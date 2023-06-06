@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @SpringBootApplication
 public class HelloWorldApplication {
-    @RequestMapping("/")
+    @RequestMapping("/home")
     String home(){
         return "Hello, World!";
     }
