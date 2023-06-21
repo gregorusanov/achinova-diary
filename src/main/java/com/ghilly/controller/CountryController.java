@@ -1,14 +1,14 @@
 package com.ghilly.controller;
 
 
-
 import com.ghilly.service.CountryService;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @RestController
-@RequestMapping("/country")
+@RequestMapping("/countries")
 public class CountryController {
 
 
@@ -18,13 +18,28 @@ public class CountryController {
         this.countryService = countryService;
     }
 
-    @GetMapping("/hello")
-    public String sayHello(){
-        return "Hello from Country and service " + countryService.serviceSaysHello();
+    @PostMapping("/")
+    public void create(@RequestBody String name) {
+        System.out.println(name);
     }
 
-    @GetMapping("/bye")
-    public String sayBye(){
-        return "Bye from Country and service " + countryService.serviceSaysHello();
+    @GetMapping("/")
+    public List<String> getCountries() {
+        return new ArrayList<>();
+    }
+
+    @GetMapping("/{countryId}")
+    public String getCountry(@PathVariable int countryId) {
+        return "get" + countryId;
+    }
+
+    @PutMapping("/{countryId}")
+    public void update(@PathVariable int countryId, @RequestBody String newName) {
+        System.out.println("update" + countryId + "newName " + newName);
+    }
+
+    @DeleteMapping("/{countryId}")
+    public void delete(@PathVariable int countryId) {
+        System.out.println("delete" + countryId);
     }
 }
