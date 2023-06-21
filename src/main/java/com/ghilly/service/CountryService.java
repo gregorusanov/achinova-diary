@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
+
 public class CountryService implements Service {
 
     private static final Logger logger = LoggerFactory.getLogger(CountryService.class);
@@ -25,7 +25,7 @@ public class CountryService implements Service {
     }
 
     @Override
-    public List<List> receiveList() {
+    public List<String> receiveList() {
         return new ArrayList<>();
     }
 

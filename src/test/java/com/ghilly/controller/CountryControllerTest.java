@@ -1,6 +1,6 @@
 package com.ghilly.controller;
 
-import com.ghilly.classes.Country;
+//import com.ghilly.classes.Country;
 import com.ghilly.service.CountryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,16 +11,18 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
+
 class CountryControllerTest {
 
     private CountryController controller;
+    private CountryService service;
     private int id;
     private String name;
 
     @BeforeEach
     void init() {
-        controller = new CountryController(mock(CountryService.class));
+        service = mock(CountryService.class);
+        controller = new CountryController(service);
         id = 1;
         name = "USSR";
     }
