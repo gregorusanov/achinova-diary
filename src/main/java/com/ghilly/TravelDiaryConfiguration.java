@@ -9,6 +9,7 @@ public class TravelDiaryConfiguration {
 
     @Bean
     public CountryService countryService() {
+        //something
         return new CountryService();
     }
 }
