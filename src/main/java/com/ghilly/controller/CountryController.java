@@ -1,7 +1,7 @@
 package com.ghilly.controller;
 
 
-import com.ghilly.service.CountryService;
+import com.ghilly.service.CountryServiceRest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -11,35 +11,40 @@ import java.util.List;
 @RequestMapping("/countries")
 public class CountryController {
 
+    CountryServiceRest service;
 
-    private final CountryService countryService;
-
-    public CountryController(CountryService countryService) {
-        this.countryService = countryService;
+    public CountryController(CountryServiceRest service){
+        this.service = service;
     }
 
+
     @PostMapping("/")
-    public void create(@RequestBody String name) {
-        System.out.println(name);;;;;
+    public void create(@RequestBody String countryName) {
+        service.add(countryName);
+        System.out.println("create" + countryName);
     }
 
     @GetMapping("/")
     public List<String> getCountries() {
+        service.receiveList();
+        System.out.println("get countries");
         return new ArrayList<>();
     }
 
     @GetMapping("/{countryId}")
-    public String getCountry(@PathVariable int countryId) {
-        return "get" + countryId;
+    public void getCountry(@PathVariable int countryId) {
+        service.receiveCountry(countryId);
     }
 
     @PutMapping("/{countryId}")
     public void update(@PathVariable int countryId, @RequestBody String newName) {
-        System.out.println("update" + countryId + "newName " + newName);
+        service.upgrade(countryId, newName);
+        System.out.println("update " + countryId + " new name is " + newName);
     }
 
     @DeleteMapping("/{countryId}")
     public void delete(@PathVariable int countryId) {
-        System.out.println("delete" + countryId);
+        service.remove(countryId);
+        System.out.println("delete " + countryId);
     }
 }

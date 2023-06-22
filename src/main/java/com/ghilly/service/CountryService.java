@@ -1,9 +1,16 @@
 package com.ghilly.service;
 
-public class CountryService {
 
+import java.util.List;
 
-    public String serviceSaysHello() {
-        return "Hello, I'm Service";
-    }
+public interface CountryService {
+        String add(String countryName);
+
+        List<String> receiveList();
+
+        String receiveCountry(int countryId);
+
+        String upgrade(int id, String newName);
+
+        String remove(int id);
 }
