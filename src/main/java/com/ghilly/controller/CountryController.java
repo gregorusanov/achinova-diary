@@ -21,11 +21,13 @@ public class CountryController {
     @PostMapping("/")
     public void create(@RequestBody String countryName) {
         service.add(countryName);
+        System.out.println("create" + countryName);
     }
 
     @GetMapping("/")
     public List<String> getCountries() {
         service.receiveList();
+        System.out.println("get countries");
         return new ArrayList<>();
     }
 
@@ -37,10 +39,12 @@ public class CountryController {
     @PutMapping("/{countryId}")
     public void update(@PathVariable int countryId, @RequestBody String newName) {
         service.upgrade(countryId, newName);
+        System.out.println("update " + countryId + " new name is " + newName);
     }
 
     @DeleteMapping("/{countryId}")
     public void delete(@PathVariable int countryId) {
-        service.clear(countryId);
+        service.remove(countryId);
+        System.out.println("delete " + countryId);
     }
 }

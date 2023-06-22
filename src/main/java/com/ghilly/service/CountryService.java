@@ -6,11 +6,11 @@ import java.util.List;
 public interface CountryService {
         String add(String countryName);
 
-        List<List> receiveList();
+        List<String> receiveList();
 
         String receiveCountry(int countryId);
 
         String upgrade(int id, String newName);
 
-        String clear(int id);
+        String remove(int id);
 }

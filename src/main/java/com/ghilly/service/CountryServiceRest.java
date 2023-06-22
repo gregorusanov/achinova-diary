@@ -18,7 +18,7 @@ public class CountryServiceRest implements CountryService {
     }
 
     @Override
-    public List<List> receiveList() {
+    public List<String> receiveList() {
         logger.info("receiveList");
         return new ArrayList<>();
     }
@@ -35,7 +35,7 @@ public class CountryServiceRest implements CountryService {
     }
 
     @Override
-    public String clear(int countryId) {
+    public String remove(int countryId) {
         return "clear" + countryId;
     }
 }

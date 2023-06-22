@@ -1,7 +1,6 @@
 package com.ghilly.controller;
 
 import com.ghilly.service.CountryServiceRest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
@@ -65,7 +64,7 @@ class CountryControllerTest {
         controller.delete(id);
 
         assertAll(
-                () -> verify(service).clear(id),
+                () -> verify(service).remove(id),
                 () -> verifyNoMoreInteractions(service)
         );
 
