@@ -20,7 +20,7 @@ public class CountryController {
 
     @PostMapping("/")
     public void create(@RequestBody String name) {
-        System.out.println(name);
+        System.out.println(name);;;;
     }
 
     @GetMapping("/")
