@@ -1,7 +1,7 @@
 package com.ghilly.controller;
 
 
-import com.ghilly.service.CountryService;
+import com.ghilly.service.CountryServiceRest;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -12,15 +12,15 @@ import java.util.List;
 public class CountryController {
 
 
-    private final CountryService countryService;
+    private final CountryServiceRest countryServiceRest;
 
-    public CountryController(CountryService countryService) {
-        this.countryService = countryService;
+    public CountryController(CountryServiceRest countryServiceRest) {
+        this.countryServiceRest = countryServiceRest;
     }
 
     @PostMapping("/")
-    public void create(@RequestBody String name) {
-        System.out.println(name);
+    public void create(@RequestBody String countryName) {
+        System.out.println(countryName);
     }
 
     @GetMapping("/")

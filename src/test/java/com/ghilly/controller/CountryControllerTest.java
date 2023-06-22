@@ -1,7 +1,6 @@
 package com.ghilly.controller;
 
-import com.ghilly.classes.Country;
-import com.ghilly.service.CountryService;
+import com.ghilly.service.CountryServiceRest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,12 +14,14 @@ import static org.mockito.Mockito.*;
 class CountryControllerTest {
 
     private CountryController controller;
+    private CountryServiceRest service;
     private int id;
     private String name;
 
     @BeforeEach
     void init() {
-        controller = new CountryController(mock(CountryService.class));
+        service = mock(CountryServiceRest.class);
+        controller = new CountryController(service);
         id = 1;
         name = "USSR";
     }
@@ -66,7 +67,7 @@ class CountryControllerTest {
 
         assertAll(
                 () -> verify(service).upgrade(id, newName),
-                () ->verifyNoMoreInteractions(service)
+                () -> verifyNoMoreInteractions(service)
         );
 
     }

@@ -13,7 +13,7 @@ public interface Service {
 
     String receiveCountry(int countryId);
 
-    void upgrade(int id, String newName);
+    void upgrade(int countryId, String newName);
 
-    void clear(int id);
+    void clear(int countryId);
 }
