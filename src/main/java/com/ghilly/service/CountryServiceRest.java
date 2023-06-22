@@ -2,13 +2,10 @@ package com.ghilly.service;
 
 import org.slf4j.LoggerFactory;
 import org.slf4j.Logger;
-import org.springframework.context.annotation.Bean;
-import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Component
 public class CountryServiceRest implements CountryService {
 
     private static final Logger logger = LoggerFactory.getLogger(CountryServiceRest.class);

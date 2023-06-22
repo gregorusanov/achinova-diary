@@ -6,23 +6,15 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class CountryControllerTest {
 
-    private CountryController controller;
-    private CountryServiceRest service;
+    private static final CountryServiceRest service = mock(CountryServiceRest.class);
+    private static final CountryController controller = new CountryController(service);
     private static final int id = 100;
     private static final String name = "USSR";
-
-    @BeforeEach
-    void init() {
-        service = mock(CountryServiceRest.class);
-        controller = new CountryController(service);
-    }
 
 
     @Test
