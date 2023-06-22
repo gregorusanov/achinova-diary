@@ -18,7 +18,7 @@ public class CountryController {
         this.countryService = countryService;
     }
 
-    @PostMapping("/*")
+    @PostMapping("/")
     public void create(@RequestBody String name) {
         System.out.println(name);
     }
