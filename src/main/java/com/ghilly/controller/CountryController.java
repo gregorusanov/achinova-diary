@@ -1,7 +1,6 @@
 package com.ghilly.controller;
 
 
-import com.ghilly.service.CountryService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -12,37 +11,28 @@ import java.util.List;
 public class CountryController {
 
 
-    private final CountryService countryService;
-
-    public CountryController(CountryService countryService) {
-        this.countryService = countryService;
-    }
-
     @PostMapping("/")
-    public void create(@RequestBody String name) {
-        countryService.add(name);
-        System.out.println(name);
+    public String create(@RequestBody String name) {
+        return name;
     }
 
     @GetMapping("/")
     public List<String> getCountries() {
-        return countryService.receiveList();
+        return new ArrayList<>();
     }
 
     @GetMapping("/{countryId}")
     public String getCountry(@PathVariable int countryId) {
-        return countryService.receiveCountry(countryId);
+        return "get country" + countryId;
     }
 
     @PutMapping("/{countryId}")
-    public void update(@PathVariable int countryId, @RequestBody String newName) {
-        countryService.upgrade(countryId, newName);
-        System.out.println("update" + countryId + "newName " + newName);
+    public String update(@PathVariable int countryId, @RequestBody String newName) {
+        return "update" + countryId + "newName " + newName;
     }
 
     @DeleteMapping("/{countryId}")
-    public void delete(@PathVariable int countryId) {
-        countryService.clear(countryId);
-        System.out.println("delete" + countryId);
+    public String delete(@PathVariable int countryId) {
+        return "delete" + countryId;
     }
 }
