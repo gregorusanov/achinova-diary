@@ -1,59 +1,81 @@
 package com.ghilly.controller;
 
+import com.ghilly.service.CountryServiceRest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
-
+@SpringBootTest
 class CountryControllerTest {
 
     private CountryController controller;
-    private static final int id = 10;
+    private CountryServiceRest service;
+    private static final int id = 100;
     private static final String name = "USSR";
 
     @BeforeEach
     void init() {
-        controller = new CountryController();
+        service = mock(CountryServiceRest.class);
+        controller = new CountryController(service);
     }
 
 
     @Test
     void createCountry() {
+        controller.create(name);
 
-        assertEquals(name, controller.create(name));
+        assertAll(
+                () -> verify(service).add(name),
+                () -> verifyNoMoreInteractions(service)
+        );
     }
 
     @Test
     void getCountries() {
-        List<String> expected = controller.getCountries();
+        controller.getCountries();
 
-        assertEquals(expected, new ArrayList<>());
+        assertAll(
+                () -> verify(service).receiveList(),
+                () -> verifyNoMoreInteractions(service)
+        );
     }
 
     @Test
     void getCountry() {
-        String expected = "get country" + id;
+        controller.getCountry(id);
 
-        assertEquals(expected, controller.getCountry(id));
+        assertAll(
+                () -> verify(service).receiveCountry(anyInt()),
+                () -> verifyNoMoreInteractions(service)
+        );
     }
 
     @Test
     void updateCountry() {
         String newName = "Russia";
 
-        String expected = "update" + id + "newName " + newName;
+        controller.update(id, newName);
 
-        assertEquals(expected, controller.update(id, newName));
+        assertAll(
+                () -> verify(service).upgrade(id, newName),
+                () ->verifyNoMoreInteractions(service)
+        );
+
     }
 
     @Test
     void deleteCountry() {
-        String expected = "delete" + id;
+        controller.delete(id);
 
-        assertEquals(expected, controller.delete(id));
+        assertAll(
+                () -> verify(service).clear(id),
+                () -> verifyNoMoreInteractions(service)
+        );
+
     }
 }
