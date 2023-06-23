@@ -9,11 +9,11 @@ import java.util.List;
 public interface Service {
     void add(String countryName);
 
-    List<List> receiveList();
+    List<String> receiveList();
 
     String receiveCountry(int countryId);
 
     void upgrade(int countryId, String newName);
 
-    void clear(int countryId);
+    void remove(int countryId);
 }

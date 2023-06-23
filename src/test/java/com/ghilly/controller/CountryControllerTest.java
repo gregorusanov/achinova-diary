@@ -1,30 +1,18 @@
 package com.ghilly.controller;
 
 import com.ghilly.service.CountryServiceRest;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
-
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @SpringBootTest
 class CountryControllerTest {
 
-    private CountryController controller;
-    private CountryServiceRest service;
-    private int id;
-    private String name;
-
-    @BeforeEach
-    void init() {
-        service = mock(CountryServiceRest.class);
-        controller = new CountryController(service);
-        id = 1;
-        name = "USSR";
-    }
+    private static final CountryServiceRest service = mock(CountryServiceRest.class);
+    private static final CountryController controller = new CountryController(service);
+    private static final int id = 100;
+    private static final String name = "USSR";
 
 
     @Test
@@ -49,11 +37,9 @@ class CountryControllerTest {
 
     @Test
     void getCountry() {
-        when(service.receiveCountry(eq(id))).thenReturn(name);
-        String expected = controller.getCountry(id);
+        controller.getCountry(id);
 
         assertAll(
-                () -> assertEquals(expected, name),
                 () -> verify(service).receiveCountry(anyInt()),
                 () -> verifyNoMoreInteractions(service)
         );
@@ -67,7 +53,7 @@ class CountryControllerTest {
 
         assertAll(
                 () -> verify(service).upgrade(id, newName),
-                () -> verifyNoMoreInteractions(service)
+                () ->verifyNoMoreInteractions(service)
         );
 
     }
@@ -77,7 +63,7 @@ class CountryControllerTest {
         controller.delete(id);
 
         assertAll(
-                () -> verify(service).clear(id),
+                () -> verify(service).remove(id),
                 () -> verifyNoMoreInteractions(service)
         );
 

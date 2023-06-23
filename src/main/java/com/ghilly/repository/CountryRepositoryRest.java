@@ -2,7 +2,6 @@ package com.ghilly.repository;
 
 
 import java.util.List;
-import java.util.Map;
 
 public class CountryRepositoryRest implements CountryRepository {
 
@@ -14,7 +13,7 @@ public class CountryRepositoryRest implements CountryRepository {
     }
 
     @Override
-    public List<List> takeList() {
+    public List<String> takeList() {
         return null;
     }
 
@@ -29,7 +28,7 @@ public class CountryRepositoryRest implements CountryRepository {
     }
 
     @Override
-    public void remove(int countryId) {
+    public void cut(int countryId) {
 
     }
 
