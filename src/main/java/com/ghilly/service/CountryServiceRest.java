@@ -4,11 +4,10 @@ import com.ghilly.repository.CountryRepositoryRest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
-public class CountryServiceRest implements Service {
+public class CountryServiceRest implements CountryService {
 
     private static final Logger logger = LoggerFactory.getLogger(CountryServiceRest.class);
     private final CountryRepositoryRest repository;
@@ -25,13 +24,13 @@ public class CountryServiceRest implements Service {
     }
 
     @Override
-    public List<String> receiveList() {
-        repository.takeList();
-        return new ArrayList<>();
+    public List<String> getAllCountries() {
+        logger.info("The list of countries is:");
+        return repository.takeAllCountries();
     }
 
     @Override
-    public String receiveCountry(int countryId) {
+    public String getCountry(int countryId) {
         if (!repository.containsCountry(countryId)) {
             throw new IllegalArgumentException("The country is not found.");
         }
@@ -43,8 +42,9 @@ public class CountryServiceRest implements Service {
         if (!repository.containsCountry(countryId)) {
             throw new IllegalArgumentException("The country is not found.");
         }
+        String oldName = repository.takeCountry(countryId);
         repository.change(countryId, newName);
-        logger.info("The country with ID {} was upgraded, new name is {}.", countryId, newName);
+        logger.info("The country with ID {} was upgraded, old name is {}, new name is {}.", countryId, oldName, newName);
     }
 
     @Override

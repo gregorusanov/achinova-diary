@@ -13,7 +13,7 @@ public class CountryRepositoryRest implements CountryRepository {
     }
 
     @Override
-    public List<String> takeList() {
+    public List<String> takeAllCountries() {
         return null;
     }
 

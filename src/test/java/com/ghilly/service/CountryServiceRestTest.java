@@ -1,82 +1,135 @@
 package com.ghilly.service;
 
 import com.ghilly.repository.CountryRepositoryRest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
-import org.mockito.Mockito;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.mockito.Mockito.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class CountryServiceRestTest {
-    private static final CountryRepositoryRest repository = Mockito.mock(CountryRepositoryRest.class);
-    private static final CountryServiceRest service = new CountryServiceRest(repository);
-    private static final String name  = "USSR";
-    private static final int id  = 1;
+    private static final String NAME = "USSR";
+    private static final int ID = 1;
+    private CountryRepositoryRest repository;
+    private CountryServiceRest service;
 
 
+    @BeforeEach
+    void init() {
+        repository = mock(CountryRepositoryRest.class);
+        service = new CountryServiceRest(repository);
+    }
     @Test
     void addAndReceiveCountry() {
-        Mockito.when(repository.takeCountry(id)).thenReturn(name);
+        when(repository.takeCountry(ID)).thenReturn(NAME);
 
-        service.add(name);
+        service.add(NAME);
 
         assertAll(
-                () -> assertEquals(name, repository.takeCountry(id)),
-                () -> Mockito.verify(repository).insert(name)
+                () -> assertEquals(NAME, repository.takeCountry(ID)),
+                () -> verify(repository).insert(NAME)
         );
     }
 
     @Test
-    void receiveList() {
-        service.receiveList();
+    void getAllCountries() {
+        List<String> expected = new ArrayList<>(List.of("Afghanistan", "France", "China"));
+        when(repository.takeAllCountries()).thenReturn(expected);
+
+        List<String> actual = service.getAllCountries();
 
         assertAll(
-                () -> Mockito.verify(repository).takeList(),
-                () -> Mockito.verifyNoMoreInteractions(repository)
+                () -> assertEquals(expected, actual),
+                () -> verify(repository).takeAllCountries(),
+                () -> verifyNoMoreInteractions(repository)
         );
     }
 
     @Test
-    void receiveCountrySuccess() {
-        Mockito.when(repository.containsCountry(id)).thenReturn(true);
-        Mockito.when(repository.takeCountry(id)).thenReturn(name);
+    void getCountrySuccess() {
+        when(repository.containsCountry(ID)).thenReturn(true);
+        when(repository.takeCountry(ID)).thenReturn(NAME);
 
-        String expected = service.receiveCountry(id);
+        String expected = service.getCountry(ID);
 
         assertAll(
-                () -> assertEquals(expected, name),
-                () -> Mockito.verify(repository).containsCountry(id),
-                () -> Mockito.verify(repository).takeCountry(id),
-                () -> Mockito.verifyNoMoreInteractions(repository)
+                () -> assertEquals(expected, NAME),
+                () -> verify(repository).containsCountry(ID),
+                () -> verify(repository).takeCountry(ID),
+                () -> verifyNoMoreInteractions(repository)
         );
     }
 
     @Test
-    void receiveCountryFail() {
-        Mockito.when(repository.containsCountry(id)).thenReturn(false);
+    void getCountryFail() {
+        when(repository.containsCountry(ID)).thenReturn(false);
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> service.receiveCountry(id));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> service.getCountry(ID));
 
         assertAll(
                 () -> assertEquals("The country is not found.", exception.getMessage()),
-                () -> Mockito.verify(repository).containsCountry(id),
-                () -> Mockito.verifyNoMoreInteractions(repository)
+                () -> verify(repository).containsCountry(ID),
+                () -> verifyNoMoreInteractions(repository)
         );
     }
 
     @Test
     void upgradeSuccess() {
+        String newName = "Russia";
+        when(repository.containsCountry(ID)).thenReturn(true);
+        when(repository.takeCountry(ID)).thenReturn(NAME);
+
+        service.upgrade(ID, newName);
+
+        assertAll(
+                () -> verify(repository).containsCountry(ID),
+                () -> verify(repository).takeCountry(ID),
+                () -> verify(repository).change(ID, newName),
+                () -> verifyNoMoreInteractions(repository)
+        );
     }
 
     @Test
     void upgradeFail() {
+        String newName = "Russia";
+        when(repository.containsCountry(ID)).thenReturn(false);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> service.upgrade(ID, newName));
+
+        assertAll(
+                () -> assertEquals("The country is not found.", exception.getMessage()),
+                () -> verify(repository).containsCountry(ID),
+                () -> verifyNoMoreInteractions(repository)
+        );
     }
 
     @Test
     void removeSuccess() {
+        when(repository.containsCountry(ID)).thenReturn(true);
+
+        service.remove(ID);
+
+        assertAll(
+                () -> verify(repository).containsCountry(ID),
+                () -> verify(repository).cut(ID),
+                () -> verifyNoMoreInteractions(repository)
+        );
     }
 
     @Test
     void removeFail() {
+        when(repository.containsCountry(ID)).thenReturn(false);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> service.remove(ID));
+
+        assertAll(
+                () -> assertEquals("The country is not found.", exception.getMessage()),
+                () -> verify(repository).containsCountry(ID),
+                () -> verifyNoMoreInteractions(repository)
+        );
     }
 }

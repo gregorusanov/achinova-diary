@@ -5,7 +5,7 @@ import java.util.List;
 public interface CountryRepository {
     void insert(String countryName);
 
-    List<String> takeList();
+    List<String> takeAllCountries();
 
     String takeCountry(int countryId);
 
