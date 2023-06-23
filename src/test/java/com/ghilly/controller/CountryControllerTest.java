@@ -2,12 +2,14 @@ package com.ghilly.controller;
 
 import com.ghilly.service.CountryServiceRest;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@SpringBootTest
 class CountryControllerTest {
 
     private static final CountryServiceRest service = mock(CountryServiceRest.class);
@@ -28,20 +30,28 @@ class CountryControllerTest {
 
     @Test
     void getCountries() {
-        controller.getCountries();
+        List<String> expected = new ArrayList<>(List.of("Japan", "Russia", "Germany"));
+        when(service.getAll()).thenReturn(expected);
+
+        List<String> actual = controller.getCountries();
 
         assertAll(
-                () -> verify(service).receiveList(),
+                () -> assertEquals(expected, actual),
+                () -> verify(service).getAll(),
                 () -> verifyNoMoreInteractions(service)
         );
     }
 
     @Test
     void getCountry() {
-        controller.getCountry(id);
+        String expected = "Belgium";
+        when(service.getCountry(id)).thenReturn(expected);
+
+        String actual = controller.getCountry(id);
 
         assertAll(
-                () -> verify(service).receiveCountry(anyInt()),
+                () -> assertEquals(expected, actual),
+                () -> verify(service, times(2)).getCountry(id),
                 () -> verifyNoMoreInteractions(service)
         );
     }
@@ -49,14 +59,15 @@ class CountryControllerTest {
     @Test
     void updateCountry() {
         String newName = "Russia";
+        when(service.getCountry(id)).thenReturn(name);
 
         controller.update(id, newName);
 
         assertAll(
+                () -> verify(service).getCountry(id),
                 () -> verify(service).upgrade(id, newName),
-                () ->verifyNoMoreInteractions(service)
+                () -> verifyNoMoreInteractions(service)
         );
-
     }
 
     @Test
@@ -67,6 +78,5 @@ class CountryControllerTest {
                 () -> verify(service).remove(id),
                 () -> verifyNoMoreInteractions(service)
         );
-
     }
 }

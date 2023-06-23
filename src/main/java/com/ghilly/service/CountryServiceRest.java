@@ -18,14 +18,15 @@ public class CountryServiceRest implements CountryService {
     }
 
     @Override
-    public List<String> receiveList() {
-        logger.info("receiveList");
+    public List<String> getAll() {
+        logger.info("getAll");
         return new ArrayList<>();
     }
 
     @Override
-    public String receiveCountry(int countryId) {
-        return "receive" + countryId;
+    public String getCountry(int countryId) {
+        logger.info("getCountry");
+        return "There will be the country name";
     }
 
     @Override
@@ -36,6 +37,7 @@ public class CountryServiceRest implements CountryService {
 
     @Override
     public String remove(int countryId) {
-        return "clear" + countryId;
+        logger.info("remove");
+        return "There will be the country name";
     }
 }

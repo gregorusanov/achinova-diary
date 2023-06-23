@@ -6,9 +6,9 @@ import java.util.List;
 public interface CountryService {
         String add(String countryName);
 
-        List<String> receiveList();
+        List<String> getAll();
 
-        String receiveCountry(int countryId);
+        String getCountry(int countryId);
 
         String upgrade(int id, String newName);
 
