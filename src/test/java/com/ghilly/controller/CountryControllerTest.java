@@ -5,7 +5,6 @@ import com.ghilly.service.CountryServiceRest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -14,11 +13,11 @@ import static org.mockito.Mockito.*;
 
 class CountryControllerTest {
 
-    private CountryServiceRest service;
-    private CountryController controller;
     private static final int ID = 100;
     private static final String NAME = "USSR";
     private static final Country USSR = new Country(ID, NAME);
+    private CountryServiceRest service;
+    private CountryController controller;
 
     @BeforeEach
     void init() {
@@ -39,7 +38,7 @@ class CountryControllerTest {
     @Test
     void getCountries() {
         Country usa = new Country(2, "USA");
-        List<Country> expected = new ArrayList<>(List.of(USSR, usa));
+        List<Country> expected = List.of(USSR, usa);
         when(service.getAllCountries()).thenReturn(expected);
 
         List<Country> actual = controller.getCountries();

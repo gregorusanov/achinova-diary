@@ -6,14 +6,15 @@ import com.ghilly.service.CountryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.List;
 
 @RestController
 @RequestMapping("/countries")
 public class CountryController {
 
-    private final CountryService service;
     private static final Logger logger = LoggerFactory.getLogger(CountryController.class);
+    private final CountryService service;
 
     public CountryController(CountryService service) {
         this.service = service;
@@ -23,7 +24,7 @@ public class CountryController {
     @PostMapping("/")
     public void create(@RequestBody String countryName) {
         service.add(countryName);
-        logger.info("{} was created.", countryName);
+        logger.info("{} was created", countryName);
     }
 
     @GetMapping("/")

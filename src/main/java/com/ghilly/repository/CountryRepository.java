@@ -11,9 +11,9 @@ public interface CountryRepository {
 
     Country takeCountry(int countryId);
 
-    void change(int countryId, String newName);
+    void update(int countryId, String newName);
 
-    void cut(int countryId);
+    void delete(int countryId);
 
     boolean containsCountry(int countryId);
 
