@@ -1,6 +1,8 @@
 package com.ghilly.repository;
 
 
+import com.ghilly.classes.Country;
+
 import java.util.List;
 
 public class CountryRepositoryRest implements CountryRepository {
@@ -13,12 +15,12 @@ public class CountryRepositoryRest implements CountryRepository {
     }
 
     @Override
-    public List<String> takeAllCountries() {
+    public List<Country> takeAllCountries() {
         return null;
     }
 
     @Override
-    public String takeCountry(int countryId) {
+    public Country takeCountry(int countryId) {
         return null;
     }
 

@@ -1,6 +1,7 @@
 package com.ghilly.controller;
 
 
+import com.ghilly.classes.Country;
 import com.ghilly.service.CountryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,20 +27,20 @@ public class CountryController {
     }
 
     @GetMapping("/")
-    public List<String> getCountries() {
+    public List<Country> getCountries() {
         logger.info("List of countries");
         return service.getAllCountries();
     }
 
     @GetMapping("/{countryId}")
-    public String getCountry(@PathVariable int countryId) {
+    public Country getCountry(@PathVariable int countryId) {
         logger.info("The country with this ID {} is: ", countryId);
         return service.getCountry(countryId);
     }
 
     @PutMapping("/{countryId}")
     public void update(@PathVariable int countryId, @RequestBody String newName) {
-        String oldName = service.getCountry(countryId);
+        String oldName = service.getCountry(countryId).getName();
         service.upgrade(countryId, newName);
         logger.info("The country name for ID {} was changed from {} to {}", countryId, oldName, newName);
     }
