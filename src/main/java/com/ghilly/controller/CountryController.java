@@ -22,7 +22,7 @@ public class CountryController {
     @PostMapping("/")
     public void create(@RequestBody String countryName) {
         service.add(countryName);
-        logger.info("{} was created.", countryName);
+        logger.info("{} was created", countryName);
     }
 
     @GetMapping("/")
