@@ -1,43 +1,55 @@
 package com.ghilly.service;
 
-import org.slf4j.LoggerFactory;
+import com.ghilly.repository.CountryRepository;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
+
 
 public class CountryServiceRest implements CountryService {
 
     private static final Logger logger = LoggerFactory.getLogger(CountryServiceRest.class);
+    private final CountryRepository repository;
+
+    public CountryServiceRest(CountryRepository repository) {
+        this.repository = repository;
+    }
 
 
     @Override
-    public String add(String countryName) {
+    public void add(String countryName) {
+        repository.insert(countryName);
         logger.info("The country {} was added by service.", countryName);
-        return countryName;
     }
 
     @Override
-    public List<String> getAll() {
-        logger.info("getAll");
-        return new ArrayList<>();
+    public List<String> getAllCountries() {
+        logger.info("The list of countries is:");
+        return repository.takeAllCountries();
     }
 
     @Override
     public String getCountry(int countryId) {
-        logger.info("getCountry");
-        return "There will be the country name";
+        return repository.takeCountry(countryId);
     }
 
     @Override
-    public String upgrade(int countryId, String newCountryName) {
-        logger.info("The country with ID {} was upgraded, new name is {}.", countryId, newCountryName);
-        return newCountryName;
+    public void upgrade(int countryId, String newName) {
+        if (!repository.containsCountry(countryId)) {
+            throw new IllegalArgumentException("The country with the ID " + countryId + " is not found.");
+        }
+        String oldName = repository.takeCountry(countryId);
+        repository.update(countryId, newName);
+        logger.info("The country with ID {} was upgraded, old name is {}, new name is {}.", countryId, oldName, newName);
     }
 
     @Override
-    public String remove(int countryId) {
-        logger.info("remove");
-        return "There will be the country name";
+    public void remove(int countryId) {
+        if (!repository.containsCountry(countryId)) {
+            throw new IllegalArgumentException("The country with the ID " + countryId + " is not found.");
+        }
+        repository.delete(countryId);
+        logger.info("The country with ID {} was deleted", countryId);
     }
 }
