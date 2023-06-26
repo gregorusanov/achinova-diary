@@ -31,28 +31,25 @@ public class CountryServiceRest implements CountryService {
 
     @Override
     public String getCountry(int countryId) {
-        if (!repository.containsCountry(countryId)) {
-            throw new IllegalArgumentException("The country is not found.");
-        }
         return repository.takeCountry(countryId);
     }
 
     @Override
     public void upgrade(int countryId, String newName) {
         if (!repository.containsCountry(countryId)) {
-            throw new IllegalArgumentException("The country is not found.");
+            throw new IllegalArgumentException("The country with the ID " + countryId + " is not found.");
         }
         String oldName = repository.takeCountry(countryId);
-        repository.change(countryId, newName);
+        repository.update(countryId, newName);
         logger.info("The country with ID {} was upgraded, old name is {}, new name is {}.", countryId, oldName, newName);
     }
 
     @Override
     public void remove(int countryId) {
         if (!repository.containsCountry(countryId)) {
-            throw new IllegalArgumentException("The country is not found.");
+            throw new IllegalArgumentException("The country with the ID " + countryId + " is not found.");
         }
-        repository.cut(countryId);
+        repository.delete(countryId);
         logger.info("The country with ID {} was deleted", countryId);
     }
 }

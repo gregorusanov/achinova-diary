@@ -3,8 +3,6 @@ package com.ghilly.service;
 import com.ghilly.repository.CountryRepositoryRest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.mockito.Mockito.*;
@@ -37,7 +35,7 @@ class CountryServiceRestTest {
 
     @Test
     void getAllCountries() {
-        List<String> expected = new ArrayList<>(List.of("Afghanistan", "France", "China"));
+        List<String> expected = List.of("Afghanistan", "France", "China");
         when(repository.takeAllCountries()).thenReturn(expected);
 
         List<String> actual = service.getAllCountries();
@@ -51,14 +49,11 @@ class CountryServiceRestTest {
 
     @Test
     void getCountrySuccess() {
-        when(repository.containsCountry(ID)).thenReturn(true);
         when(repository.takeCountry(ID)).thenReturn(NAME);
-
         String expected = service.getCountry(ID);
 
         assertAll(
                 () -> assertEquals(expected, NAME),
-                () -> verify(repository).containsCountry(ID),
                 () -> verify(repository).takeCountry(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
@@ -66,13 +61,11 @@ class CountryServiceRestTest {
 
     @Test
     void getCountryFail() {
-        when(repository.containsCountry(ID)).thenReturn(false);
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> service.getCountry(ID));
+        String actual = service.getCountry(ID);
 
         assertAll(
-                () -> assertEquals("The country is not found.", exception.getMessage()),
-                () -> verify(repository).containsCountry(ID),
+                () -> assertNull(actual),
+                () -> verify(repository).takeCountry(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
     }
@@ -88,7 +81,7 @@ class CountryServiceRestTest {
         assertAll(
                 () -> verify(repository).containsCountry(ID),
                 () -> verify(repository).takeCountry(ID),
-                () -> verify(repository).change(ID, newName),
+                () -> verify(repository).update(ID, newName),
                 () -> verifyNoMoreInteractions(repository)
         );
     }
@@ -101,7 +94,7 @@ class CountryServiceRestTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> service.upgrade(ID, newName));
 
         assertAll(
-                () -> assertEquals("The country is not found.", exception.getMessage()),
+                () -> assertEquals("The country with the ID " + ID + " is not found.", exception.getMessage()),
                 () -> verify(repository).containsCountry(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
@@ -115,7 +108,7 @@ class CountryServiceRestTest {
 
         assertAll(
                 () -> verify(repository).containsCountry(ID),
-                () -> verify(repository).cut(ID),
+                () -> verify(repository).delete(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
     }
@@ -127,7 +120,7 @@ class CountryServiceRestTest {
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> service.remove(ID));
 
         assertAll(
-                () -> assertEquals("The country is not found.", exception.getMessage()),
+                () -> assertEquals("The country with the ID " + ID + " is not found.", exception.getMessage()),
                 () -> verify(repository).containsCountry(ID),
                 () -> verifyNoMoreInteractions(repository)
         );

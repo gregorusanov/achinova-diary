@@ -5,8 +5,6 @@ import java.util.List;
 
 public class CountryRepositoryRest implements CountryRepository {
 
-    private CountryRepositoryRest countryRepository;
-
     @Override
     public void insert(String countryName) {
 
@@ -23,12 +21,12 @@ public class CountryRepositoryRest implements CountryRepository {
     }
 
     @Override
-    public void change(int countryId, String newName) {
+    public void update(int countryId, String newName) {
 
     }
 
     @Override
-    public void cut(int countryId) {
+    public void delete(int countryId) {
 
     }
 

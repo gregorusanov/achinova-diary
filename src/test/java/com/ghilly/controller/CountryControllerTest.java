@@ -36,7 +36,7 @@ class CountryControllerTest {
 
     @Test
     void getCountries() {
-        List<String> expected = new ArrayList<>(List.of("Japan", "Russia", "Germany"));
+        List<String> expected = List.of("Japan", "Russia", "Germany");
         when(service.getAllCountries()).thenReturn(expected);
 
         List<String> actual = controller.getCountries();
