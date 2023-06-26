@@ -1,6 +1,7 @@
 package com.ghilly.controller;
 
 import com.ghilly.service.CountryServiceRest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -12,32 +13,37 @@ import static org.mockito.Mockito.*;
 
 class CountryControllerTest {
 
-    private static final CountryServiceRest service = mock(CountryServiceRest.class);
-    private static final CountryController controller = new CountryController(service);
-    private static final int id = 100;
-    private static final String name = "USSR";
+    private CountryServiceRest service;
+    private CountryController controller;
+    private static final int ID = 100;
+    private static final String NAME = "USSR";
 
+    @BeforeEach
+    void init() {
+        service = mock(CountryServiceRest.class);
+        controller = new CountryController(service);
+    }
 
     @Test
     void createCountry() {
-        controller.create(name);
+        controller.create(NAME);
 
         assertAll(
-                () -> verify(service).add(name),
+                () -> verify(service).add(NAME),
                 () -> verifyNoMoreInteractions(service)
         );
     }
 
     @Test
     void getCountries() {
-        List<String> expected = new ArrayList<>(List.of("Japan", "Russia", "Germany"));
-        when(service.getAll()).thenReturn(expected);
+        List<String> expected = List.of("Japan", "Russia", "Germany");
+        when(service.getAllCountries()).thenReturn(expected);
 
         List<String> actual = controller.getCountries();
 
         assertAll(
                 () -> assertEquals(expected, actual),
-                () -> verify(service).getAll(),
+                () -> verify(service).getAllCountries(),
                 () -> verifyNoMoreInteractions(service)
         );
     }
@@ -45,13 +51,13 @@ class CountryControllerTest {
     @Test
     void getCountry() {
         String expected = "Belgium";
-        when(service.getCountry(id)).thenReturn(expected);
+        when(service.getCountry(ID)).thenReturn(expected);
 
-        String actual = controller.getCountry(id);
+        String actual = controller.getCountry(ID);
 
         assertAll(
                 () -> assertEquals(expected, actual),
-                () -> verify(service, times(2)).getCountry(id),
+                () -> verify(service).getCountry(ID),
                 () -> verifyNoMoreInteractions(service)
         );
     }
@@ -59,23 +65,23 @@ class CountryControllerTest {
     @Test
     void updateCountry() {
         String newName = "Russia";
-        when(service.getCountry(id)).thenReturn(name);
+        when(service.getCountry(ID)).thenReturn(NAME);
 
-        controller.update(id, newName);
+        controller.update(ID, newName);
 
         assertAll(
-                () -> verify(service).getCountry(id),
-                () -> verify(service).upgrade(id, newName),
+                () -> verify(service).getCountry(ID),
+                () -> verify(service).upgrade(ID, newName),
                 () -> verifyNoMoreInteractions(service)
         );
     }
 
     @Test
     void deleteCountry() {
-        controller.delete(id);
+        controller.delete(ID);
 
         assertAll(
-                () -> verify(service).remove(id),
+                () -> verify(service).remove(ID),
                 () -> verifyNoMoreInteractions(service)
         );
     }

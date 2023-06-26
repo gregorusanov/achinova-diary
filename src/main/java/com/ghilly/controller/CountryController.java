@@ -28,7 +28,7 @@ public class CountryController {
     @GetMapping("/")
     public List<String> getCountries() {
         logger.info("List of countries");
-        return service.getAll();
+        return service.getAllCountries();
     }
 
     @GetMapping("/{countryId}")
