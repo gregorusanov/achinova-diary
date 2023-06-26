@@ -1,6 +1,6 @@
 package com.ghilly.service;
 
-import com.ghilly.repository.CountryRepositoryRest;
+import com.ghilly.repository.CountryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -10,9 +10,9 @@ import java.util.List;
 public class CountryServiceRest implements CountryService {
 
     private static final Logger logger = LoggerFactory.getLogger(CountryServiceRest.class);
-    private final CountryRepositoryRest repository;
+    private final CountryRepository repository;
 
-    public CountryServiceRest(CountryRepositoryRest repository) {
+    public CountryServiceRest(CountryRepository repository) {
         this.repository = repository;
     }
 
