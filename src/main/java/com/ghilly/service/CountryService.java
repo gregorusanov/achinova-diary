@@ -1,6 +1,6 @@
 package com.ghilly.service;
 
-import com.ghilly.classes.Country;
+import com.ghilly.model.Country;
 
 import java.util.List;
 
@@ -11,7 +11,7 @@ public interface CountryService {
 
     Country getCountry(int countryId);
 
-    void upgrade(int countryId, String newName);
+    void upgrade(Country country);
 
     void remove(int countryId);
 }

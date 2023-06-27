@@ -1,17 +1,17 @@
-package com.ghilly.classes;
+package com.ghilly.model;
 
 import java.util.Objects;
 
 public class Country {
-    private long id;
+    private int id;
     private String name;
 
-    public Country(long id, String name) {
+    public Country(int id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public long getId() {
+    public int getId() {
         return id;
     }
 

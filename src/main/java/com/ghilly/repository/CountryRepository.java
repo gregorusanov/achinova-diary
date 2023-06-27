@@ -1,6 +1,6 @@
 package com.ghilly.repository;
 
-import com.ghilly.classes.Country;
+import com.ghilly.model.Country;
 
 import java.util.List;
 

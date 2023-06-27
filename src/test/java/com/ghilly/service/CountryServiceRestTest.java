@@ -1,6 +1,6 @@
 package com.ghilly.service;
 
-import com.ghilly.classes.Country;
+import com.ghilly.model.Country;
 import com.ghilly.repository.CountryRepositoryRest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -81,13 +81,11 @@ class CountryServiceRestTest {
     void upgradeSuccess() {
         String newName = "Russia";
         when(repository.containsCountry(ID)).thenReturn(true);
-        when(repository.takeCountry(ID)).thenReturn(USSR);
 
-        service.upgrade(ID, newName);
+        service.upgrade(new Country(ID, newName));
 
         assertAll(
                 () -> verify(repository).containsCountry(ID),
-                () -> verify(repository).takeCountry(ID),
                 () -> verify(repository).update(ID, newName),
                 () -> verifyNoMoreInteractions(repository)
         );
@@ -98,7 +96,8 @@ class CountryServiceRestTest {
         String newName = "Russia";
         when(repository.containsCountry(ID)).thenReturn(false);
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> service.upgrade(ID, newName));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> service.upgrade(new Country(ID, newName)));
 
         assertAll(
                 () -> assertEquals("The country with the ID " + ID + " is not found.", exception.getMessage()),

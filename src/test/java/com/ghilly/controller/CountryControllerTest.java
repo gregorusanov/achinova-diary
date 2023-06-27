@@ -1,6 +1,6 @@
 package com.ghilly.controller;
 
-import com.ghilly.classes.Country;
+import com.ghilly.model.Country;
 import com.ghilly.service.CountryServiceRest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -66,13 +66,11 @@ class CountryControllerTest {
     @Test
     void updateCountry() {
         String newName = "Russia";
-        when(service.getCountry(ID)).thenReturn(USSR);
 
         controller.update(ID, newName);
 
         assertAll(
-                () -> verify(service).getCountry(ID),
-                () -> verify(service).upgrade(ID, newName),
+                () -> verify(service).upgrade(new Country(ID, newName)),
                 () -> verifyNoMoreInteractions(service)
         );
     }
