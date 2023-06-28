@@ -1,32 +1,14 @@
 package com.ghilly.model;
 
-import com.sun.istack.NotNull;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
-@Entity
-@Table(name = "countries")
 public class Country {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;
-
-    @NotBlank(message = "You have to fill this field!")
     private String name;
 
     public Country(int id, String name) {
         this.id = id;
         this.name = name;
-    }
-
-    public Country(String name) {
-        this.name = name;
-    }
-
-    public Country() {
-
     }
 
     public int getId() {
