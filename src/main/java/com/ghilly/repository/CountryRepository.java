@@ -1,13 +1,15 @@
 package com.ghilly.repository;
 
+import com.ghilly.model.Country;
+
 import java.util.List;
 
 public interface CountryRepository {
     void insert(String countryName);
 
-    List<String> takeAllCountries();
+    List<Country> takeAllCountries();
 
-    String takeCountry(int countryId);
+    Country takeCountry(int countryId);
 
     void update(int countryId, String newName);
 

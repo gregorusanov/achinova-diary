@@ -1,10 +1,10 @@
 package com.ghilly.controller;
 
+import com.ghilly.model.Country;
 import com.ghilly.service.CountryServiceRest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -13,10 +13,11 @@ import static org.mockito.Mockito.*;
 
 class CountryControllerTest {
 
-    private CountryServiceRest service;
-    private CountryController controller;
     private static final int ID = 100;
     private static final String NAME = "USSR";
+    private static final Country USSR = new Country(ID, NAME);
+    private CountryServiceRest service;
+    private CountryController controller;
 
     @BeforeEach
     void init() {
@@ -36,10 +37,11 @@ class CountryControllerTest {
 
     @Test
     void getCountries() {
-        List<String> expected = List.of("Japan", "Russia", "Germany");
+        Country usa = new Country(2, "USA");
+        List<Country> expected = List.of(USSR, usa);
         when(service.getAllCountries()).thenReturn(expected);
 
-        List<String> actual = controller.getCountries();
+        List<Country> actual = controller.getCountries();
 
         assertAll(
                 () -> assertEquals(expected, actual),
@@ -50,13 +52,12 @@ class CountryControllerTest {
 
     @Test
     void getCountry() {
-        String expected = "Belgium";
-        when(service.getCountry(ID)).thenReturn(expected);
+        when(service.getCountry(ID)).thenReturn(USSR);
 
-        String actual = controller.getCountry(ID);
+        Country actual = controller.getCountry(ID);
 
         assertAll(
-                () -> assertEquals(expected, actual),
+                () -> assertEquals(USSR, actual),
                 () -> verify(service).getCountry(ID),
                 () -> verifyNoMoreInteractions(service)
         );
@@ -65,13 +66,11 @@ class CountryControllerTest {
     @Test
     void updateCountry() {
         String newName = "Russia";
-        when(service.getCountry(ID)).thenReturn(NAME);
 
         controller.update(ID, newName);
 
         assertAll(
-                () -> verify(service).getCountry(ID),
-                () -> verify(service).upgrade(ID, newName),
+                () -> verify(service).upgrade(new Country(ID, newName)),
                 () -> verifyNoMoreInteractions(service)
         );
     }

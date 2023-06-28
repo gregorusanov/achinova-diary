@@ -1,17 +1,19 @@
 package com.ghilly.service;
 
+import com.ghilly.model.Country;
 import com.ghilly.repository.CountryRepositoryRest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
 import java.util.List;
 
-import static org.mockito.Mockito.*;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class CountryServiceRestTest {
     private static final String NAME = "USSR";
     private static final int ID = 1;
+    private static final Country USSR = new Country(ID, NAME);
     private CountryRepositoryRest repository;
     private CountryServiceRest service;
 
@@ -21,24 +23,28 @@ class CountryServiceRestTest {
         repository = mock(CountryRepositoryRest.class);
         service = new CountryServiceRest(repository);
     }
+
     @Test
     void addAndReceiveCountry() {
-        when(repository.takeCountry(ID)).thenReturn(NAME);
+        when(repository.takeCountry(ID)).thenReturn(USSR);
 
         service.add(NAME);
 
         assertAll(
-                () -> assertEquals(NAME, repository.takeCountry(ID)),
+                () -> assertEquals(NAME, repository.takeCountry(ID).getName()),
                 () -> verify(repository).insert(NAME)
         );
     }
 
     @Test
     void getAllCountries() {
-        List<String> expected = List.of("Afghanistan", "France", "China");
+        Country af = new Country(1, "Afghanistan");
+        Country fr = new Country(2, "France");
+        Country cn = new Country(3, "China");
+        List<Country> expected = List.of(af, fr, cn);
         when(repository.takeAllCountries()).thenReturn(expected);
 
-        List<String> actual = service.getAllCountries();
+        List<Country> actual = service.getAllCountries();
 
         assertAll(
                 () -> assertEquals(expected, actual),
@@ -49,11 +55,12 @@ class CountryServiceRestTest {
 
     @Test
     void getCountrySuccess() {
-        when(repository.takeCountry(ID)).thenReturn(NAME);
-        String expected = service.getCountry(ID);
+        when(repository.takeCountry(ID)).thenReturn(USSR);
+
+        Country expected = service.getCountry(ID);
 
         assertAll(
-                () -> assertEquals(expected, NAME),
+                () -> assertEquals(expected, USSR),
                 () -> verify(repository).takeCountry(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
@@ -61,7 +68,7 @@ class CountryServiceRestTest {
 
     @Test
     void getCountryFail() {
-        String actual = service.getCountry(ID);
+        Country actual = service.getCountry(ID);
 
         assertAll(
                 () -> assertNull(actual),
@@ -74,13 +81,11 @@ class CountryServiceRestTest {
     void upgradeSuccess() {
         String newName = "Russia";
         when(repository.containsCountry(ID)).thenReturn(true);
-        when(repository.takeCountry(ID)).thenReturn(NAME);
 
-        service.upgrade(ID, newName);
+        service.upgrade(new Country(ID, newName));
 
         assertAll(
                 () -> verify(repository).containsCountry(ID),
-                () -> verify(repository).takeCountry(ID),
                 () -> verify(repository).update(ID, newName),
                 () -> verifyNoMoreInteractions(repository)
         );
@@ -91,7 +96,8 @@ class CountryServiceRestTest {
         String newName = "Russia";
         when(repository.containsCountry(ID)).thenReturn(false);
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> service.upgrade(ID, newName));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> service.upgrade(new Country(ID, newName)));
 
         assertAll(
                 () -> assertEquals("The country with the ID " + ID + " is not found.", exception.getMessage()),
