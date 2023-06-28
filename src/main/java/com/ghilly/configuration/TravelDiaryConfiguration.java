@@ -17,10 +17,9 @@ public class TravelDiaryConfiguration {
     @Bean
     public DataSource getDataSource() {
         DataSourceBuilder dataSourceBuilder = DataSourceBuilder.create();
-        dataSourceBuilder.driverClassName("org.postgresql.Driver");
-        dataSourceBuilder.url("jdbc:postgresql://localhost:5432");
-        dataSourceBuilder.username("postgres");
-        dataSourceBuilder.password("");
+        dataSourceBuilder.url("jdbc:postgresql://localhost:5432/Travel_Diary_BD");
+        dataSourceBuilder.username("travelDiaryUser");
+        dataSourceBuilder.password("1111");
         return dataSourceBuilder.build();
     }
     @Bean
