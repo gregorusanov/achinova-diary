@@ -1,14 +1,28 @@
 package com.ghilly.model;
 
+import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
+@Entity
+@Table(name = "countries")
 public class Country {
+    @Id
+    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @Column(name = "id")
     private int id;
+
+    @Column(name = "country")
+    @NotBlank(message = "The country should have a name!")
     private String name;
 
     public Country(int id, String name) {
         this.id = id;
         this.name = name;
+    }
+
+    public Country() {
+
     }
 
     public int getId() {
