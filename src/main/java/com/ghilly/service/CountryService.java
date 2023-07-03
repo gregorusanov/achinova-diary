@@ -5,13 +5,13 @@ import com.ghilly.model.Country;
 import java.util.List;
 
 public interface CountryService {
-    void add(String countryName);
+    Country create(String countryName);
 
     List<Country> getAllCountries();
 
-    Country getCountry(int countryId);
+    Country getCountryById(int countryId);
 
-    void upgrade(Country country);
+    void update(Country country);
 
-    void remove(int countryId);
+    void delete(int countryId);
 }

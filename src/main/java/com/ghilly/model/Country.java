@@ -2,13 +2,15 @@ package com.ghilly.model;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
 @Table(name = "countries")
-public class Country {
+public class Country implements Serializable {
     @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "countries_seq")
+    @SequenceGenerator(name = "countries_seq", sequenceName = "countries_id_seq", allocationSize = 1)
     @Column(name = "id")
     private int id;
 
@@ -18,6 +20,10 @@ public class Country {
 
     public Country(int id, String name) {
         this.id = id;
+        this.name = name;
+    }
+
+    public Country(String name) {
         this.name = name;
     }
 

@@ -5,6 +5,7 @@ import com.ghilly.model.Country;
 import com.ghilly.service.CountryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,33 +22,38 @@ public class CountryController {
 
 
     @PostMapping("/")
-    public void create(@RequestBody String countryName) {
-        service.add(countryName);
+    public ResponseEntity<Country> create(@RequestBody String countryName) {
+        Country country = service.create(countryName);
         logger.info("{} was created", countryName);
+        return ResponseEntity.ok().body(country);
     }
 
-    @GetMapping("/")
-    public List<Country> getCountries() {
+    @GetMapping("/all")
+    public ResponseEntity<List<Country>> getAllCountries() {
         logger.info("List of countries");
-        return service.getAllCountries();
+        List<Country> allCountries = service.getAllCountries();
+        return ResponseEntity.ok().body(allCountries);
     }
 
     @GetMapping("/{countryId}")
-    public Country getCountry(@PathVariable int countryId) {
+    public ResponseEntity<Country> getCountry(@PathVariable int countryId) {
         logger.info("The country with this ID {} is: ", countryId);
-        return service.getCountry(countryId);
+        Country country = service.getCountryById(countryId);
+        return ResponseEntity.ok().body(country);
     }
 
     @PutMapping("/{countryId}")
-    public void update(@PathVariable int countryId, @RequestBody String newName) {
+    public ResponseEntity<Country> update(@PathVariable int countryId, @RequestBody String newName) {
         Country country = new Country(countryId, newName);
-        service.upgrade(country);
+        service.update(country);
         logger.info("The country name for ID {} was changed to {}", country.getId(), country.getName());
+        return ResponseEntity.ok().body(service.getCountryById(countryId));
     }
 
     @DeleteMapping("/{countryId}")
-    public void delete(@PathVariable int countryId) {
-        service.remove(countryId);
+    public ResponseEntity<String> delete(@PathVariable int countryId) {
+        service.delete(countryId);
         logger.info("The country with ID {} was deleted.", countryId);
+        return ResponseEntity.ok().body("The country with ID " + countryId + " was deleted.");
     }
 }

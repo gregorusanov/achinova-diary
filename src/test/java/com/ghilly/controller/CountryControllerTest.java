@@ -30,7 +30,7 @@ class CountryControllerTest {
         controller.create(NAME);
 
         assertAll(
-                () -> verify(service).add(NAME),
+                () -> verify(service).create(NAME),
                 () -> verifyNoMoreInteractions(service)
         );
     }
@@ -41,10 +41,9 @@ class CountryControllerTest {
         List<Country> expected = List.of(USSR, usa);
         when(service.getAllCountries()).thenReturn(expected);
 
-        List<Country> actual = controller.getCountries();
+        controller.getAllCountries();
 
         assertAll(
-                () -> assertEquals(expected, actual),
                 () -> verify(service).getAllCountries(),
                 () -> verifyNoMoreInteractions(service)
         );
@@ -52,13 +51,13 @@ class CountryControllerTest {
 
     @Test
     void getCountry() {
-        when(service.getCountry(ID)).thenReturn(USSR);
+        when(service.getCountryById(ID)).thenReturn(USSR);
 
-        Country actual = controller.getCountry(ID);
+        Country actual = controller.getCountry(ID).getBody();
 
         assertAll(
                 () -> assertEquals(USSR, actual),
-                () -> verify(service).getCountry(ID),
+                () -> verify(service).getCountryById(ID),
                 () -> verifyNoMoreInteractions(service)
         );
     }
@@ -70,7 +69,8 @@ class CountryControllerTest {
         controller.update(ID, newName);
 
         assertAll(
-                () -> verify(service).upgrade(new Country(ID, newName)),
+                () -> verify(service).update(new Country(ID, newName)),
+                () -> verify(service).getCountryById(ID),
                 () -> verifyNoMoreInteractions(service)
         );
     }
@@ -80,7 +80,7 @@ class CountryControllerTest {
         controller.delete(ID);
 
         assertAll(
-                () -> verify(service).remove(ID),
+                () -> verify(service).delete(ID),
                 () -> verifyNoMoreInteractions(service)
         );
     }

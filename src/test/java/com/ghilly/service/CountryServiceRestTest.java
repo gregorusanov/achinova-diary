@@ -1,11 +1,12 @@
 package com.ghilly.service;
 
 import com.ghilly.model.Country;
-import com.ghilly.repository.CountryRepositoryRest;
+import com.ghilly.repository.CountryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -14,65 +15,78 @@ class CountryServiceRestTest {
     private static final String NAME = "USSR";
     private static final int ID = 1;
     private static final Country USSR = new Country(ID, NAME);
-    private CountryRepositoryRest repository;
+    private CountryRepository repository;
     private CountryServiceRest service;
-
 
     @BeforeEach
     void init() {
-        repository = mock(CountryRepositoryRest.class);
+        repository = mock(CountryRepository.class);
         service = new CountryServiceRest(repository);
     }
 
     @Test
-    void addAndReceiveCountry() {
-        when(repository.takeCountry(ID)).thenReturn(USSR);
+    void addCountryFail() {
+        when(repository.findByName(NAME)).thenReturn(Optional.of(USSR));
 
-        service.add(NAME);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> service.create(NAME));
 
         assertAll(
-                () -> assertEquals(NAME, repository.takeCountry(ID).getName()),
-                () -> verify(repository).insert(NAME)
+                () -> assertEquals("Country with this name " + NAME + " already exists.", exception.getMessage()),
+                () -> verify(repository).findByName(NAME),
+                () -> verifyNoMoreInteractions(repository)
+        );
+    }
+
+    @Test
+    void addCountrySuccess() {
+        service.create(NAME);
+
+        assertAll(
+                () -> verify(repository).findByName(NAME),
+                () -> verify(repository).save(new Country(0, NAME)),
+                () -> verifyNoMoreInteractions(repository)
         );
     }
 
     @Test
     void getAllCountries() {
-        Country af = new Country(1, "Afghanistan");
-        Country fr = new Country(2, "France");
-        Country cn = new Country(3, "China");
+        Country af = new Country("Afghanistan");
+        Country fr = new Country("France");
+        Country cn = new Country("China");
         List<Country> expected = List.of(af, fr, cn);
-        when(repository.takeAllCountries()).thenReturn(expected);
+        when(repository.findAll()).thenReturn(expected);
 
         List<Country> actual = service.getAllCountries();
 
         assertAll(
                 () -> assertEquals(expected, actual),
-                () -> verify(repository).takeAllCountries(),
+                () -> verify(repository).findAll(),
                 () -> verifyNoMoreInteractions(repository)
         );
     }
 
     @Test
     void getCountrySuccess() {
-        when(repository.takeCountry(ID)).thenReturn(USSR);
+        when(repository.findById(ID)).thenReturn(Optional.of(USSR));
 
-        Country expected = service.getCountry(ID);
+        Country expected = service.getCountryById(ID);
 
         assertAll(
                 () -> assertEquals(expected, USSR),
-                () -> verify(repository).takeCountry(ID),
+                () -> verify((repository), times(2)).findById(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
     }
 
     @Test
     void getCountryFail() {
-        Country actual = service.getCountry(ID);
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> service.getCountryById(ID));
 
         assertAll(
-                () -> assertNull(actual),
-                () -> verify(repository).takeCountry(ID),
+                () -> assertEquals("Country with this ID " + ID + " is not found.", exception.getMessage()),
+                () -> verify(repository).findById(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
     }
@@ -80,13 +94,14 @@ class CountryServiceRestTest {
     @Test
     void upgradeSuccess() {
         String newName = "Russia";
-        when(repository.containsCountry(ID)).thenReturn(true);
+        Country country = new Country(ID, newName);
+        when(repository.existsById(ID)).thenReturn(true);
 
-        service.upgrade(new Country(ID, newName));
+        service.update(country);
 
         assertAll(
-                () -> verify(repository).containsCountry(ID),
-                () -> verify(repository).update(ID, newName),
+                () -> verify(repository).existsById(ID),
+                () -> verify(repository).save(country),
                 () -> verifyNoMoreInteractions(repository)
         );
     }
@@ -94,40 +109,41 @@ class CountryServiceRestTest {
     @Test
     void upgradeFail() {
         String newName = "Russia";
-        when(repository.containsCountry(ID)).thenReturn(false);
+        Country country = new Country(ID, newName);
+        when(repository.existsById(ID)).thenReturn(false);
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> service.upgrade(new Country(ID, newName)));
+                () -> service.update(country));
 
         assertAll(
                 () -> assertEquals("The country with the ID " + ID + " is not found.", exception.getMessage()),
-                () -> verify(repository).containsCountry(ID),
+                () -> verify(repository).existsById(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
     }
 
     @Test
     void removeSuccess() {
-        when(repository.containsCountry(ID)).thenReturn(true);
+        when(repository.existsById(ID)).thenReturn(true);
 
-        service.remove(ID);
+        service.delete(ID);
 
         assertAll(
-                () -> verify(repository).containsCountry(ID),
-                () -> verify(repository).delete(ID),
+                () -> verify(repository).existsById(ID),
+                () -> verify(repository).deleteById(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
     }
 
     @Test
     void removeFail() {
-        when(repository.containsCountry(ID)).thenReturn(false);
+        when(repository.existsById(ID)).thenReturn(false);
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> service.remove(ID));
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> service.delete(ID));
 
         assertAll(
                 () -> assertEquals("The country with the ID " + ID + " is not found.", exception.getMessage()),
-                () -> verify(repository).containsCountry(ID),
+                () -> verify(repository).existsById(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
     }
