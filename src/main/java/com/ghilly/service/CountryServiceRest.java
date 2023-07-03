@@ -1,6 +1,6 @@
 package com.ghilly.service;
 
-import com.ghilly.model.Countries;
+import com.ghilly.model.Country;
 import com.ghilly.repository.CountryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,39 +20,39 @@ public class CountryServiceRest implements CountryService {
 
 
     @Override
-    public Countries create(String countryName) {
+    public Country create(String countryName) {
         countryName = countryName.replaceAll("[^\\w+]", "");
         if (repository.findByName(countryName).isPresent()) {
             throw new IllegalArgumentException("Country with this name " + countryName + " already exists.");
         }
-        Countries country = repository.save(new Countries(countryName));
+        Country country = repository.save(new Country(countryName));
         logger.info("The country {} was added by service.", countryName);
         return country;
     }
 
     @Override
-    public List<Countries> getAllCountries() {
-        ArrayList<Countries> countries = new ArrayList<>();
+    public List<Country> getAllCountries() {
+        ArrayList<Country> countries = new ArrayList<>();
         repository.findAll().forEach(countries::add);
         logger.info("The list of countries is: {}", countries);
         return countries;
     }
 
     @Override
-    public Countries getCountryById(int countryId) {
+    public Country getCountryById(int countryId) {
         if (!repository.findById(countryId).isPresent()) {
-            throw new IllegalArgumentException("Countries with this ID " + countryId + " is not found.");
+            throw new IllegalArgumentException("Country with this ID " + countryId + " is not found.");
         }
         return repository.findById(countryId).get();
     }
 
     @Override
-    public void update(Countries countries) {
-        if (!repository.existsById(countries.getId())) {
-            throw new IllegalArgumentException("The countries with the ID " + countries.getId() + " is not found.");
+    public void update(Country country) {
+        if (!repository.existsById(country.getId())) {
+            throw new IllegalArgumentException("The country with the ID " + country.getId() + " is not found.");
         }
-        repository.save(new Countries(countries.getId(), countries.getName()));
-        logger.info("The countries with ID {} was upgraded, new name is {}.", countries.getId(), countries.getName());
+        repository.save(new Country(country.getId(), country.getName()));
+        logger.info("The country with ID {} was upgraded, new name is {}.", country.getId(), country.getName());
     }
 
     @Override

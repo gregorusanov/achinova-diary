@@ -1,6 +1,6 @@
 package com.ghilly.service;
 
-import com.ghilly.model.Countries;
+import com.ghilly.model.Country;
 import com.ghilly.repository.CountryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,10 +11,10 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
-class CountriesServiceRestTest {
+class CountryServiceRestTest {
     private static final String NAME = "USSR";
     private static final int ID = 1;
-    private static final Countries USSR = new Countries(ID, NAME);
+    private static final Country USSR = new Country(ID, NAME);
     private CountryRepository repository;
     private CountryServiceRest service;
 
@@ -44,20 +44,20 @@ class CountriesServiceRestTest {
 
         assertAll(
                 () -> verify(repository).findByName(NAME),
-                () -> verify(repository).save(new Countries(0, NAME)),
+                () -> verify(repository).save(new Country(0, NAME)),
                 () -> verifyNoMoreInteractions(repository)
         );
     }
 
     @Test
     void getAllCountries() {
-        Countries af = new Countries("Afghanistan");
-        Countries fr = new Countries("France");
-        Countries cn = new Countries("China");
-        List<Countries> expected = List.of(af, fr, cn);
+        Country af = new Country("Afghanistan");
+        Country fr = new Country("France");
+        Country cn = new Country("China");
+        List<Country> expected = List.of(af, fr, cn);
         when(repository.findAll()).thenReturn(expected);
 
-        List<Countries> actual = service.getAllCountries();
+        List<Country> actual = service.getAllCountries();
 
         assertAll(
                 () -> assertEquals(expected, actual),
@@ -70,7 +70,7 @@ class CountriesServiceRestTest {
     void getCountrySuccess() {
         when(repository.findById(ID)).thenReturn(Optional.of(USSR));
 
-        Countries expected = service.getCountryById(ID);
+        Country expected = service.getCountryById(ID);
 
         assertAll(
                 () -> assertEquals(expected, USSR),
@@ -85,7 +85,7 @@ class CountriesServiceRestTest {
                 () -> service.getCountryById(ID));
 
         assertAll(
-                () -> assertEquals("Countries with this ID " + ID + " is not found.", exception.getMessage()),
+                () -> assertEquals("Country with this ID " + ID + " is not found.", exception.getMessage()),
                 () -> verify(repository).findById(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
@@ -94,14 +94,14 @@ class CountriesServiceRestTest {
     @Test
     void upgradeSuccess() {
         String newName = "Russia";
-        Countries countries = new Countries(ID, newName);
+        Country country = new Country(ID, newName);
         when(repository.existsById(ID)).thenReturn(true);
 
-        service.update(countries);
+        service.update(country);
 
         assertAll(
                 () -> verify(repository).existsById(ID),
-                () -> verify(repository).save(countries),
+                () -> verify(repository).save(country),
                 () -> verifyNoMoreInteractions(repository)
         );
     }
@@ -109,14 +109,14 @@ class CountriesServiceRestTest {
     @Test
     void upgradeFail() {
         String newName = "Russia";
-        Countries countries = new Countries(ID, newName);
+        Country country = new Country(ID, newName);
         when(repository.existsById(ID)).thenReturn(false);
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> service.update(countries));
+                () -> service.update(country));
 
         assertAll(
-                () -> assertEquals("The countries with the ID " + ID + " is not found.", exception.getMessage()),
+                () -> assertEquals("The country with the ID " + ID + " is not found.", exception.getMessage()),
                 () -> verify(repository).existsById(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
