@@ -1,21 +1,12 @@
 package com.ghilly.repository;
 
-import com.ghilly.model.Country;
+import com.ghilly.model.Countries;
+import org.springframework.data.repository.CrudRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Optional;
 
-public interface CountryRepository {
-    void insert(String countryName);
-
-    List<Country> takeAllCountries();
-
-    Country takeCountry(int countryId);
-
-    void update(int countryId, String newName);
-
-    void delete(int countryId);
-
-    boolean containsCountry(int countryId);
-
-
+@Repository
+public interface CountryRepository extends CrudRepository<Countries, Integer> {
+    Optional<Countries> findByName(String countryName);
 }
