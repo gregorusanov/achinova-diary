@@ -25,7 +25,7 @@ public class CountryServiceRest implements CountryService {
     public Country create(String countryName) {
         countryName = countryName.replaceAll("[^\\w+]", "");
         if (repository.findByName(countryName).isPresent()) {
-            throw new NameAlreadyExistsException("Country with this name " + countryName + " already exists.");
+            throw new IllegalArgumentException("Country with this name " + countryName + " already exists.");
         }
         Country country = repository.save(new Country(countryName));
         logger.info("The country {} was added by service.", countryName);
@@ -43,7 +43,7 @@ public class CountryServiceRest implements CountryService {
     @Override
     public Country getCountryById(int countryId) {
         if (!repository.findById(countryId).isPresent()) {
-            throw new IdIsNotFoundException("Country with this ID " + countryId + " is not found.");
+            throw new IllegalArgumentException("Country with this ID " + countryId + " is not found.");
         }
         return repository.findById(countryId).get();
     }
@@ -65,7 +65,7 @@ public class CountryServiceRest implements CountryService {
     @Override
     public void exists (int countryId) {
         if (!repository.existsById(countryId)) {
-            throw new IdIsNotFoundException("The country with the ID " + countryId + " is not found.");
+            throw new IllegalArgumentException("The country with the ID " + countryId + " is not found.");
         }
     }
 }
