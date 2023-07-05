@@ -42,7 +42,6 @@ public class CountryRestControllerIntegrationTest {
         assertTrue(repository.findByName(jp).isPresent());
 
         repository.deleteAll();
-        //TODO check country to DB (via repository)
     }
 
     @Test
