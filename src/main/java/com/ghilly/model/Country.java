@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "countries")
-public class Countries implements Serializable {
+public class Country implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "countries_seq")
     @SequenceGenerator(name = "countries_seq", sequenceName = "countries_id_seq", allocationSize = 1)
@@ -18,16 +18,16 @@ public class Countries implements Serializable {
     @NotBlank(message = "The country should have a name!")
     private String name;
 
-    public Countries(int id, String name) {
+    public Country(int id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public Countries(String name) {
+    public Country(String name) {
         this.name = name;
     }
 
-    public Countries() {
+    public Country() {
 
     }
 
@@ -43,8 +43,8 @@ public class Countries implements Serializable {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Countries countries = (Countries) o;
-        return id == countries.id && name.equals(countries.name);
+        Country country = (Country) o;
+        return id == country.id && name.equals(country.name);
     }
 
     @Override
@@ -54,6 +54,6 @@ public class Countries implements Serializable {
 
     @Override
     public String toString() {
-        return "Countries{" + "id=" + id + ", name='" + name + '\'' + '}';
+        return "Country{" + "id=" + id + ", name='" + name + '\'' + '}';
     }
 }

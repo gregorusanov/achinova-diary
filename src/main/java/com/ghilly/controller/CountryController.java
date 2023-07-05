@@ -1,7 +1,7 @@
 package com.ghilly.controller;
 
 
-import com.ghilly.model.Countries;
+import com.ghilly.model.Country;
 import com.ghilly.service.CountryService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,31 +22,31 @@ public class CountryController {
 
 
     @PostMapping("/")
-    public ResponseEntity<Countries> create(@RequestBody String countryName) {
-        Countries country = service.create(countryName);
+    public ResponseEntity<Country> create(@RequestBody String countryName) {
+        Country country = service.create(countryName);
         logger.info("{} was created", countryName);
         return ResponseEntity.ok().body(country);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Countries>> getAllCountries() {
+    public ResponseEntity<List<Country>> getAllCountries() {
         logger.info("List of countries");
-        List<Countries> allCountries = service.getAllCountries();
+        List<Country> allCountries = service.getAllCountries();
         return ResponseEntity.ok().body(allCountries);
     }
 
     @GetMapping("/{countryId}")
-    public ResponseEntity<Countries> getCountry(@PathVariable int countryId) {
+    public ResponseEntity<Country> getCountry(@PathVariable int countryId) {
         logger.info("The country with this ID {} is: ", countryId);
-        Countries country = service.getCountryById(countryId);
+        Country country = service.getCountryById(countryId);
         return ResponseEntity.ok().body(country);
     }
 
     @PutMapping("/{countryId}")
-    public ResponseEntity<Countries> update(@PathVariable int countryId, @RequestBody String newName) {
-        Countries countries = new Countries(countryId, newName);
-        service.update(countries);
-        logger.info("The countries name for ID {} was changed to {}", countries.getId(), countries.getName());
+    public ResponseEntity<Country> update(@PathVariable int countryId, @RequestBody String newName) {
+        Country country = new Country(countryId, newName);
+        service.update(country);
+        logger.info("The country name for ID {} was changed to {}", country.getId(), country.getName());
         return ResponseEntity.ok().body(service.getCountryById(countryId));
     }
 
