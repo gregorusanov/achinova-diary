@@ -14,4 +14,6 @@ public interface CountryService {
     void update(Country country);
 
     void delete(int countryId);
+
+    void exists (int countryId);
 }
