@@ -1,5 +1,6 @@
 package com.ghilly.service;
 
+import com.ghilly.exception.EmptyNameException;
 import com.ghilly.exception.IdIsNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.model.Country;
@@ -9,6 +10,8 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.lang.Character.toUpperCase;
 
 
 public class CountryServiceRest implements CountryService {
@@ -23,9 +26,13 @@ public class CountryServiceRest implements CountryService {
 
     @Override
     public Country create(String countryName) {
-        countryName = countryName.replaceAll("[^\\w+]", "");
+        countryName = countryName.replaceAll("[^a-zA-Z]", "");
+        if (countryName.isEmpty()) {
+            throw new EmptyNameException("The country name should not be empty!");
+        }
+        countryName = countryName.replace(countryName.charAt(0), toUpperCase(countryName.charAt(0)));
         if (repository.findByName(countryName).isPresent()) {
-            throw new IllegalArgumentException("Country with this name " + countryName + " already exists.");
+            throw new NameAlreadyExistsException("The country with this name " + countryName + " already exists.");
         }
         Country country = repository.save(new Country(countryName));
         logger.info("The country {} was added by service.", countryName);
@@ -43,7 +50,7 @@ public class CountryServiceRest implements CountryService {
     @Override
     public Country getCountryById(int countryId) {
         if (!repository.findById(countryId).isPresent()) {
-            throw new IllegalArgumentException("Country with this ID " + countryId + " is not found.");
+            throw new IdIsNotFoundException("The country with this ID " + countryId + " is not found.");
         }
         return repository.findById(countryId).get();
     }
@@ -63,9 +70,9 @@ public class CountryServiceRest implements CountryService {
     }
 
     @Override
-    public void exists (int countryId) {
+    public void exists(int countryId) {
         if (!repository.existsById(countryId)) {
-            throw new IllegalArgumentException("The country with the ID " + countryId + " is not found.");
+            throw new IdIsNotFoundException("The country with this ID " + countryId + " is not found.");
         }
     }
 }

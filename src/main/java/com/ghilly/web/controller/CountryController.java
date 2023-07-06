@@ -1,4 +1,4 @@
-package com.ghilly.controller;
+package com.ghilly.web.controller;
 
 
 import com.ghilly.model.Country;

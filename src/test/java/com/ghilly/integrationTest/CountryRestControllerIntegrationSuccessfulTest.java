@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application.properties")
-public class CountryRestControllerIntegrationTest {
+public class CountryRestControllerIntegrationSuccessfulTest {
 
     @Autowired
     private MockMvc mvc;
