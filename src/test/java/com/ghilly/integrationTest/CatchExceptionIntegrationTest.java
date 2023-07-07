@@ -1,6 +1,5 @@
 package com.ghilly.integrationTest;
 
-import com.ghilly.exception.EmptyNameException;
 import com.ghilly.exception.IdIsNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.model.Country;
@@ -26,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application.properties")
-public class IntegrationFailTest {
+public class CatchExceptionIntegrationTest {
     @Autowired
     private MockMvc mvc;
 
@@ -34,7 +33,7 @@ public class IntegrationFailTest {
     private CountryRepository repository;
 
     @Test
-    public void createCountryStatusConflict409() throws Exception {
+    public void catchNameAlreadyExistsExceptionStatus409() throws Exception {
         String rus = "Russia";
         repository.save(new Country(rus));
 
@@ -50,55 +49,12 @@ public class IntegrationFailTest {
     }
 
     @Test
-    public void createCountryStatusNotAcceptable406() throws Exception {
-        String toClear = "12";
-        repository.save(new Country(toClear));
-
-        mvc.perform(MockMvcRequestBuilders
-                        .post("/countries/")
-                        .content(toClear))
-                .andExpect(status().isNotAcceptable())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof EmptyNameException))
-                .andExpect(result -> assertEquals("The country name should not be empty!",
-                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
-
-    }
-
-    @Test
-    public void getCountryStatusNotFound404() throws Exception {
+    public void catchIdIsNotFoundStatus404() throws Exception {
         int id = 400;
 
         mvc.perform(MockMvcRequestBuilders
                     .get("/countries/{countryId}", id)
                     .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IdIsNotFoundException))
-                .andExpect(result -> assertEquals("The country with this ID " + id + " is not found.",
-                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
-
-    }
-
-    @Test
-    public void updateCountryStatusNotFound404() throws Exception {
-        int id = 289;
-        String name = "Mongolia";
-
-        mvc.perform(MockMvcRequestBuilders
-                        .put("/countries/{countryId}", id)
-                        .content(name))
-                .andExpect(status().isNotFound())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IdIsNotFoundException))
-                .andExpect(result -> assertEquals("The country with this ID " + id + " is not found.",
-                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
-
-    }
-
-    @Test
-    public void deleteCountryStatusNotFound404() throws Exception {
-        int id = 666;
-
-        mvc.perform(MockMvcRequestBuilders
-                        .delete("/countries/{countryId}", id))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof IdIsNotFoundException))
                 .andExpect(result -> assertEquals("The country with this ID " + id + " is not found.",

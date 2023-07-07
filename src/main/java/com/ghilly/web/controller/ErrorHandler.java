@@ -1,6 +1,5 @@
 package com.ghilly.web.controller;
 
-import com.ghilly.exception.EmptyNameException;
 import com.ghilly.exception.IdIsNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import org.springframework.http.HttpStatus;
@@ -32,12 +31,4 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
                 .status(HttpStatus.CONFLICT)
                 .body(exception.getMessage());
     }
-
-    @ExceptionHandler(EmptyNameException.class)
-    public ResponseEntity<String> catchEmptyNameException(EmptyNameException exception) {
-        return ResponseEntity
-                .status(HttpStatus.NOT_ACCEPTABLE)
-                .body(exception.getMessage());
-    }
-
 }

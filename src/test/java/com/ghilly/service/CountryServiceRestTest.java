@@ -1,6 +1,5 @@
 package com.ghilly.service;
 
-import com.ghilly.exception.EmptyNameException;
 import com.ghilly.exception.IdIsNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.model.Country;
@@ -37,17 +36,6 @@ class CountryServiceRestTest {
         assertAll(
                 () -> assertEquals("The country with this name " + NAME + " already exists.", exception.getMessage()),
                 () -> verify(repository).findByName(NAME),
-                () -> verifyNoMoreInteractions(repository)
-        );
-    }
-
-    @Test
-    void addCountryEmptyNameFail() {
-        EmptyNameException exception = assertThrows(EmptyNameException.class,
-                () -> service.create(""));
-
-        assertAll(
-                () -> assertEquals("The country name should not be empty!", exception.getMessage()),
                 () -> verifyNoMoreInteractions(repository)
         );
     }

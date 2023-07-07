@@ -1,6 +1,5 @@
 package com.ghilly.web.controller;
 
-import com.ghilly.exception.EmptyNameException;
 import com.ghilly.exception.IdIsNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import org.junit.jupiter.api.Test;
@@ -27,31 +26,23 @@ class ErrorHandlerTest {
 
     @Test
     void catchIdIsNotFoundExceptionTest() {
+        String message = "The country with this ID " + id + " is not found.";
         ResponseEntity<String> actual = handler.catchIdIsNotFoundException
-                (new IdIsNotFoundException("The country with this ID " + id + " is not found."));
+                (new IdIsNotFoundException(message));
         status = HttpStatus.NOT_FOUND;
 
         assertEquals(status, actual.getStatusCode());
-        assertEquals(404, actual.getStatusCodeValue());
+        assertEquals(message, actual.getBody());
     }
 
     @Test
     void catchNameAlreadyExistsExceptionTest() {
+        String message = "The country with this ID " + usa + " is not found.";
         ResponseEntity<String> actual = handler.catchNameAlreadyExistsException
-                (new NameAlreadyExistsException("The country with this ID " + usa + " is not found."));
+                (new NameAlreadyExistsException(message));
         status = HttpStatus.CONFLICT;
 
         assertEquals(status, actual.getStatusCode());
-        assertEquals(409, actual.getStatusCodeValue());
-    }
-
-    @Test
-    void catchEmptyNameExceptionTest() {
-        ResponseEntity<String> actual = handler.catchEmptyNameException
-                (new EmptyNameException("The country name should not be empty!"));
-        status = HttpStatus.NOT_ACCEPTABLE;
-
-        assertEquals(status, actual.getStatusCode());
-        assertEquals(406, actual.getStatusCodeValue());
+        assertEquals(message, actual.getBody());
     }
 }

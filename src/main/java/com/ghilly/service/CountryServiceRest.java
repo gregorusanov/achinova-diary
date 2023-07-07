@@ -1,6 +1,5 @@
 package com.ghilly.service;
 
-import com.ghilly.exception.EmptyNameException;
 import com.ghilly.exception.IdIsNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.model.Country;
@@ -26,11 +25,6 @@ public class CountryServiceRest implements CountryService {
 
     @Override
     public Country create(String countryName) {
-        countryName = countryName.replaceAll("[^a-zA-Z]", "");
-        if (countryName.isEmpty()) {
-            throw new EmptyNameException("The country name should not be empty!");
-        }
-        countryName = countryName.replace(countryName.charAt(0), toUpperCase(countryName.charAt(0)));
         if (repository.findByName(countryName).isPresent()) {
             throw new NameAlreadyExistsException("The country with this name " + countryName + " already exists.");
         }
