@@ -38,8 +38,8 @@ public class CatchExceptionIntegrationTest {
         repository.save(new Country(rus));
 
         mvc.perform(MockMvcRequestBuilders
-                    .post("/countries/")
-                    .content(rus))
+                        .post("/countries/")
+                        .content(rus))
                 .andExpect(status().isConflict())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof NameAlreadyExistsException))
                 .andExpect(result -> assertEquals("The country with this name " + rus + " already exists.",
@@ -53,8 +53,8 @@ public class CatchExceptionIntegrationTest {
         int id = 400;
 
         mvc.perform(MockMvcRequestBuilders
-                    .get("/countries/{countryId}", id)
-                    .contentType(MediaType.APPLICATION_JSON))
+                        .get("/countries/{countryId}", id)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof IdIsNotFoundException))
                 .andExpect(result -> assertEquals("The country with this ID " + id + " is not found.",
