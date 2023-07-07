@@ -1,7 +1,8 @@
-package com.ghilly.controller;
+package com.ghilly.web.controller;
 
 import com.ghilly.model.Country;
 import com.ghilly.service.CountryServiceRest;
+import com.ghilly.web.controller.CountryController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

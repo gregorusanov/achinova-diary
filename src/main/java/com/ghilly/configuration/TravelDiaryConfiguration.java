@@ -1,6 +1,6 @@
 package com.ghilly.configuration;
 
-import com.ghilly.controller.CountryController;
+import com.ghilly.web.controller.CountryController;
 import com.ghilly.repository.CountryRepository;
 import com.ghilly.service.CountryService;
 import com.ghilly.service.CountryServiceRest;

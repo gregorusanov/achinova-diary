@@ -1,5 +1,7 @@
 package com.ghilly.service;
 
+import com.ghilly.exception.IdIsNotFoundException;
+import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.model.Country;
 import com.ghilly.repository.CountryRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,11 +30,11 @@ class CountryServiceRestTest {
     void addCountryFail() {
         when(repository.findByName(NAME)).thenReturn(Optional.of(USSR));
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        NameAlreadyExistsException exception = assertThrows(NameAlreadyExistsException.class,
                 () -> service.create(NAME));
 
         assertAll(
-                () -> assertEquals("Country with this name " + NAME + " already exists.", exception.getMessage()),
+                () -> assertEquals("The country with this name " + NAME + " already exists.", exception.getMessage()),
                 () -> verify(repository).findByName(NAME),
                 () -> verifyNoMoreInteractions(repository)
         );
@@ -81,11 +83,11 @@ class CountryServiceRestTest {
 
     @Test
     void getCountryFail() {
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        IdIsNotFoundException exception = assertThrows(IdIsNotFoundException.class,
                 () -> service.getCountryById(ID));
 
         assertAll(
-                () -> assertEquals("Country with this ID " + ID + " is not found.", exception.getMessage()),
+                () -> assertEquals("The country with this ID " + ID + " is not found.", exception.getMessage()),
                 () -> verify(repository).findById(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
@@ -112,11 +114,11 @@ class CountryServiceRestTest {
         Country country = new Country(ID, newName);
         when(repository.existsById(ID)).thenReturn(false);
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        IdIsNotFoundException exception = assertThrows(IdIsNotFoundException.class,
                 () -> service.update(country));
 
         assertAll(
-                () -> assertEquals("The country with the ID " + ID + " is not found.", exception.getMessage()),
+                () -> assertEquals("The country with this ID " + ID + " is not found.", exception.getMessage()),
                 () -> verify(repository).existsById(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
@@ -139,10 +141,10 @@ class CountryServiceRestTest {
     void removeFail() {
         when(repository.existsById(ID)).thenReturn(false);
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> service.delete(ID));
+        IdIsNotFoundException exception = assertThrows(IdIsNotFoundException.class, () -> service.delete(ID));
 
         assertAll(
-                () -> assertEquals("The country with the ID " + ID + " is not found.", exception.getMessage()),
+                () -> assertEquals("The country with this ID " + ID + " is not found.", exception.getMessage()),
                 () -> verify(repository).existsById(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
