@@ -61,8 +61,7 @@ public class CountryServiceRest implements CountryService {
         logger.info("The country with ID {} was deleted", countryId);
     }
 
-    @Override
-    public void exists(int countryId) {
+    private void exists(int countryId) {
         if (!repository.existsById(countryId)) {
             throw new IdIsNotFoundException("The country with this ID " + countryId + " is not found.");
         }
