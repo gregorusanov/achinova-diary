@@ -1,4 +1,4 @@
-package com.ghilly.web.controller;
+package com.ghilly.web;
 
 import com.ghilly.exception.IdIsNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
@@ -15,7 +15,7 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<String> catchRuntimeException(RuntimeException exception) {
         return ResponseEntity
                 .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Runtime exception");
+                .body("Runtime exception " + exception.getMessage());
     }
 
     @ExceptionHandler(IdIsNotFoundException.class)
