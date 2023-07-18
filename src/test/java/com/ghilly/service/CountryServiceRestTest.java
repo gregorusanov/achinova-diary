@@ -52,6 +52,32 @@ class CountryServiceRestTest {
     }
 
     @Test
+    void addCountryWithSymbolsSuccess() {
+        String name = "@Russia777";
+        String rus = name.replaceAll("[^a-zA-Z]", "");
+        service.create(name);
+
+        assertAll(
+                () -> verify(repository).findByName(rus),
+                () -> verify(repository).save(new Country(0, rus)),
+                () -> verifyNoMoreInteractions(repository)
+        );
+    }
+
+    @Test
+    void addOnlySymbolsSuccess() {
+        String name = "@#$%^*()_+77";
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> service.create(name));
+
+        assertAll(
+                () -> assertEquals("This is field should not be empty!", exception.getMessage()),
+                () -> verifyNoMoreInteractions(repository)
+        );
+    }
+
+    @Test
     void getAllCountries() {
         Country af = new Country("Afghanistan");
         Country fr = new Country("France");
