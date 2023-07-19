@@ -51,7 +51,7 @@ public class CountryServiceRest implements CountryService {
 
     @Override
     public void update(Country country) {
-        exists(country.getId());
+        throwExceptionIfIdDoesNotExist(country.getId());
         throwExceptionWhenCountryNameContainsWrongSymbols(country.getName());
         repository.save(new Country(country.getId(), country.getName()));
         logger.info("The country with ID {} was upgraded, new name is {}.", country.getId(), country.getName());
@@ -59,20 +59,19 @@ public class CountryServiceRest implements CountryService {
 
     @Override
     public void delete(int countryId) {
-        exists(countryId);
+        throwExceptionIfIdDoesNotExist(countryId);
         repository.deleteById(countryId);
         logger.info("The country with ID {} was deleted", countryId);
     }
 
-    private void exists(int countryId) {
+    private void throwExceptionIfIdDoesNotExist(int countryId) {
         if (!repository.existsById(countryId)) {
             throw new IdIsNotFoundException("The country with this ID " + countryId + " is not found.");
         }
     }
 
     private void throwExceptionWhenCountryNameContainsWrongSymbols(String name) {
-        if (!(Pattern.matches("^[a-zA-Z]+( [a-zA-Z]+)*$", name) ||
-                Pattern.matches("^[a-zA-Z]+(-[a-zA-Z]+)*$", name)))
+        if (!Pattern.matches("^(?:[a-zA-Z]+[ -]?)+$", name))
             throw new IllegalArgumentException
                     ("This field should contain only letters, that could be separated by one space or one hyphen!");
     }
