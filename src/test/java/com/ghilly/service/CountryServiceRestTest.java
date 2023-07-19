@@ -64,6 +64,7 @@ class CountryServiceRestTest {
                 () -> verifyNoMoreInteractions(repository)
         );
     }
+
     @Test
     void addCountryWithSymbolsAndDigitsFail() {
         String name = "Russia777";
