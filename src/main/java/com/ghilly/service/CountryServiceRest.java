@@ -9,13 +9,15 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
+
+import static com.ghilly.utils.ValidationUtils.checkNameIsCorrect;
 
 
 public class CountryServiceRest implements CountryService {
 
     private static final Logger logger = LoggerFactory.getLogger(CountryServiceRest.class);
     private final CountryRepository repository;
+
 
     public CountryServiceRest(CountryRepository repository) {
         this.repository = repository;
@@ -24,7 +26,7 @@ public class CountryServiceRest implements CountryService {
 
     @Override
     public Country create(String countryName) {
-        throwExceptionWhenCountryNameContainsWrongSymbols(countryName);
+        checkNameIsCorrect(countryName);
         if (repository.findByName(countryName).isPresent()) {
             throw new NameAlreadyExistsException("The country with this name " + countryName + " already exists.");
         }
@@ -52,7 +54,7 @@ public class CountryServiceRest implements CountryService {
     @Override
     public void update(Country country) {
         throwExceptionIfIdDoesNotExist(country.getId());
-        throwExceptionWhenCountryNameContainsWrongSymbols(country.getName());
+        checkNameIsCorrect(country.getName());
         repository.save(new Country(country.getId(), country.getName()));
         logger.info("The country with ID {} was upgraded, new name is {}.", country.getId(), country.getName());
     }
@@ -64,15 +66,9 @@ public class CountryServiceRest implements CountryService {
         logger.info("The country with ID {} was deleted", countryId);
     }
 
-    private void throwExceptionIfIdDoesNotExist(int countryId) {
+    public void throwExceptionIfIdDoesNotExist(int countryId) {
         if (!repository.existsById(countryId)) {
             throw new IdNotFoundException("The country with this ID " + countryId + " is not found.");
         }
-    }
-
-    private void throwExceptionWhenCountryNameContainsWrongSymbols(String name) {
-        if (!Pattern.matches("^(?:[a-zA-Z]+[ -]?)+$", name))
-            throw new IllegalArgumentException
-                    ("This field should contain only letters, that could be separated by one space or one hyphen!");
     }
 }
