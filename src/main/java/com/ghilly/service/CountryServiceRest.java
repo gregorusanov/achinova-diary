@@ -1,6 +1,6 @@
 package com.ghilly.service;
 
-import com.ghilly.exception.IdIsNotFoundException;
+import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.model.Country;
 import com.ghilly.repository.CountryRepository;
@@ -44,7 +44,7 @@ public class CountryServiceRest implements CountryService {
     @Override
     public Country getCountryById(int countryId) {
         if (!repository.findById(countryId).isPresent()) {
-            throw new IdIsNotFoundException("The country with this ID " + countryId + " is not found.");
+            throw new IdNotFoundException("The country with this ID " + countryId + " is not found.");
         }
         return repository.findById(countryId).get();
     }
@@ -66,7 +66,7 @@ public class CountryServiceRest implements CountryService {
 
     private void throwExceptionIfIdDoesNotExist(int countryId) {
         if (!repository.existsById(countryId)) {
-            throw new IdIsNotFoundException("The country with this ID " + countryId + " is not found.");
+            throw new IdNotFoundException("The country with this ID " + countryId + " is not found.");
         }
     }
 

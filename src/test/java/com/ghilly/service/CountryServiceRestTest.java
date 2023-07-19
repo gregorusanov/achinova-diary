@@ -1,6 +1,6 @@
 package com.ghilly.service;
 
-import com.ghilly.exception.IdIsNotFoundException;
+import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.model.Country;
 import com.ghilly.repository.CountryRepository;
@@ -152,7 +152,7 @@ class CountryServiceRestTest {
 
     @Test
     void getCountryFail() {
-        IdIsNotFoundException exception = assertThrows(IdIsNotFoundException.class,
+        IdNotFoundException exception = assertThrows(IdNotFoundException.class,
                 () -> service.getCountryById(ID));
 
         assertAll(
@@ -183,7 +183,7 @@ class CountryServiceRestTest {
         Country country = new Country(ID, newName);
         when(repository.existsById(ID)).thenReturn(false);
 
-        IdIsNotFoundException exception = assertThrows(IdIsNotFoundException.class,
+        IdNotFoundException exception = assertThrows(IdNotFoundException.class,
                 () -> service.update(country));
 
         assertAll(
@@ -228,7 +228,7 @@ class CountryServiceRestTest {
     void removeFail() {
         when(repository.existsById(ID)).thenReturn(false);
 
-        IdIsNotFoundException exception = assertThrows(IdIsNotFoundException.class, () -> service.delete(ID));
+        IdNotFoundException exception = assertThrows(IdNotFoundException.class, () -> service.delete(ID));
 
         assertAll(
                 () -> assertEquals("The country with this ID " + ID + " is not found.", exception.getMessage()),

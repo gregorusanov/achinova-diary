@@ -1,6 +1,6 @@
 package com.ghilly.web;
 
-import com.ghilly.exception.IdIsNotFoundException;
+import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,8 +18,8 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
                 .body("Runtime exception " + exception.getMessage());
     }
 
-    @ExceptionHandler(IdIsNotFoundException.class)
-    public ResponseEntity<String> catchIdIsNotFoundException(IdIsNotFoundException exception) {
+    @ExceptionHandler(IdNotFoundException.class)
+    public ResponseEntity<String> catchIdIsNotFoundException(IdNotFoundException exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_FOUND)
                 .body(exception.getMessage());

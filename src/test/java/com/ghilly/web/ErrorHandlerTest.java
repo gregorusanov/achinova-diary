@@ -1,8 +1,7 @@
 package com.ghilly.web;
 
-import com.ghilly.exception.IdIsNotFoundException;
+import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
-import com.ghilly.web.ErrorHandler;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +28,7 @@ class ErrorHandlerTest {
     void catchIdIsNotFoundExceptionTest() {
         String message = "The country with this ID " + id + " is not found.";
         ResponseEntity<String> actual = handler.catchIdIsNotFoundException
-                (new IdIsNotFoundException(message));
+                (new IdNotFoundException(message));
         HttpStatus status = HttpStatus.NOT_FOUND;
 
         assertEquals(status, actual.getStatusCode());

@@ -1,6 +1,6 @@
 package com.ghilly.integrationTest;
 
-import com.ghilly.exception.IdIsNotFoundException;
+import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.model.Country;
 import com.ghilly.repository.CountryRepository;
@@ -56,7 +56,7 @@ public class CatchExceptionIntegrationTest {
                         .get("/countries/{countryId}", id)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IdIsNotFoundException))
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IdNotFoundException))
                 .andExpect(result -> assertEquals("The country with this ID " + id + " is not found.",
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
 
