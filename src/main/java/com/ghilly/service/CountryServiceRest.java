@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 
 public class CountryServiceRest implements CountryService {
@@ -23,8 +24,7 @@ public class CountryServiceRest implements CountryService {
 
     @Override
     public Country create(String countryName) {
-        countryName = countryName.replaceAll("[^a-zA-Z]", "");
-        if(countryName.isEmpty()) throw new IllegalArgumentException("This is field should not be empty!");
+        throwExceptionWhenCountryNameContainsWrongSymbols(countryName);
         if (repository.findByName(countryName).isPresent()) {
             throw new NameAlreadyExistsException("The country with this name " + countryName + " already exists.");
         }
@@ -52,6 +52,7 @@ public class CountryServiceRest implements CountryService {
     @Override
     public void update(Country country) {
         exists(country.getId());
+        throwExceptionWhenCountryNameContainsWrongSymbols(country.getName());
         repository.save(new Country(country.getId(), country.getName()));
         logger.info("The country with ID {} was upgraded, new name is {}.", country.getId(), country.getName());
     }
@@ -67,5 +68,12 @@ public class CountryServiceRest implements CountryService {
         if (!repository.existsById(countryId)) {
             throw new IdIsNotFoundException("The country with this ID " + countryId + " is not found.");
         }
+    }
+
+    private void throwExceptionWhenCountryNameContainsWrongSymbols(String name) {
+        if (!(Pattern.matches("^[a-zA-Z]+( [a-zA-Z]+)*$", name) ||
+                Pattern.matches("^[a-zA-Z]+(-[a-zA-Z]+)*$", name)))
+            throw new IllegalArgumentException
+                    ("This field should contain only letters, that could be separated by one space or one hyphen!");
     }
 }
