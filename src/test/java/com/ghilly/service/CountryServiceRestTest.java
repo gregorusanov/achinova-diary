@@ -52,27 +52,70 @@ class CountryServiceRestTest {
     }
 
     @Test
-    void addCountryWithSymbolsSuccess() {
-        String name = "@Russia777";
-        String rus = name.replaceAll("[^a-zA-Z]", "");
-        service.create(name);
+    void addEmptyLineFail() {
+        String name = "";
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> service.create(name));
 
         assertAll(
-                () -> verify(repository).findByName(rus),
-                () -> verify(repository).save(new Country(0, rus)),
+                () -> assertEquals("This field should contain only letters, " +
+                                "that could be separated by one space or one hyphen!",
+                        exception.getMessage()),
                 () -> verifyNoMoreInteractions(repository)
         );
     }
 
     @Test
-    void addOnlySymbolsSuccess() {
+    void addCountryWithSymbolsAndDigitsFail() {
+        String name = "Russia777";
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> service.create(name));
+
+        assertAll(
+                () -> assertEquals("This field should contain only letters, " +
+                                "that could be separated by one space or one hyphen!",
+                        exception.getMessage()),
+                () -> verifyNoMoreInteractions(repository)
+        );
+    }
+
+    @Test
+    void addOnlySymbolsFail() {
         String name = "@#$%^*()_+77";
 
         IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
                 () -> service.create(name));
 
         assertAll(
-                () -> assertEquals("This is field should not be empty!", exception.getMessage()),
+                () -> assertEquals("This field should contain only letters, " +
+                                "that could be separated by one space or one hyphen!",
+                        exception.getMessage()),
+                () -> verifyNoMoreInteractions(repository)
+        );
+    }
+
+    @Test
+    void addCountryNameConsistingOfTwoWordsAndSpaces() {
+        String name = "Bosnia and Herzegovina";
+
+        service.create(name);
+
+        assertAll(
+                () -> verify(repository).findByName(name),
+                () -> verify(repository).save(new Country(0, name)),
+                () -> verifyNoMoreInteractions(repository)
+        );
+    }
+
+    @Test
+    void addCountryNameConsistingOfTwoWordsAndHyphen() {
+        String name = "Guinea-Bissau";
+
+        service.create(name);
+
+        assertAll(
+                () -> verify(repository).findByName(name),
+                () -> verify(repository).save(new Country(0, name)),
                 () -> verifyNoMoreInteractions(repository)
         );
     }
@@ -135,7 +178,7 @@ class CountryServiceRestTest {
     }
 
     @Test
-    void upgradeFail() {
+    void upgradeFailIdNotFound() {
         String newName = "Russia";
         Country country = new Country(ID, newName);
         when(repository.existsById(ID)).thenReturn(false);
@@ -145,6 +188,24 @@ class CountryServiceRestTest {
 
         assertAll(
                 () -> assertEquals("The country with this ID " + ID + " is not found.", exception.getMessage()),
+                () -> verify(repository).existsById(ID),
+                () -> verifyNoMoreInteractions(repository)
+        );
+    }
+
+    @Test
+    void upgradeFailWrongNewName() {
+        String newName = "Russia!";
+        Country country = new Country(ID, newName);
+        when(repository.existsById(ID)).thenReturn(true);
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+                () -> service.update(country));
+
+        assertAll(
+                () -> assertEquals("This field should contain only letters, " +
+                                "that could be separated by one space or one hyphen!",
+                        exception.getMessage()),
                 () -> verify(repository).existsById(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
