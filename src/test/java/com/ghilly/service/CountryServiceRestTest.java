@@ -2,6 +2,7 @@ package com.ghilly.service;
 
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
+import com.ghilly.exception.WrongNameException;
 import com.ghilly.model.Country;
 import com.ghilly.repository.CountryRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -130,12 +131,12 @@ class CountryServiceRestTest {
         Country country = new Country(ID, newName);
         when(repository.existsById(ID)).thenReturn(true);
 
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
+        WrongNameException exception = assertThrows(WrongNameException.class,
                 () -> service.update(country));
 
         assertAll(
-                () -> assertEquals("This field should contain only letters, " +
-                                "that could be separated by one space or one hyphen!",
+                () -> assertEquals("This field should contain only letters, that could be separated by one space or " +
+                                "one hyphen. " + newName + " is not allowed here!",
                         exception.getMessage()),
                 () -> verify(repository).existsById(ID),
                 () -> verifyNoMoreInteractions(repository)

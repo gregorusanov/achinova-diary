@@ -1,6 +1,6 @@
 package com.ghilly.utils;
 
-import com.ghilly.exception.WrongArgumentNameException;
+import com.ghilly.exception.WrongNameException;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
@@ -18,7 +18,7 @@ class ValidationUtilsTest {
     @ParameterizedTest
     @ValueSource(strings = {"U.S.A", "Germany*", "77Russia", "Bosnia  and Herzegovina", "Guinea-Bissau--old"})
     void incorrectNamesCheckingTest(String name) {
-        WrongArgumentNameException exception = assertThrows(WrongArgumentNameException.class,
+        WrongNameException exception = assertThrows(WrongNameException.class,
                 () -> ValidationUtils.checkNameIsCorrect(name));
         assertEquals("This field should contain only letters, that could be separated by one space or " +
                 "one hyphen. " + name + " is not allowed here!", exception.getMessage());

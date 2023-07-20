@@ -2,7 +2,7 @@ package com.ghilly.web;
 
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
-import com.ghilly.exception.WrongArgumentNameException;
+import com.ghilly.exception.WrongNameException;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,11 +48,11 @@ class ErrorHandlerTest {
     }
 
     @Test
-    void catchWrongArgumentNameExceptionTest() {
+    void catchWrongNameExceptionTest() {
         String wrongName = "U.S.A.";
         String message = "This field should contain only letters, that could be separated by one space or " +
                 "one hyphen. " + wrongName + " is not allowed here!";
-        ResponseEntity<String> actual = handler.catchWrongArgumentNameException(new WrongArgumentNameException(message));
+        ResponseEntity<String> actual = handler.catchWrongArgumentNameException(new WrongNameException(message));
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
         assertEquals(status, actual.getStatusCode());

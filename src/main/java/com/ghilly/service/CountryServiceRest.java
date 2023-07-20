@@ -50,7 +50,7 @@ public class CountryServiceRest implements CountryService {
 
     @Override
     public void update(Country country) {
-        checkIfIdExists(country.getId());
+        checkIdExists(country.getId());
         checkNameIsCorrect(country.getName());
         repository.save(new Country(country.getId(), country.getName()));
         logger.info("The country with ID {} was upgraded, new name is {}.", country.getId(), country.getName());
@@ -58,12 +58,12 @@ public class CountryServiceRest implements CountryService {
 
     @Override
     public void delete(int countryId) {
-        checkIfIdExists(countryId);
+        checkIdExists(countryId);
         repository.deleteById(countryId);
         logger.info("The country with ID {} was deleted", countryId);
     }
 
-    public void checkIfIdExists(int countryId) {
+    private void checkIdExists(int countryId) {
         if (!repository.existsById(countryId)) {
             throw new IdNotFoundException("The country with this ID " + countryId + " is not found.");
         }
