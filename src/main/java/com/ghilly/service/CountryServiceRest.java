@@ -12,17 +12,14 @@ import java.util.List;
 
 import static com.ghilly.utils.ValidationUtils.checkNameIsCorrect;
 
-
 public class CountryServiceRest implements CountryService {
 
     private static final Logger logger = LoggerFactory.getLogger(CountryServiceRest.class);
     private final CountryRepository repository;
 
-
     public CountryServiceRest(CountryRepository repository) {
         this.repository = repository;
     }
-
 
     @Override
     public Country create(String countryName) {
@@ -53,7 +50,7 @@ public class CountryServiceRest implements CountryService {
 
     @Override
     public void update(Country country) {
-        throwExceptionIfIdDoesNotExist(country.getId());
+        checkIfIdExists(country.getId());
         checkNameIsCorrect(country.getName());
         repository.save(new Country(country.getId(), country.getName()));
         logger.info("The country with ID {} was upgraded, new name is {}.", country.getId(), country.getName());
@@ -61,12 +58,12 @@ public class CountryServiceRest implements CountryService {
 
     @Override
     public void delete(int countryId) {
-        throwExceptionIfIdDoesNotExist(countryId);
+        checkIfIdExists(countryId);
         repository.deleteById(countryId);
         logger.info("The country with ID {} was deleted", countryId);
     }
 
-    public void throwExceptionIfIdDoesNotExist(int countryId) {
+    public void checkIfIdExists(int countryId) {
         if (!repository.existsById(countryId)) {
             throw new IdNotFoundException("The country with this ID " + countryId + " is not found.");
         }

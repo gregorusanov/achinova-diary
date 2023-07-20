@@ -2,6 +2,7 @@ package com.ghilly.web;
 
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
+import com.ghilly.exception.WrongArgumentNameException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -29,6 +30,13 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<String> catchNameAlreadyExistsException(NameAlreadyExistsException exception) {
         return ResponseEntity
                 .status(HttpStatus.CONFLICT)
+                .body(exception.getMessage());
+    }
+
+    @ExceptionHandler(WrongArgumentNameException.class)
+    public ResponseEntity<String> catchWrongArgumentNameException(WrongArgumentNameException exception) {
+        return ResponseEntity
+                .status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());
     }
 }

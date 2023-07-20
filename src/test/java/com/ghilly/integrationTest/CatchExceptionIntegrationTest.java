@@ -2,6 +2,7 @@ package com.ghilly.integrationTest;
 
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
+import com.ghilly.exception.WrongArgumentNameException;
 import com.ghilly.model.Country;
 import com.ghilly.repository.CountryRepository;
 import org.junit.Test;
@@ -60,5 +61,19 @@ public class CatchExceptionIntegrationTest {
                 .andExpect(result -> assertEquals("The country with this ID " + id + " is not found.",
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
 
+    }
+
+    @Test
+    public void catchWrongArgumentNameExceptionStatus400() throws Exception {
+        String wrongName = "Rus777";
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/countries/")
+                        .content(wrongName))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof WrongArgumentNameException))
+                .andExpect(result -> assertEquals("This field should contain only letters, " +
+                                "that could be separated by one space or one hyphen. " + wrongName + " is not allowed here!",
+                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
     }
 }

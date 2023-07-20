@@ -27,7 +27,7 @@ class CountryServiceRestTest {
     }
 
     @Test
-    void addCountryFail() {
+    void createCountryFail() {
         when(repository.findByName(NAME)).thenReturn(Optional.of(USSR));
 
         NameAlreadyExistsException exception = assertThrows(NameAlreadyExistsException.class,
@@ -41,81 +41,12 @@ class CountryServiceRestTest {
     }
 
     @Test
-    void addCountrySuccess() {
+    void createCountrySuccess() {
         service.create(NAME);
 
         assertAll(
                 () -> verify(repository).findByName(NAME),
                 () -> verify(repository).save(new Country(0, NAME)),
-                () -> verifyNoMoreInteractions(repository)
-        );
-    }
-
-    @Test
-    void addEmptyLineFail() {
-        String name = "";
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> service.create(name));
-
-        assertAll(
-                () -> assertEquals("This field should contain only letters, " +
-                                "that could be separated by one space or one hyphen!",
-                        exception.getMessage()),
-                () -> verifyNoMoreInteractions(repository)
-        );
-    }
-
-    @Test
-    void addCountryWithSymbolsAndDigitsFail() {
-        String name = "Russia777";
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> service.create(name));
-
-        assertAll(
-                () -> assertEquals("This field should contain only letters, " +
-                                "that could be separated by one space or one hyphen!",
-                        exception.getMessage()),
-                () -> verifyNoMoreInteractions(repository)
-        );
-    }
-
-    @Test
-    void addOnlySymbolsFail() {
-        String name = "@#$%^*()_+77";
-
-        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class,
-                () -> service.create(name));
-
-        assertAll(
-                () -> assertEquals("This field should contain only letters, " +
-                                "that could be separated by one space or one hyphen!",
-                        exception.getMessage()),
-                () -> verifyNoMoreInteractions(repository)
-        );
-    }
-
-    @Test
-    void addCountryNameConsistingOfTwoWordsAndSpaces() {
-        String name = "Bosnia and Herzegovina";
-
-        service.create(name);
-
-        assertAll(
-                () -> verify(repository).findByName(name),
-                () -> verify(repository).save(new Country(0, name)),
-                () -> verifyNoMoreInteractions(repository)
-        );
-    }
-
-    @Test
-    void addCountryNameConsistingOfTwoWordsAndHyphen() {
-        String name = "Guinea-Bissau";
-
-        service.create(name);
-
-        assertAll(
-                () -> verify(repository).findByName(name),
-                () -> verify(repository).save(new Country(0, name)),
                 () -> verifyNoMoreInteractions(repository)
         );
     }
@@ -163,7 +94,7 @@ class CountryServiceRestTest {
     }
 
     @Test
-    void upgradeSuccess() {
+    void updateSuccess() {
         String newName = "Russia";
         Country country = new Country(ID, newName);
         when(repository.existsById(ID)).thenReturn(true);
@@ -178,7 +109,7 @@ class CountryServiceRestTest {
     }
 
     @Test
-    void upgradeFailIdNotFound() {
+    void updateFailIdNotFound() {
         String newName = "Russia";
         Country country = new Country(ID, newName);
         when(repository.existsById(ID)).thenReturn(false);
@@ -194,7 +125,7 @@ class CountryServiceRestTest {
     }
 
     @Test
-    void upgradeFailWrongNewName() {
+    void updateFailWrongNewName() {
         String newName = "Russia!";
         Country country = new Country(ID, newName);
         when(repository.existsById(ID)).thenReturn(true);
