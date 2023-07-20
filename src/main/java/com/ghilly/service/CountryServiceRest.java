@@ -23,8 +23,6 @@ public class CountryServiceRest implements CountryService {
 
     @Override
     public Country create(String countryName) {
-        countryName = countryName.replaceAll("[^a-zA-Z]", "");
-        if(countryName.isEmpty()) throw new IllegalArgumentException("This is field should not be empty!");
         if (repository.findByName(countryName).isPresent()) {
             throw new NameAlreadyExistsException("The country with this name " + countryName + " already exists.");
         }
