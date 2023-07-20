@@ -1,7 +1,7 @@
 package com.ghilly.configuration;
 
 import com.ghilly.repository.CityRepository;
-import com.ghilly.service.CityService;
+import com.ghilly.service.CityServiceRest;
 import com.ghilly.web.controller.CityController;
 import com.ghilly.web.controller.CountryController;
 import com.ghilly.repository.CountryRepository;
@@ -23,12 +23,12 @@ public class TravelDiaryConfiguration {
     }
 
     @Bean
-    public CityService cityService(CityRepository cityRepository) {
-        return new CityService(cityRepository);
+    public CityServiceRest cityService(CityRepository cityRepository, CountryRepository countryRepository) {
+        return new CityServiceRest(cityRepository, countryRepository);
     }
 
     @Bean
-    public CityController cityController(CityService service) {
+    public CityController cityController(CityServiceRest service) {
         return new CityController(service);
     }
 }
