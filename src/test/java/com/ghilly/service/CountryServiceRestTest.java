@@ -1,7 +1,8 @@
 package com.ghilly.service;
 
-import com.ghilly.exception.IdIsNotFoundException;
+import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
+import com.ghilly.exception.WrongNameException;
 import com.ghilly.model.Country;
 import com.ghilly.repository.CountryRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -27,7 +28,7 @@ class CountryServiceRestTest {
     }
 
     @Test
-    void addCountryFail() {
+    void createCountryFail() {
         when(repository.findByName(NAME)).thenReturn(Optional.of(USSR));
 
         NameAlreadyExistsException exception = assertThrows(NameAlreadyExistsException.class,
@@ -41,7 +42,7 @@ class CountryServiceRestTest {
     }
 
     @Test
-    void addCountrySuccess() {
+    void createCountrySuccess() {
         service.create(NAME);
 
         assertAll(
@@ -83,7 +84,7 @@ class CountryServiceRestTest {
 
     @Test
     void getCountryFail() {
-        IdIsNotFoundException exception = assertThrows(IdIsNotFoundException.class,
+        IdNotFoundException exception = assertThrows(IdNotFoundException.class,
                 () -> service.getCountryById(ID));
 
         assertAll(
@@ -94,7 +95,7 @@ class CountryServiceRestTest {
     }
 
     @Test
-    void upgradeSuccess() {
+    void updateSuccess() {
         String newName = "Russia";
         Country country = new Country(ID, newName);
         when(repository.existsById(ID)).thenReturn(true);
@@ -109,16 +110,34 @@ class CountryServiceRestTest {
     }
 
     @Test
-    void upgradeFail() {
+    void updateFailIdNotFound() {
         String newName = "Russia";
         Country country = new Country(ID, newName);
         when(repository.existsById(ID)).thenReturn(false);
 
-        IdIsNotFoundException exception = assertThrows(IdIsNotFoundException.class,
+        IdNotFoundException exception = assertThrows(IdNotFoundException.class,
                 () -> service.update(country));
 
         assertAll(
                 () -> assertEquals("The country with this ID " + ID + " is not found.", exception.getMessage()),
+                () -> verify(repository).existsById(ID),
+                () -> verifyNoMoreInteractions(repository)
+        );
+    }
+
+    @Test
+    void updateFailWrongNewName() {
+        String newName = "Russia!";
+        Country country = new Country(ID, newName);
+        when(repository.existsById(ID)).thenReturn(true);
+
+        WrongNameException exception = assertThrows(WrongNameException.class,
+                () -> service.update(country));
+
+        assertAll(
+                () -> assertEquals("This field should contain only letters, that could be separated by one space or " +
+                                "one hyphen. " + newName + " is not allowed here!",
+                        exception.getMessage()),
                 () -> verify(repository).existsById(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
@@ -141,7 +160,7 @@ class CountryServiceRestTest {
     void removeFail() {
         when(repository.existsById(ID)).thenReturn(false);
 
-        IdIsNotFoundException exception = assertThrows(IdIsNotFoundException.class, () -> service.delete(ID));
+        IdNotFoundException exception = assertThrows(IdNotFoundException.class, () -> service.delete(ID));
 
         assertAll(
                 () -> assertEquals("The country with this ID " + ID + " is not found.", exception.getMessage()),

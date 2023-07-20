@@ -1,8 +1,8 @@
 package com.ghilly.web;
 
-import com.ghilly.exception.IdIsNotFoundException;
+import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
-import com.ghilly.web.ErrorHandler;
+import com.ghilly.exception.WrongNameException;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +29,7 @@ class ErrorHandlerTest {
     void catchIdIsNotFoundExceptionTest() {
         String message = "The country with this ID " + id + " is not found.";
         ResponseEntity<String> actual = handler.catchIdIsNotFoundException
-                (new IdIsNotFoundException(message));
+                (new IdNotFoundException(message));
         HttpStatus status = HttpStatus.NOT_FOUND;
 
         assertEquals(status, actual.getStatusCode());
@@ -42,6 +42,18 @@ class ErrorHandlerTest {
         ResponseEntity<String> actual = handler.catchNameAlreadyExistsException
                 (new NameAlreadyExistsException(message));
         HttpStatus status = HttpStatus.CONFLICT;
+
+        assertEquals(status, actual.getStatusCode());
+        assertEquals(message, actual.getBody());
+    }
+
+    @Test
+    void catchWrongNameExceptionTest() {
+        String wrongName = "U.S.A.";
+        String message = "This field should contain only letters, that could be separated by one space or " +
+                "one hyphen. " + wrongName + " is not allowed here!";
+        ResponseEntity<String> actual = handler.catchWrongArgumentNameException(new WrongNameException(message));
+        HttpStatus status = HttpStatus.BAD_REQUEST;
 
         assertEquals(status, actual.getStatusCode());
         assertEquals(message, actual.getBody());
