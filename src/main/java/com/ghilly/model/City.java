@@ -35,10 +35,6 @@ public class City implements Serializable {
 
     }
 
-    public City (String name){
-        this.name = name;
-    }
-
     public int getId() {
         return id;
     }
