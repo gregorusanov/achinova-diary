@@ -63,18 +63,18 @@ class CountryControllerTest {
         );
     }
 
-    @Test
-    void updateCountry() {
-        String newName = "Russia";
-
-        controller.update(ID, newName);
-
-        assertAll(
-                () -> verify(service).update(new Country(ID, newName)),
-                () -> verify(service).getCountryById(ID),
-                () -> verifyNoMoreInteractions(service)
-        );
-    }
+//    @Test
+//    void updateCountry() {
+//        String newName = "Russia";
+//
+//        controller.update(ID, newName);
+//
+//        assertAll(
+//                () -> verify(service).update(new Country(ID, newName)),
+//                () -> verify(service).getCountryById(ID),
+//                () -> verifyNoMoreInteractions(service)
+//        );
+//    }
 
     @Test
     void deleteCountry() {

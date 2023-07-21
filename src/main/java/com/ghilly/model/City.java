@@ -8,6 +8,7 @@ import java.util.Objects;
 @Entity
 @Table(name="cities")
 public class City implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cities_seq")
     @SequenceGenerator(name = "cities_seq", sequenceName = "cities_id_seq", allocationSize = 1)

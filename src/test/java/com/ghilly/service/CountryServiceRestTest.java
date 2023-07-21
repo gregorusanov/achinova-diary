@@ -18,6 +18,9 @@ class CountryServiceRestTest {
     private static final String NAME = "USSR";
     private static final int ID = 1;
     private static final Country USSR = new Country(ID, NAME);
+    private final String idNotFoundExMsg = "The country with this ID " + ID + " is not found.";
+    private final String wrongNameExMsg = "Warning! \n The legal country name consists of letters that could be separated " +
+            "by one space or hyphen. \n The name is not allowed here: ";
     private CountryRepository repository;
     private CountryServiceRest service;
 
@@ -53,6 +56,18 @@ class CountryServiceRestTest {
     }
 
     @Test
+    void createCountryWithWrongNameFail() {
+        String usa = "U.S.A.";
+
+        WrongNameException exception = assertThrows(WrongNameException.class, () -> service.create(usa));
+
+        assertAll(
+                () -> assertEquals(wrongNameExMsg + usa, exception.getMessage()),
+                () -> verifyNoMoreInteractions(repository)
+        );
+    }
+
+    @Test
     void getAllCountries() {
         Country af = new Country("Afghanistan");
         Country fr = new Country("France");
@@ -71,13 +86,15 @@ class CountryServiceRestTest {
 
     @Test
     void getCountrySuccess() {
+        when(repository.existsById(ID)).thenReturn(true);
         when(repository.findById(ID)).thenReturn(Optional.of(USSR));
 
         Country expected = service.getCountryById(ID);
 
         assertAll(
                 () -> assertEquals(expected, USSR),
-                () -> verify((repository), times(2)).findById(ID),
+                () -> verify((repository)).existsById(ID),
+                () -> verify((repository)).findById(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
     }
@@ -88,8 +105,8 @@ class CountryServiceRestTest {
                 () -> service.getCountryById(ID));
 
         assertAll(
-                () -> assertEquals("The country with this ID " + ID + " is not found.", exception.getMessage()),
-                () -> verify(repository).findById(ID),
+                () -> assertEquals(idNotFoundExMsg, exception.getMessage()),
+                () -> verify((repository)).existsById(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
     }
@@ -119,25 +136,22 @@ class CountryServiceRestTest {
                 () -> service.update(country));
 
         assertAll(
-                () -> assertEquals("The country with this ID " + ID + " is not found.", exception.getMessage()),
+                () -> assertEquals(idNotFoundExMsg, exception.getMessage()),
                 () -> verify(repository).existsById(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
     }
 
     @Test
-    void updateFailWrongNewName() {
+    void updateWrongNewNameFail() {
         String newName = "Russia!";
         Country country = new Country(ID, newName);
         when(repository.existsById(ID)).thenReturn(true);
 
-        WrongNameException exception = assertThrows(WrongNameException.class,
-                () -> service.update(country));
+        WrongNameException exception = assertThrows(WrongNameException.class, () -> service.update(country));
 
         assertAll(
-                () -> assertEquals("This field should contain only letters, that could be separated by one space or " +
-                                "one hyphen. " + newName + " is not allowed here!",
-                        exception.getMessage()),
+                () -> assertEquals(wrongNameExMsg + newName, exception.getMessage()),
                 () -> verify(repository).existsById(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
@@ -163,7 +177,7 @@ class CountryServiceRestTest {
         IdNotFoundException exception = assertThrows(IdNotFoundException.class, () -> service.delete(ID));
 
         assertAll(
-                () -> assertEquals("The country with this ID " + ID + " is not found.", exception.getMessage()),
+                () -> assertEquals(idNotFoundExMsg, exception.getMessage()),
                 () -> verify(repository).existsById(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
