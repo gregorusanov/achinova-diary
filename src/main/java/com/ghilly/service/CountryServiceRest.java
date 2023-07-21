@@ -2,6 +2,7 @@ package com.ghilly.service;
 
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
+import com.ghilly.exception.WrongNameException;
 import com.ghilly.model.Country;
 import com.ghilly.repository.CountryRepository;
 import org.slf4j.Logger;
@@ -10,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ghilly.utils.ValidationUtils.checkNameIsCorrect;
+import static com.ghilly.utils.ValidationUtils.isWrongName;
 
 public class CountryServiceRest implements CountryService {
 
@@ -23,7 +24,7 @@ public class CountryServiceRest implements CountryService {
 
     @Override
     public Country create(String countryName) {
-        checkNameIsCorrect(countryName);
+        checkNameIsWrong(countryName);
         if (repository.findByName(countryName).isPresent()) {
             throw new NameAlreadyExistsException("The country with this name " + countryName + " already exists.");
         }
@@ -42,16 +43,14 @@ public class CountryServiceRest implements CountryService {
 
     @Override
     public Country getCountryById(int countryId) {
-        if (!repository.findById(countryId).isPresent()) {
-            throw new IdNotFoundException("The country with this ID " + countryId + " is not found.");
-        }
+        checkIdExists(countryId);
         return repository.findById(countryId).get();
     }
 
     @Override
     public void update(Country country) {
         checkIdExists(country.getId());
-        checkNameIsCorrect(country.getName());
+        checkNameIsWrong(country.getName());
         repository.save(new Country(country.getId(), country.getName()));
         logger.info("The country with ID {} was upgraded, new name is {}.", country.getId(), country.getName());
     }
@@ -66,6 +65,13 @@ public class CountryServiceRest implements CountryService {
     private void checkIdExists(int countryId) {
         if (!repository.existsById(countryId)) {
             throw new IdNotFoundException("The country with this ID " + countryId + " is not found.");
+        }
+    }
+
+    private void checkNameIsWrong(String countryName) {
+        if (isWrongName(countryName)) {
+            throw new WrongNameException("Warning! \n The legal country name consists of letters that could be " +
+                    "separated by one space or hyphen. \n The name is not allowed here: " + countryName);
         }
     }
 }

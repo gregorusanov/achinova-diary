@@ -1,26 +1,36 @@
 package com.ghilly.utils;
 
-import com.ghilly.exception.WrongNameException;
 import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-import static org.junit.jupiter.api.Assertions.*;
+import java.util.stream.Stream;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 class ValidationUtilsTest {
-    @ParameterizedTest
-    @ValueSource(strings = {"USA", "Germany", "germanY", "Bosnia and Herzegovina", "Guinea-Bissau",
-            "Guinea-Bissau-old-old"})
-    void correctNamesCheckingTest(String name) {
-        assertDoesNotThrow(() -> ValidationUtils.checkNameIsCorrect(name));
+
+    private static Stream<Arguments> provideNames() {
+        return Stream.of(
+                Arguments.of("USA", false),
+                Arguments.of("germanY", false),
+                Arguments.of("Bosnia and Herzegovina", false),
+                Arguments.of("Guinea-Bissau", false),
+                Arguments.of("Guinea-Bissau-old-old", false),
+                Arguments.of("Germany*", true),
+                Arguments.of("77Russia", true),
+                Arguments.of("U.S.A", true),
+                Arguments.of("Bosnia  and Herzegovina", true),
+                Arguments.of("   ", true),
+                Arguments.of("", true),
+                Arguments.of("Guinea-Bissau--old", true));
     }
 
+
     @ParameterizedTest
-    @ValueSource(strings = {"U.S.A", "Germany*", "77Russia", "Bosnia  and Herzegovina", "Guinea-Bissau--old"})
-    void incorrectNamesCheckingTest(String name) {
-        WrongNameException exception = assertThrows(WrongNameException.class,
-                () -> ValidationUtils.checkNameIsCorrect(name));
-        assertEquals("This field should contain only letters, that could be separated by one space or " +
-                "one hyphen. " + name + " is not allowed here!", exception.getMessage());
+    @MethodSource("provideNames")
+    void correctNamesCheckingTest(String name, boolean expected) {
+        assertEquals(ValidationUtils.isWrongName(name), expected);
     }
 }
