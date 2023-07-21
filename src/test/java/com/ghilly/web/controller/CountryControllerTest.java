@@ -2,7 +2,6 @@ package com.ghilly.web.controller;
 
 import com.ghilly.model.Country;
 import com.ghilly.service.CountryServiceRest;
-import com.ghilly.web.controller.CountryController;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -63,18 +62,18 @@ class CountryControllerTest {
         );
     }
 
-//    @Test
-//    void updateCountry() {
-//        String newName = "Russia";
-//
-//        controller.update(ID, newName);
-//
-//        assertAll(
-//                () -> verify(service).update(new Country(ID, newName)),
-//                () -> verify(service).getCountryById(ID),
-//                () -> verifyNoMoreInteractions(service)
-//        );
-//    }
+   @Test
+    void updateCountry() {
+        String newName = "Russia";
+
+        controller.update(ID, newName);
+
+        assertAll(
+               () -> verify(service).update(new Country(ID, newName)),
+                () -> verify(service).getCountryById(ID),
+                () -> verifyNoMoreInteractions(service)
+        );
+    }
 
     @Test
     void deleteCountry() {
