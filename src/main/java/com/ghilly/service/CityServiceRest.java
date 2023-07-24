@@ -8,6 +8,7 @@ import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.CountryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.repository.CrudRepository;
 
 import static com.ghilly.utils.ValidationUtils.isWrongName;
 
@@ -23,7 +24,7 @@ public class CityServiceRest implements CityService {
     }
 
     public City create(String cityName, int countryId) {
-        checkCountryIdExists(countryId);
+        checkIdExists(countryId, countryRepository);
         checkNameIsWrong(cityName);
         if (cityRepository.findByName(cityName).isPresent())
             throw new NameAlreadyExistsException("The city with the name " + cityName + " already exists.");
@@ -35,19 +36,14 @@ public class CityServiceRest implements CityService {
 
     @Override
     public City getCity(int cityId) {
-        checkCityIdExists(cityId);
+        checkIdExists(cityId, cityRepository);
         return cityRepository.findById(cityId).get();
     }
 
-    private void checkCityIdExists(int cityId) {
-        if (cityRepository.findById(cityId).isEmpty())
-            throw new IdNotFoundException("The city with the ID " + cityId + " is not found.");
-    }
-
-    private void checkCountryIdExists(int countryId) {
-        if (countryRepository.findById(countryId).isEmpty()) {
-            throw new IdNotFoundException("The country with the ID " + countryId + " is not found.");
-        }
+    private void checkIdExists(int id, CrudRepository repository) {
+        String kindOfArea = repository instanceof CityRepository ? "city" : "country";
+        if (repository.findById(id).isEmpty())
+            throw new IdNotFoundException("The " + kindOfArea + " with the ID " + id + " is not found.");
     }
 
     private void checkNameIsWrong(String countryName) {

@@ -107,7 +107,7 @@ class CityServiceRestTest {
     }
 
     @Test
-    void getCityCityIdNotFoundFail() {
+    void getCityIdNotFound() {
         when(countryRepository.findById(COUNTRY_ID)).thenReturn(Optional.of(RUS));
 
         IdNotFoundException ex = assertThrows(IdNotFoundException.class, () -> service.getCity(CITY_ID));
