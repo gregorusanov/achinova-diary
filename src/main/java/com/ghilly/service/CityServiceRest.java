@@ -23,8 +23,7 @@ public class CityServiceRest implements CityService {
     }
 
     public City create(String cityName, int countryId) {
-        if (countryRepository.findById(countryId).isEmpty())
-            throw new IdNotFoundException("The country with the ID " + countryId + " is not found.");
+        checkCountryIdExists(countryId);
         checkNameIsWrong(cityName);
         if (cityRepository.findByName(cityName).isPresent())
             throw new NameAlreadyExistsException("The city with the name " + cityName + " already exists.");
@@ -32,6 +31,24 @@ public class CityServiceRest implements CityService {
         logger.info("The city with the name {} is created, country name is {}", cityName,
                 countryRepository.findById(countryId).get().getName());
         return city;
+    }
+
+    @Override
+    public City getCity(int cityId, int countryId) {
+        checkCountryIdExists(countryId);
+        checkCityIdExists(cityId);
+        return cityRepository.findById(cityId).get();
+    }
+
+    private void checkCityIdExists(int cityId) {
+        if (cityRepository.findById(cityId).isEmpty())
+            throw new IdNotFoundException("The city with the ID " + cityId + " is not found.");
+    }
+
+    private void checkCountryIdExists(int countryId) {
+        if (countryRepository.findById(countryId).isEmpty()) {
+            throw new IdNotFoundException("The country with the ID " + countryId + " is not found.");
+        }
     }
 
     private void checkNameIsWrong(String countryName) {
