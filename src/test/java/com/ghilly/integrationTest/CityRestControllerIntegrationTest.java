@@ -47,7 +47,7 @@ public class CityRestControllerIntegrationTest {
         int id = countryRepository.findByName(jp).get().getId();
 
         mvc.perform(MockMvcRequestBuilders
-                        .post("/countries/cities/create/{countryId}", id)
+                        .post("/countries/{countryId}/cities", id)
                         .content(tokyo))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(tokyo));
@@ -66,7 +66,7 @@ public class CityRestControllerIntegrationTest {
         cityRepository.save(new City(tokyo, id));
 
         mvc.perform(MockMvcRequestBuilders
-                        .post("/countries/cities/create/{countryId}", id)
+                        .post("/countries/{countryId}/cities", id)
                         .content(tokyo))
                 .andExpect(status().isConflict())
                 .andExpect(result -> Assertions.assertTrue(result.getResolvedException() instanceof NameAlreadyExistsException))
@@ -104,7 +104,7 @@ public class CityRestControllerIntegrationTest {
         countryRepository.save(new Country(ger));
 
         mvc.perform(MockMvcRequestBuilders
-                        .get("/countries/cities/{cityId}",  30)
+                        .get("/countries/cities/{cityId}", 30)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof IdNotFoundException))
