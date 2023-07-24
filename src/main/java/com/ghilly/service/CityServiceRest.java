@@ -1,6 +1,5 @@
 package com.ghilly.service;
 
-import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.exception.WrongNameException;
 import com.ghilly.model.City;
@@ -8,8 +7,8 @@ import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.CountryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.data.repository.CrudRepository;
 
+import static com.ghilly.utils.ValidationUtils.checkIdExists;
 import static com.ghilly.utils.ValidationUtils.isWrongName;
 
 public class CityServiceRest implements CityService {
@@ -40,11 +39,6 @@ public class CityServiceRest implements CityService {
         return cityRepository.findById(cityId).get();
     }
 
-    private void checkIdExists(int id, CrudRepository repository) {
-        String kindOfArea = repository instanceof CityRepository ? "city" : "country";
-        if (repository.findById(id).isEmpty())
-            throw new IdNotFoundException("The " + kindOfArea + " with the ID " + id + " is not found.");
-    }
 
     private void checkNameIsWrong(String countryName) {
         if (isWrongName(countryName)) {
