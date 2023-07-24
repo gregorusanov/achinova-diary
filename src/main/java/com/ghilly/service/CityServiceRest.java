@@ -34,8 +34,7 @@ public class CityServiceRest implements CityService {
     }
 
     @Override
-    public City getCity(int cityId, int countryId) {
-        checkCountryIdExists(countryId);
+    public City getCity(int cityId) {
         checkCityIdExists(cityId);
         return cityRepository.findById(cityId).get();
     }

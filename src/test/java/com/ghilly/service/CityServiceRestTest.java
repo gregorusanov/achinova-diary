@@ -95,28 +95,14 @@ class CityServiceRestTest {
 
     @Test
     void getCitySuccess() {
-        when(countryRepository.findById(COUNTRY_ID)).thenReturn(Optional.of(RUS));
         when(cityRepository.findById(CITY_ID)).thenReturn(Optional.of(MOS));
 
-        City city = service.getCity(CITY_ID, COUNTRY_ID);
+        City city = service.getCity(CITY_ID);
 
         assertAll(
                 () -> assertEquals(city.getName(), MOSCOW),
-                () -> verify(countryRepository).findById(COUNTRY_ID),
                 () -> verify(cityRepository, times(2)).findById(CITY_ID),
-                () -> verifyNoMoreInteractions(countryRepository, cityRepository)
-        );
-    }
-
-    @Test
-    void getCityCountryIdNotFoundFail() {
-        IdNotFoundException ex = assertThrows(IdNotFoundException.class, () -> service.getCity(CITY_ID, COUNTRY_ID));
-
-        assertAll(
-                () -> assertEquals(COUNTRY_ID_NOT_FOUND_EX_MSG_BEGIN + COUNTRY_ID + ID_NOT_FOUND_EX_MSG_END,
-                        ex.getMessage()),
-                () -> verify(countryRepository).findById(COUNTRY_ID),
-                () -> verifyNoMoreInteractions(countryRepository)
+                () -> verifyNoMoreInteractions(cityRepository)
         );
     }
 
@@ -124,14 +110,13 @@ class CityServiceRestTest {
     void getCityCityIdNotFoundFail() {
         when(countryRepository.findById(COUNTRY_ID)).thenReturn(Optional.of(RUS));
 
-        IdNotFoundException ex = assertThrows(IdNotFoundException.class, () -> service.getCity(CITY_ID, COUNTRY_ID));
+        IdNotFoundException ex = assertThrows(IdNotFoundException.class, () -> service.getCity(CITY_ID));
 
         assertAll(
                 () -> assertEquals(CITY_ID_NOT_FOUND_EX_MSG_BEGIN + CITY_ID + ID_NOT_FOUND_EX_MSG_END,
                         ex.getMessage()),
-                () -> verify(countryRepository).findById(COUNTRY_ID),
                 () -> verify(cityRepository).findById(CITY_ID),
-                () -> verifyNoMoreInteractions(countryRepository, cityRepository)
+                () -> verifyNoMoreInteractions(cityRepository)
         );
     }
 

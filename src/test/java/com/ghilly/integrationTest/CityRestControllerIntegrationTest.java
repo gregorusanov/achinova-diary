@@ -47,7 +47,7 @@ public class CityRestControllerIntegrationTest {
         int id = countryRepository.findByName(jp).get().getId();
 
         mvc.perform(MockMvcRequestBuilders
-                        .post("/countries/{countryId}/cities/", id)
+                        .post("/countries/cities/create/{countryId}", id)
                         .content(tokyo))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(tokyo));
@@ -66,7 +66,7 @@ public class CityRestControllerIntegrationTest {
         cityRepository.save(new City(tokyo, id));
 
         mvc.perform(MockMvcRequestBuilders
-                        .post("/countries/{countryId}/cities/", id)
+                        .post("/countries/cities/create/{countryId}", id)
                         .content(tokyo))
                 .andExpect(status().isConflict())
                 .andExpect(result -> Assertions.assertTrue(result.getResolvedException() instanceof NameAlreadyExistsException))
@@ -87,7 +87,7 @@ public class CityRestControllerIntegrationTest {
         int cityId = cityRepository.findByName(paris).get().getId();
 
         mvc.perform(MockMvcRequestBuilders
-                        .get("/countries/{countryId}/cities/{cityId}", countryId, cityId)
+                        .get("/countries/cities/{cityId}", cityId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -102,10 +102,9 @@ public class CityRestControllerIntegrationTest {
     public void getCityStatusNotFound404() throws Exception {
         String ger = "Germany";
         countryRepository.save(new Country(ger));
-        int countryId = countryRepository.findByName(ger).get().getId();
 
         mvc.perform(MockMvcRequestBuilders
-                        .get("/countries/{countryId}/cities/{cityId}", countryId, 30)
+                        .get("/countries/cities/{cityId}",  30)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof IdNotFoundException))

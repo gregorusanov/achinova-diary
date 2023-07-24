@@ -5,5 +5,5 @@ import com.ghilly.model.City;
 public interface CityService {
     City create(String cityName, int countryId);
 
-    City getCity(int cityId, int countryId);
+    City getCity(int cityId);
 }

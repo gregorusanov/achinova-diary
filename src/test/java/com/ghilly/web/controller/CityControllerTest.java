@@ -34,12 +34,13 @@ class CityControllerTest {
 
     @Test
     void getCity() {
-        when(service.getCity(ID, ID)).thenReturn(CITY);
-        City actual = controller.getCity(ID, ID).getBody();
+        when(service.getCity(ID)).thenReturn(CITY);
+
+        City actual = controller.getCity(ID).getBody();
 
         assertAll(
                 () -> assertEquals(CITY_NAME, actual.getName()),
-                () -> verify(service).getCity(ID, ID),
+                () -> verify(service).getCity(ID),
                 () -> verifyNoMoreInteractions(service)
         );
 
