@@ -23,7 +23,7 @@ public class CityServiceRest implements CityService {
     }
 
     public City create(String cityName, int countryId) {
-        checkIdExists(countryId, countryRepository);
+        checkIdExists(countryId, countryRepository, "country");
         checkNameIsWrong(cityName);
         if (cityRepository.findByName(cityName).isPresent())
             throw new NameAlreadyExistsException("The city with the name " + cityName + " already exists.");
@@ -35,7 +35,7 @@ public class CityServiceRest implements CityService {
 
     @Override
     public City getCity(int cityId) {
-        checkIdExists(cityId, cityRepository);
+        checkIdExists(cityId, cityRepository, "city");
         return cityRepository.findById(cityId).get();
     }
 

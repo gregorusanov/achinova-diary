@@ -18,7 +18,7 @@ class CountryServiceRestTest {
     private static final String NAME = "USSR";
     private static final int ID = 1;
     private static final Country USSR = new Country(ID, NAME);
-    private final String idNotFoundExMsg = "The country with this ID " + ID + " is not found.";
+    private final String idNotFoundExMsg = "The country with the ID " + ID + " is not found.";
     private final String wrongNameExMsg = "Warning! \n The legal country name consists of letters that could be separated " +
             "by one space or hyphen. \n The name is not allowed here: ";
     private CountryRepository repository;
@@ -86,15 +86,13 @@ class CountryServiceRestTest {
 
     @Test
     void getCountrySuccess() {
-        when(repository.existsById(ID)).thenReturn(true);
         when(repository.findById(ID)).thenReturn(Optional.of(USSR));
 
         Country expected = service.getCountryById(ID);
 
         assertAll(
                 () -> assertEquals(expected, USSR),
-                () -> verify((repository)).existsById(ID),
-                () -> verify((repository)).findById(ID),
+                () -> verify(repository, times(2)).findById(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
     }
@@ -106,7 +104,7 @@ class CountryServiceRestTest {
 
         assertAll(
                 () -> assertEquals(idNotFoundExMsg, exception.getMessage()),
-                () -> verify((repository)).existsById(ID),
+                () -> verify((repository)).findById(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
     }
@@ -115,12 +113,12 @@ class CountryServiceRestTest {
     void updateSuccess() {
         String newName = "Russia";
         Country country = new Country(ID, newName);
-        when(repository.existsById(ID)).thenReturn(true);
+        when(repository.findById(ID)).thenReturn(Optional.of(USSR));
 
         service.update(country);
 
         assertAll(
-                () -> verify(repository).existsById(ID),
+                () -> verify(repository).findById(ID),
                 () -> verify(repository).save(country),
                 () -> verifyNoMoreInteractions(repository)
         );
@@ -130,14 +128,13 @@ class CountryServiceRestTest {
     void updateFailIdNotFound() {
         String newName = "Russia";
         Country country = new Country(ID, newName);
-        when(repository.existsById(ID)).thenReturn(false);
 
         IdNotFoundException exception = assertThrows(IdNotFoundException.class,
                 () -> service.update(country));
 
         assertAll(
                 () -> assertEquals(idNotFoundExMsg, exception.getMessage()),
-                () -> verify(repository).existsById(ID),
+                () -> verify(repository).findById(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
     }
@@ -146,25 +143,25 @@ class CountryServiceRestTest {
     void updateWrongNewNameFail() {
         String newName = "Russia!";
         Country country = new Country(ID, newName);
-        when(repository.existsById(ID)).thenReturn(true);
+        when(repository.findById(ID)).thenReturn(Optional.of(USSR));
 
         WrongNameException exception = assertThrows(WrongNameException.class, () -> service.update(country));
 
         assertAll(
                 () -> assertEquals(wrongNameExMsg + newName, exception.getMessage()),
-                () -> verify(repository).existsById(ID),
+                () -> verify(repository).findById(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
     }
 
     @Test
     void removeSuccess() {
-        when(repository.existsById(ID)).thenReturn(true);
+        when(repository.findById(ID)).thenReturn(Optional.of(USSR));
 
         service.delete(ID);
 
         assertAll(
-                () -> verify(repository).existsById(ID),
+                () -> verify(repository).findById(ID),
                 () -> verify(repository).deleteById(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
@@ -172,13 +169,11 @@ class CountryServiceRestTest {
 
     @Test
     void removeFail() {
-        when(repository.existsById(ID)).thenReturn(false);
-
         IdNotFoundException exception = assertThrows(IdNotFoundException.class, () -> service.delete(ID));
 
         assertAll(
                 () -> assertEquals(idNotFoundExMsg, exception.getMessage()),
-                () -> verify(repository).existsById(ID),
+                () -> verify(repository).findById(ID),
                 () -> verifyNoMoreInteractions(repository)
         );
     }

@@ -15,9 +15,8 @@ public class ValidationUtils {
         return !Pattern.matches("^(?:[a-zA-Z]+[ -]?)+$", name);
     }
 
-    public static void checkIdExists(int id, CrudRepository repository) {
-        String kindOfArea = repository instanceof CityRepository ? "city" : "country";
+    public static void checkIdExists(int id, CrudRepository repository, String object) {
         if (repository.findById(id).isEmpty())
-            throw new IdNotFoundException("The " + kindOfArea + " with the ID " + id + " is not found.");
+            throw new IdNotFoundException("The " + object + " with the ID " + id + " is not found.");
     }
 }
