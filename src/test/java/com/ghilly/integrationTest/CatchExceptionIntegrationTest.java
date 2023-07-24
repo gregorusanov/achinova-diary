@@ -58,7 +58,7 @@ public class CatchExceptionIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof IdNotFoundException))
-                .andExpect(result -> assertEquals("The country with this ID " + id + " is not found.",
+                .andExpect(result -> assertEquals("The country with the ID " + id + " is not found.",
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
 
     }

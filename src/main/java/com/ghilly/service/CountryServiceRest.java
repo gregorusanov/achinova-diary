@@ -11,6 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.ghilly.utils.ValidationUtils.checkIdExists;
 import static com.ghilly.utils.ValidationUtils.isWrongName;
 
 public class CountryServiceRest implements CountryService {
@@ -43,13 +44,13 @@ public class CountryServiceRest implements CountryService {
 
     @Override
     public Country getCountryById(int countryId) {
-        checkIdExists(countryId);
+        checkIdExists(countryId, repository, "country");
         return repository.findById(countryId).get();
     }
 
     @Override
     public void update(Country country) {
-        checkIdExists(country.getId());
+        checkIdExists(country.getId(), repository, "country");
         checkNameIsWrong(country.getName());
         repository.save(new Country(country.getId(), country.getName()));
         logger.info("The country with ID {} was upgraded, new name is {}.", country.getId(), country.getName());
@@ -57,15 +58,9 @@ public class CountryServiceRest implements CountryService {
 
     @Override
     public void delete(int countryId) {
-        checkIdExists(countryId);
+        checkIdExists(countryId, repository, "country");
         repository.deleteById(countryId);
         logger.info("The country with ID {} was deleted", countryId);
-    }
-
-    private void checkIdExists(int countryId) {
-        if (!repository.existsById(countryId)) {
-            throw new IdNotFoundException("The country with this ID " + countryId + " is not found.");
-        }
     }
 
     private void checkNameIsWrong(String countryName) {

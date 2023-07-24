@@ -1,6 +1,5 @@
 package com.ghilly.service;
 
-import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.exception.WrongNameException;
 import com.ghilly.model.City;
@@ -9,6 +8,7 @@ import com.ghilly.repository.CountryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.ghilly.utils.ValidationUtils.checkIdExists;
 import static com.ghilly.utils.ValidationUtils.isWrongName;
 
 public class CityServiceRest implements CityService {
@@ -23,8 +23,7 @@ public class CityServiceRest implements CityService {
     }
 
     public City create(String cityName, int countryId) {
-        if (countryRepository.findById(countryId).isEmpty())
-            throw new IdNotFoundException("The country with the ID " + countryId + " is not found.");
+        checkIdExists(countryId, countryRepository, "country");
         checkNameIsWrong(cityName);
         if (cityRepository.findByName(cityName).isPresent())
             throw new NameAlreadyExistsException("The city with the name " + cityName + " already exists.");
@@ -33,6 +32,13 @@ public class CityServiceRest implements CityService {
                 countryRepository.findById(countryId).get().getName());
         return city;
     }
+
+    @Override
+    public City getCity(int cityId) {
+        checkIdExists(cityId, cityRepository, "city");
+        return cityRepository.findById(cityId).get();
+    }
+
 
     private void checkNameIsWrong(String countryName) {
         if (isWrongName(countryName)) {

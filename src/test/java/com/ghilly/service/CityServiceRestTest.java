@@ -17,9 +17,13 @@ import static org.mockito.Mockito.*;
 
 class CityServiceRestTest {
     private static final String MOSCOW = "Moscow";
-    private static final int ID = 1;
-    private static final Country RUS = new Country(ID, "Russia");
-    private static final City MOS = new City(MOSCOW, ID);
+    private static final int COUNTRY_ID = 1;
+    private static final int CITY_ID = 7;
+    private static final Country RUS = new Country(COUNTRY_ID, "Russia");
+    private static final City MOS = new City(MOSCOW, COUNTRY_ID);
+    private static final String COUNTRY_ID_NOT_FOUND_EX_MSG_BEGIN = "The country with the ID ";
+    private static final String CITY_ID_NOT_FOUND_EX_MSG_BEGIN = "The city with the ID ";
+    private static final String ID_NOT_FOUND_EX_MSG_END = " is not found.";
     private CityServiceRest service;
     private CityRepository cityRepository;
     private CountryRepository countryRepository;
@@ -33,12 +37,12 @@ class CityServiceRestTest {
 
     @Test
     void createSuccess() {
-        when(countryRepository.findById(ID)).thenReturn(Optional.of(RUS));
+        when(countryRepository.findById(COUNTRY_ID)).thenReturn(Optional.of(RUS));
 
-        service.create(MOSCOW, ID);
+        service.create(MOSCOW, COUNTRY_ID);
 
         assertAll(
-                () -> verify(countryRepository, times(2)).findById(ID),
+                () -> verify(countryRepository, times(2)).findById(COUNTRY_ID),
                 () -> verify(cityRepository).findByName(MOSCOW),
                 () -> verify(cityRepository).save(MOS),
                 () -> verifyNoMoreInteractions(cityRepository, countryRepository)
@@ -47,26 +51,27 @@ class CityServiceRestTest {
 
     @Test
     void createIdIsNotFoundFail() {
-        IdNotFoundException exception = assertThrows(IdNotFoundException.class, () -> service.create(MOSCOW, ID));
+        IdNotFoundException exception = assertThrows(IdNotFoundException.class, () -> service.create(MOSCOW, COUNTRY_ID));
 
         assertAll(
-                () -> assertEquals("The country with the ID " + ID + " is not found.", exception.getMessage()),
-                () -> verify(countryRepository).findById(ID),
+                () -> assertEquals(COUNTRY_ID_NOT_FOUND_EX_MSG_BEGIN + COUNTRY_ID + ID_NOT_FOUND_EX_MSG_END,
+                        exception.getMessage()),
+                () -> verify(countryRepository).findById(COUNTRY_ID),
                 () -> verifyNoMoreInteractions(countryRepository)
         );
     }
 
     @Test
     void createNameAlreadyExistsFail() {
-        when(countryRepository.findById(ID)).thenReturn(Optional.of(RUS));
+        when(countryRepository.findById(COUNTRY_ID)).thenReturn(Optional.of(RUS));
         when(cityRepository.findByName(MOSCOW)).thenReturn(Optional.of(MOS));
         NameAlreadyExistsException exception = assertThrows(NameAlreadyExistsException.class,
-                () -> service.create(MOSCOW, ID));
+                () -> service.create(MOSCOW, COUNTRY_ID));
 
         assertAll(
                 () -> assertEquals("The city with the name " + MOSCOW + " already exists.",
                         exception.getMessage()),
-                () -> verify(countryRepository).findById(ID),
+                () -> verify(countryRepository).findById(COUNTRY_ID),
                 () -> verify(cityRepository).findByName(MOSCOW),
                 () -> verifyNoMoreInteractions(countryRepository, cityRepository)
         );
@@ -75,18 +80,44 @@ class CityServiceRestTest {
     @Test
     void createWrongNameFail() {
         String wrong = "777Mo$cow!";
-        when(countryRepository.findById(ID)).thenReturn(Optional.of(RUS));
+        when(countryRepository.findById(COUNTRY_ID)).thenReturn(Optional.of(RUS));
 
-        WrongNameException exception = assertThrows(WrongNameException.class, () -> service.create(wrong, ID));
+        WrongNameException exception = assertThrows(WrongNameException.class, () -> service.create(wrong, COUNTRY_ID));
 
         assertAll(
                 () -> assertEquals("Warning! \n The legal country name consists of letters that could be " +
                                 "separated by one space or hyphen. \n The name is not allowed here: " + wrong,
                         exception.getMessage()),
-                () -> verify(countryRepository).findById(ID),
+                () -> verify(countryRepository).findById(COUNTRY_ID),
                 () -> verifyNoMoreInteractions(countryRepository)
         );
     }
 
+    @Test
+    void getCitySuccess() {
+        when(cityRepository.findById(CITY_ID)).thenReturn(Optional.of(MOS));
+
+        City city = service.getCity(CITY_ID);
+
+        assertAll(
+                () -> assertEquals(city.getName(), MOSCOW),
+                () -> verify(cityRepository, times(2)).findById(CITY_ID),
+                () -> verifyNoMoreInteractions(cityRepository)
+        );
+    }
+
+    @Test
+    void getCityIdNotFound() {
+        when(countryRepository.findById(COUNTRY_ID)).thenReturn(Optional.of(RUS));
+
+        IdNotFoundException ex = assertThrows(IdNotFoundException.class, () -> service.getCity(CITY_ID));
+
+        assertAll(
+                () -> assertEquals(CITY_ID_NOT_FOUND_EX_MSG_BEGIN + CITY_ID + ID_NOT_FOUND_EX_MSG_END,
+                        ex.getMessage()),
+                () -> verify(cityRepository).findById(CITY_ID),
+                () -> verifyNoMoreInteractions(cityRepository)
+        );
+    }
 
 }
