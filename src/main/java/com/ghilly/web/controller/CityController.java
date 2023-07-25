@@ -6,6 +6,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 
 @RequestMapping("/countries")
 public class CityController {
@@ -29,5 +31,12 @@ public class CityController {
         City city = service.getCity(cityId);
         logger.info("The city with the ID {} is: {}", cityId, city.getName());
         return ResponseEntity.ok().body(city);
+    }
+
+    @GetMapping("/cities/all")
+    public ResponseEntity<List<City>> getAllCities() {
+        logger.info("You are getting the list of cities.");
+        List<City> allCities = service.getAllCities();
+        return ResponseEntity.ok().body(allCities);
     }
 }

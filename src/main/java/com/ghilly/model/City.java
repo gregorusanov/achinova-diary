@@ -63,6 +63,6 @@ public class City implements Serializable {
 
     @Override
     public String toString() {
-        return "City{" + "id = " + id + ", name = " + name + "country ID = " + countryId + '\'' + '}';
+        return "\n City name = " + name + ", city id = " + id + ", country ID = " + countryId;
     }
 }

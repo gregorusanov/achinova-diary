@@ -10,6 +10,7 @@ import com.ghilly.repository.CountryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -116,6 +117,25 @@ class CityServiceRestTest {
                 () -> assertEquals(CITY_ID_NOT_FOUND_EX_MSG_BEGIN + CITY_ID + ID_NOT_FOUND_EX_MSG_END,
                         ex.getMessage()),
                 () -> verify(cityRepository).findById(CITY_ID),
+                () -> verifyNoMoreInteractions(cityRepository)
+        );
+    }
+
+    @Test
+    void getAllCities() {
+        String sochi = "Sochi";
+        String spb = "Saint-Petersburg";
+        List<City> cities = List.of(MOS, new City(sochi, COUNTRY_ID), new City(spb, COUNTRY_ID));
+        when(cityRepository.findAll()).thenReturn(cities);
+
+        List<City> actual = service.getAllCities();
+
+        assertAll(
+                () -> assertEquals(3, actual.size()),
+                () -> assertEquals(actual.get(0).getName(), MOSCOW),
+                () -> assertEquals(actual.get(1).getName(), sochi),
+                () -> assertEquals(actual.get(2).getName(), spb),
+                () -> verify(cityRepository).findAll(),
                 () -> verifyNoMoreInteractions(cityRepository)
         );
     }

@@ -8,6 +8,8 @@ import com.ghilly.repository.CountryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.List;
+
 import static com.ghilly.utils.ValidationUtils.checkIdExists;
 import static com.ghilly.utils.ValidationUtils.isWrongName;
 
@@ -22,8 +24,9 @@ public class CityServiceRest implements CityService {
         this.countryRepository = countryRepository;
     }
 
+    @Override
     public City create(String cityName, int countryId) {
-        checkIdExists(countryId, countryRepository, "country");
+        checkIdExists(countryId, countryRepository, "The country with the ID " + countryId + " is not found.");
         checkNameIsWrong(cityName);
         if (cityRepository.findByName(cityName).isPresent())
             throw new NameAlreadyExistsException("The city with the name " + cityName + " already exists.");
@@ -35,8 +38,15 @@ public class CityServiceRest implements CityService {
 
     @Override
     public City getCity(int cityId) {
-        checkIdExists(cityId, cityRepository, "city");
+        checkIdExists(cityId, cityRepository, "The city with the ID " + cityId + " is not found.");
         return cityRepository.findById(cityId).get();
+    }
+
+    @Override
+    public List<City> getAllCities() {
+        List<City> cities = (List<City>) cityRepository.findAll();
+        logger.info("The list of cities is: {}", cities);
+        return cities;
     }
 
 

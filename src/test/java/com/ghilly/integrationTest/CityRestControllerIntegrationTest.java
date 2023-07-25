@@ -16,6 +16,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Objects;
@@ -110,6 +111,37 @@ public class CityRestControllerIntegrationTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof IdNotFoundException))
                 .andExpect(result -> assertEquals("The city with the ID " + 30 + " is not found.",
                         Objects.requireNonNull(Objects.requireNonNull(result.getResolvedException()).getMessage())));
+        countryRepository.deleteAll();
+    }
+
+    @Test
+    public void getAllCitiesStatusOk200() throws Exception {
+        String ber = "Berlin";
+        String mos = "Moscow";
+        String spb = "Saint-Petersburg";
+        String rus = "Russia";
+        String ger = "Germany";
+        countryRepository.save(new Country(ger));
+        countryRepository.save(new Country(rus));
+        int rusId = countryRepository.findByName(rus).get().getId();
+        int gerId = countryRepository.findByName(ger).get().getId();
+        cityRepository.save(new City(ber, gerId));
+        cityRepository.save(new City(mos, rusId));
+        cityRepository.save(new City(spb, rusId));
+
+        mvc.perform(MockMvcRequestBuilders
+                    .get("/countries/cities/all")
+                    .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].name").value(ber))
+                .andExpect(jsonPath("$[1].name").value(mos))
+                .andExpect(jsonPath("$[2].name").value(spb));
+        assertTrue(cityRepository.findByName(ber).isPresent());
+        assertTrue(cityRepository.findByName(mos).isPresent());
+        assertTrue(cityRepository.findByName(spb).isPresent());
+
+        cityRepository.deleteAll();
         countryRepository.deleteAll();
     }
 }
