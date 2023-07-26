@@ -5,6 +5,8 @@ import com.ghilly.service.CityServiceRest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -44,6 +46,21 @@ class CityControllerTest {
                 () -> verifyNoMoreInteractions(service)
         );
 
+    }
+
+    @Test
+    void getAllCities() {
+        String sochi = "Sochi";
+        String spb = "Saint-Petersburg";
+        List<City> cities = List.of(CITY, new City(sochi, ID), new City(spb, ID));
+        when(service.getAllCities()).thenReturn(cities);
+
+        controller.getAllCities();
+
+        assertAll(
+                () -> verify(service).getAllCities(),
+                () -> verifyNoMoreInteractions(service)
+        );
     }
 
 }
