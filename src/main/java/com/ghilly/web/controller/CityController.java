@@ -39,4 +39,11 @@ public class CityController {
         List<City> allCities = service.getAllCities();
         return ResponseEntity.ok().body(allCities);
     }
+
+    @PutMapping("/cities/{cityId}")
+    public ResponseEntity<City> update(@RequestBody  String newName, @PathVariable int cityId) {
+        service.update(cityId, newName);
+        logger.info("The city name for city ID {} is changing to {}", cityId, newName);
+        return ResponseEntity.ok().body(service.getCity(cityId));
+    }
 }

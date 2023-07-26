@@ -1,6 +1,5 @@
 package com.ghilly.service;
 
-import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.exception.WrongNameException;
 import com.ghilly.model.Country;
