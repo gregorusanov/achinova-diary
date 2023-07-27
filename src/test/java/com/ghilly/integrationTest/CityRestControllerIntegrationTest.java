@@ -16,7 +16,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import java.util.Objects;
@@ -54,37 +53,40 @@ public class CityRestControllerIntegrationTest {
                 .andExpect(jsonPath("$.name").value(tokyo));
         assertTrue(cityRepository.findByName(tokyo).isPresent());
 
-        countryRepository.deleteAll();
         cityRepository.deleteAll();
+        countryRepository.deleteAll();
     }
 
     @Test
     public void createCityStatusConflict409() throws Exception {
         String jp = "Japan";
         String tokyo = "Tokyo";
-        countryRepository.save(new Country(jp));
+        Country japan = new Country(jp);
+        countryRepository.save(japan);
         int id = countryRepository.findByName(jp).get().getId();
-        cityRepository.save(new City(tokyo, id));
+        cityRepository.save(new City(tokyo, japan));
 
         mvc.perform(MockMvcRequestBuilders
                         .post("/countries/{countryId}/cities", id)
                         .content(tokyo))
                 .andExpect(status().isConflict())
-                .andExpect(result -> Assertions.assertTrue(result.getResolvedException() instanceof NameAlreadyExistsException))
+                .andExpect(result -> Assertions.assertTrue(result.getResolvedException() instanceof
+                        NameAlreadyExistsException))
                 .andExpect(result -> assertEquals("The city with the name " + tokyo + " already exists.",
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
 
-        countryRepository.deleteAll();
         cityRepository.deleteAll();
+        countryRepository.deleteAll();
     }
 
     @Test
     public void getCityStatusOk200() throws Exception {
         String fr = "France";
         String paris = "Paris";
-        countryRepository.save(new Country(fr));
-        int countryId = countryRepository.findByName(fr).get().getId();
-        cityRepository.save(new City(paris, countryId));
+        Country country = new Country(fr);
+        countryRepository.save(country);
+        City city = new City(paris, country);
+        cityRepository.save(city);
         int cityId = cityRepository.findByName(paris).get().getId();
 
         mvc.perform(MockMvcRequestBuilders
@@ -111,6 +113,8 @@ public class CityRestControllerIntegrationTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof IdNotFoundException))
                 .andExpect(result -> assertEquals("The city with the ID " + 30 + " is not found.",
                         Objects.requireNonNull(Objects.requireNonNull(result.getResolvedException()).getMessage())));
+
+        cityRepository.deleteAll();
         countryRepository.deleteAll();
     }
 
@@ -121,17 +125,17 @@ public class CityRestControllerIntegrationTest {
         String spb = "Saint-Petersburg";
         String rus = "Russia";
         String ger = "Germany";
-        countryRepository.save(new Country(ger));
-        countryRepository.save(new Country(rus));
-        int rusId = countryRepository.findByName(rus).get().getId();
-        int gerId = countryRepository.findByName(ger).get().getId();
-        cityRepository.save(new City(ber, gerId));
-        cityRepository.save(new City(mos, rusId));
-        cityRepository.save(new City(spb, rusId));
+        Country germany = new Country(ger);
+        countryRepository.save(germany);
+        cityRepository.save(new City(ber, germany));
+        Country russia = new Country(rus);
+        countryRepository.save(russia);
+        cityRepository.save(new City(mos, russia));
+        cityRepository.save(new City(spb, russia));
 
         mvc.perform(MockMvcRequestBuilders
-                    .get("/countries/cities/all")
-                    .contentType(MediaType.APPLICATION_JSON))
+                        .get("/countries/cities/all")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].name").value(ber))
@@ -140,6 +144,27 @@ public class CityRestControllerIntegrationTest {
         assertTrue(cityRepository.findByName(ber).isPresent());
         assertTrue(cityRepository.findByName(mos).isPresent());
         assertTrue(cityRepository.findByName(spb).isPresent());
+
+        cityRepository.deleteAll();
+        countryRepository.deleteAll();
+    }
+
+    @Test
+    public void updateStatusOk200() throws Exception {
+        String oldName = "Stalingrad";
+        String newName = "Volgograd";
+        Country rus = new Country("Russia");
+        countryRepository.save(rus);
+        cityRepository.save(new City(oldName, rus));
+        int cityId = cityRepository.findByName(oldName).get().getId();
+
+        mvc.perform(MockMvcRequestBuilders
+                        .put("/countries/cities/{cityId}", cityId)
+                        .content(newName))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.name").value(newName));
+        assertTrue(cityRepository.findByName(newName).isPresent());
 
         cityRepository.deleteAll();
         countryRepository.deleteAll();

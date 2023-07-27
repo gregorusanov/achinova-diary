@@ -10,4 +10,6 @@ public interface CityService {
     City getCity(int cityId);
 
     List<City> getAllCities();
+
+    void update(int cityId, String newName);
 }

@@ -6,7 +6,7 @@ import java.io.Serializable;
 import java.util.Objects;
 
 @Entity
-@Table(name="cities")
+@Table(name = "cities")
 public class City implements Serializable {
 
     @Id
@@ -14,22 +14,29 @@ public class City implements Serializable {
     @SequenceGenerator(name = "cities_seq", sequenceName = "cities_id_seq", allocationSize = 1)
     @Column(name = "id")
     private int id;
-    @Column(name="city")
+
+    @Column(name = "city")
     @NotBlank(message = "The city should have a name!")
     private String name;
-    @Column(name="country_id")
-    @NotBlank
-    private int countryId;
 
-    public City (int id, String name, int countryId){
+    @ManyToOne
+    @JoinColumn(name = "country_id", nullable = false)
+    private Country country;
+
+    public City(int id, String name) {
         this.id = id;
         this.name = name;
-        this.countryId = countryId;
     }
 
-    public City (String name, int countryId){
+    public City(int id, String name, Country country) {
+        this.id = id;
         this.name = name;
-        this.countryId = countryId;
+        this.country = country;
+    }
+
+    public City(String name, Country country) {
+        this.name = name;
+        this.country = country;
     }
 
     public City() {
@@ -40,17 +47,29 @@ public class City implements Serializable {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
 
-    public int getCountryId() {
-        return countryId;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public Country getCountry() {
+        return country;
+    }
+
+    public void setCountry(Country country) {
+        this.country = country;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, countryId);
+        return Objects.hash(id, name, country);
     }
 
     @Override
@@ -58,11 +77,12 @@ public class City implements Serializable {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         City city = (City) obj;
-        return id == city.id && name.equals(city.name) && countryId == city.countryId;
+        return id == city.id && name.equals(city.name) && country == city.country;
     }
+
 
     @Override
     public String toString() {
-        return "\n City name = " + name + ", city id = " + id + ", country ID = " + countryId;
+        return "\n City name = " + name + ", city id = " + id + ", country name = " + country.getName();
     }
 }

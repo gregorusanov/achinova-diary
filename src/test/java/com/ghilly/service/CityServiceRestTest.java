@@ -21,10 +21,12 @@ class CityServiceRestTest {
     private static final int COUNTRY_ID = 1;
     private static final int CITY_ID = 7;
     private static final Country RUS = new Country(COUNTRY_ID, "Russia");
-    private static final City MOS = new City(MOSCOW, COUNTRY_ID);
+    private static final City MOS = new City(CITY_ID, MOSCOW, RUS);
     private static final String COUNTRY_ID_NOT_FOUND_EX_MSG_BEGIN = "The country with the ID ";
     private static final String CITY_ID_NOT_FOUND_EX_MSG_BEGIN = "The city with the ID ";
     private static final String ID_NOT_FOUND_EX_MSG_END = " is not found.";
+    private static final String WRONG_NAME_EX_MSG = "Warning! \n The legal country name consists of letters that " +
+            "could be separated by one space or hyphen. \n The name is not allowed here: ";
     private CityServiceRest service;
     private CityRepository cityRepository;
     private CountryRepository countryRepository;
@@ -45,7 +47,7 @@ class CityServiceRestTest {
         assertAll(
                 () -> verify(countryRepository, times(2)).findById(COUNTRY_ID),
                 () -> verify(cityRepository).findByName(MOSCOW),
-                () -> verify(cityRepository).save(MOS),
+                () -> verify(cityRepository).save(new City(MOSCOW, RUS)),
                 () -> verifyNoMoreInteractions(cityRepository, countryRepository)
         );
     }
@@ -86,8 +88,7 @@ class CityServiceRestTest {
         WrongNameException exception = assertThrows(WrongNameException.class, () -> service.create(wrong, COUNTRY_ID));
 
         assertAll(
-                () -> assertEquals("Warning! \n The legal country name consists of letters that could be " +
-                                "separated by one space or hyphen. \n The name is not allowed here: " + wrong,
+                () -> assertEquals(WRONG_NAME_EX_MSG + wrong,
                         exception.getMessage()),
                 () -> verify(countryRepository).findById(COUNTRY_ID),
                 () -> verifyNoMoreInteractions(countryRepository)
@@ -125,7 +126,7 @@ class CityServiceRestTest {
     void getAllCities() {
         String sochi = "Sochi";
         String spb = "Saint-Petersburg";
-        List<City> cities = List.of(MOS, new City(sochi, COUNTRY_ID), new City(spb, COUNTRY_ID));
+        List<City> cities = List.of(MOS, new City(sochi, RUS), new City(spb, RUS));
         when(cityRepository.findAll()).thenReturn(cities);
 
         List<City> actual = service.getAllCities();
@@ -136,6 +137,50 @@ class CityServiceRestTest {
                 () -> assertEquals(actual.get(1).getName(), sochi),
                 () -> assertEquals(actual.get(2).getName(), spb),
                 () -> verify(cityRepository).findAll(),
+                () -> verifyNoMoreInteractions(cityRepository)
+        );
+    }
+
+    @Test
+    void updateSuccess() {
+        String newName = "Moskvabad";
+        when(cityRepository.findById(CITY_ID)).thenReturn(Optional.of(MOS));
+
+        service.update(CITY_ID, newName);
+
+        assertAll(
+                () -> verify(cityRepository, times(2)).findById(CITY_ID),
+                () -> verify(cityRepository).save(new City(CITY_ID, newName, RUS)),
+                () -> verifyNoMoreInteractions(cityRepository)
+        );
+    }
+
+    @Test
+    void updateFailIdNotFound() {
+        String newName = "Moskvabad";
+
+        IdNotFoundException exception = assertThrows(IdNotFoundException.class,
+                () -> service.update(CITY_ID, newName));
+
+        assertAll(
+                () -> assertEquals(CITY_ID_NOT_FOUND_EX_MSG_BEGIN + CITY_ID + ID_NOT_FOUND_EX_MSG_END,
+                        exception.getMessage()),
+                () -> verify(cityRepository).findById(CITY_ID),
+                () -> verifyNoMoreInteractions(cityRepository)
+        );
+    }
+
+    @Test
+    void updateWrongNewNameFail() {
+        String newName = "Moskv@b@d";
+        when(cityRepository.findById(CITY_ID)).thenReturn(Optional.of(MOS));
+
+        WrongNameException exception = assertThrows(WrongNameException.class,
+                () -> service.update(CITY_ID, newName));
+
+        assertAll(
+                () -> assertEquals(WRONG_NAME_EX_MSG + newName, exception.getMessage()),
+                () -> verify(cityRepository).findById(CITY_ID),
                 () -> verifyNoMoreInteractions(cityRepository)
         );
     }

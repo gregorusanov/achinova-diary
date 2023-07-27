@@ -3,6 +3,7 @@ package com.ghilly.service;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.exception.WrongNameException;
 import com.ghilly.model.City;
+import com.ghilly.model.Country;
 import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.CountryRepository;
 import org.slf4j.Logger;
@@ -30,9 +31,9 @@ public class CityServiceRest implements CityService {
         checkNameIsWrong(cityName);
         if (cityRepository.findByName(cityName).isPresent())
             throw new NameAlreadyExistsException("The city with the name " + cityName + " already exists.");
-        City city = cityRepository.save(new City(cityName, countryId));
-        logger.info("The city with the name {} is created, country name is {}", cityName,
-                countryRepository.findById(countryId).get().getName());
+        Country country = countryRepository.findById(countryId).get();
+        City city = cityRepository.save(new City(cityName, country));
+        logger.info("The city with the name {} is created, country name is {}", cityName, country);
         return city;
     }
 
@@ -47,6 +48,16 @@ public class CityServiceRest implements CityService {
         List<City> cities = (List<City>) cityRepository.findAll();
         logger.info("The list of cities is: {}", cities);
         return cities;
+    }
+
+    @Override
+    public void update(int cityId, String newName) {
+        checkIdExists(cityId, cityRepository, "The city with the ID " + cityId + " is not found.");
+        checkNameIsWrong(newName);
+        Country country = cityRepository.findById(cityId).get().getCountry();
+        City city = new City(cityId, newName, country);
+        cityRepository.save(city);
+        logger.info("The city with ID {} was updated, new name is {}.", cityId, newName);
     }
 
 
