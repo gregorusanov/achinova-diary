@@ -35,7 +35,7 @@ class CountryServiceRestTest {
         when(repository.findByName(NAME)).thenReturn(Optional.of(USSR));
 
         NameAlreadyExistsException exception = assertThrows(NameAlreadyExistsException.class,
-                () -> service.create(NAME));
+                () -> service.create(USSR));
 
         assertAll(
                 () -> assertEquals("The country with this name " + NAME + " already exists.", exception.getMessage()),
@@ -46,23 +46,23 @@ class CountryServiceRestTest {
 
     @Test
     void createCountrySuccess() {
-        service.create(NAME);
+        service.create(USSR);
 
         assertAll(
                 () -> verify(repository).findByName(NAME),
-                () -> verify(repository).save(new Country(0, NAME)),
+                () -> verify(repository).save(USSR),
                 () -> verifyNoMoreInteractions(repository)
         );
     }
 
     @Test
     void createCountryWithWrongNameFail() {
-        String usa = "U.S.A.";
+        Country usa = new Country("U.S.A.");
 
         WrongNameException exception = assertThrows(WrongNameException.class, () -> service.create(usa));
 
         assertAll(
-                () -> assertEquals(wrongNameExMsg + usa, exception.getMessage()),
+                () -> assertEquals(wrongNameExMsg + usa.getName(), exception.getMessage()),
                 () -> verifyNoMoreInteractions(repository)
         );
     }

@@ -5,7 +5,7 @@ import com.ghilly.model.Country;
 import java.util.List;
 
 public interface CountryService {
-    Country create(String countryName);
+    Country create(Country country);
 
     List<Country> getAllCountries();
 
