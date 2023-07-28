@@ -21,7 +21,7 @@ class CityServiceRestTest {
     private static final int COUNTRY_ID = 1;
     private static final int CITY_ID = 7;
     private static final Country RUS = new Country(COUNTRY_ID, "Russia");
-    private static final City MOS = new City(CITY_ID, MOSCOW, RUS);
+    private static final City MOS = new City(CITY_ID, MOSCOW, RUS, true);
     private static final String COUNTRY_ID_NOT_FOUND_EX_MSG_BEGIN = "The country with the ID ";
     private static final String CITY_ID_NOT_FOUND_EX_MSG_BEGIN = "The city with the ID ";
     private static final String ID_NOT_FOUND_EX_MSG_END = " is not found.";
@@ -42,19 +42,19 @@ class CityServiceRestTest {
     void createSuccess() {
         when(countryRepository.findById(COUNTRY_ID)).thenReturn(Optional.of(RUS));
 
-        service.create(MOSCOW, COUNTRY_ID);
+        service.create(MOS);
 
         assertAll(
-                () -> verify(countryRepository, times(2)).findById(COUNTRY_ID),
+                () -> verify(countryRepository).findById(COUNTRY_ID),
                 () -> verify(cityRepository).findByName(MOSCOW),
-                () -> verify(cityRepository).save(new City(MOSCOW, RUS)),
+                () -> verify(cityRepository).save(MOS),
                 () -> verifyNoMoreInteractions(cityRepository, countryRepository)
         );
     }
 
     @Test
     void createIdIsNotFoundFail() {
-        IdNotFoundException exception = assertThrows(IdNotFoundException.class, () -> service.create(MOSCOW, COUNTRY_ID));
+        IdNotFoundException exception = assertThrows(IdNotFoundException.class, () -> service.create(MOS));
 
         assertAll(
                 () -> assertEquals(COUNTRY_ID_NOT_FOUND_EX_MSG_BEGIN + COUNTRY_ID + ID_NOT_FOUND_EX_MSG_END,
@@ -69,7 +69,7 @@ class CityServiceRestTest {
         when(countryRepository.findById(COUNTRY_ID)).thenReturn(Optional.of(RUS));
         when(cityRepository.findByName(MOSCOW)).thenReturn(Optional.of(MOS));
         NameAlreadyExistsException exception = assertThrows(NameAlreadyExistsException.class,
-                () -> service.create(MOSCOW, COUNTRY_ID));
+                () -> service.create(MOS));
 
         assertAll(
                 () -> assertEquals("The city with the name " + MOSCOW + " already exists.",
@@ -82,10 +82,11 @@ class CityServiceRestTest {
 
     @Test
     void createWrongNameFail() {
-        String wrong = "777Mo$cow!";
         when(countryRepository.findById(COUNTRY_ID)).thenReturn(Optional.of(RUS));
+        String wrong = "777Mo$cow!";
 
-        WrongNameException exception = assertThrows(WrongNameException.class, () -> service.create(wrong, COUNTRY_ID));
+        WrongNameException exception = assertThrows(WrongNameException.class,
+                () -> service.create(new City(2, wrong, RUS, true)));
 
         assertAll(
                 () -> assertEquals(WRONG_NAME_EX_MSG + wrong,
@@ -126,7 +127,7 @@ class CityServiceRestTest {
     void getAllCities() {
         String sochi = "Sochi";
         String spb = "Saint-Petersburg";
-        List<City> cities = List.of(MOS, new City(sochi, RUS), new City(spb, RUS));
+        List<City> cities = List.of(MOS, new City(sochi, RUS, false), new City(spb, RUS, false));
         when(cityRepository.findAll()).thenReturn(cities);
 
         List<City> actual = service.getAllCities();
@@ -143,28 +144,32 @@ class CityServiceRestTest {
 
     @Test
     void updateSuccess() {
-        String newName = "Moskvabad";
+        when(countryRepository.findById(COUNTRY_ID)).thenReturn(Optional.of(RUS));
         when(cityRepository.findById(CITY_ID)).thenReturn(Optional.of(MOS));
+        City toChange = new City(CITY_ID, "Moskvabad", RUS, true);
 
-        service.update(CITY_ID, newName);
+        service.update(toChange);
 
         assertAll(
-                () -> verify(cityRepository, times(2)).findById(CITY_ID),
-                () -> verify(cityRepository).save(new City(CITY_ID, newName, RUS)),
-                () -> verifyNoMoreInteractions(cityRepository)
+                () -> verify(countryRepository).findById(COUNTRY_ID),
+                () -> verify(cityRepository).findById(CITY_ID),
+                () -> verify(cityRepository).save(toChange),
+                () -> verifyNoMoreInteractions(cityRepository, countryRepository)
         );
     }
 
     @Test
     void updateFailIdNotFound() {
-        String newName = "Moskvabad";
+        when(countryRepository.findById(COUNTRY_ID)).thenReturn(Optional.of(RUS));
+        City toChange = new City(CITY_ID, "Moskvabad", RUS, true);
 
         IdNotFoundException exception = assertThrows(IdNotFoundException.class,
-                () -> service.update(CITY_ID, newName));
+                () -> service.update(toChange));
 
         assertAll(
                 () -> assertEquals(CITY_ID_NOT_FOUND_EX_MSG_BEGIN + CITY_ID + ID_NOT_FOUND_EX_MSG_END,
                         exception.getMessage()),
+                () -> verify(countryRepository).findById(COUNTRY_ID),
                 () -> verify(cityRepository).findById(CITY_ID),
                 () -> verifyNoMoreInteractions(cityRepository)
         );
@@ -172,14 +177,17 @@ class CityServiceRestTest {
 
     @Test
     void updateWrongNewNameFail() {
-        String newName = "Moskv@b@d";
+        when(countryRepository.findById(COUNTRY_ID)).thenReturn(Optional.of(RUS));
         when(cityRepository.findById(CITY_ID)).thenReturn(Optional.of(MOS));
+        String newName = "Moskv@b@d";
+        City toChange = new City(CITY_ID, newName, RUS, true);
 
         WrongNameException exception = assertThrows(WrongNameException.class,
-                () -> service.update(CITY_ID, newName));
+                () -> service.update(toChange));
 
         assertAll(
                 () -> assertEquals(WRONG_NAME_EX_MSG + newName, exception.getMessage()),
+                () -> verify(countryRepository).findById(COUNTRY_ID),
                 () -> verify(cityRepository).findById(CITY_ID),
                 () -> verifyNoMoreInteractions(cityRepository)
         );

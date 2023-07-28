@@ -49,10 +49,10 @@ public class CountryServiceRest implements CountryService {
 
     @Override
     public void update(Country country) {
-        checkIdExists(country.getId(), repository, "The country with the ID " + country.getId() + " is not found.");
+        checkIdExists(country.getCountry_id(), repository, "The country with the ID " + country.getCountry_id() + " is not found.");
         checkNameIsWrong(country.getName());
-        repository.save(new Country(country.getId(), country.getName()));
-        logger.info("The country with ID {} was upgraded, new name is {}.", country.getId(), country.getName());
+        repository.save(new Country(country.getCountry_id(), country.getName()));
+        logger.info("The country with ID {} was upgraded, new name is {}.", country.getCountry_id(), country.getName());
     }
 
     @Override

@@ -5,11 +5,11 @@ import com.ghilly.model.City;
 import java.util.List;
 
 public interface CityService {
-    City create(String cityName, int countryId);
+    City create(City city);
 
     City getCity(int cityId);
 
     List<City> getAllCities();
 
-    void update(int cityId, String newName);
+    void update(City city);
 }

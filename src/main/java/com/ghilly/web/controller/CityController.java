@@ -7,9 +7,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 
-@RequestMapping("/countries")
+@RequestMapping("/countries/cities")
 public class CityController {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CityController.class);
@@ -19,31 +20,31 @@ public class CityController {
         this.service = service;
     }
 
-    @PostMapping("/{countryId}/cities")
-    public ResponseEntity<City> create(@RequestBody String cityName, @PathVariable int countryId) {
-        City city = service.create(cityName, countryId);
-        logger.info("The city with the name {} is created.", cityName);
+    @PostMapping("/")
+    public ResponseEntity<City> create(@RequestBody City city) {
+        service.create(city);
+        logger.info("The city with the name {} is created.", city.getName());
         return ResponseEntity.ok().body(city);
     }
 
-    @GetMapping("/cities/{cityId}")
+    @GetMapping("/{cityId}")
     public ResponseEntity<City> getCity(@PathVariable int cityId) {
         City city = service.getCity(cityId);
         logger.info("The city with the ID {} is: {}", cityId, city.getName());
         return ResponseEntity.ok().body(city);
     }
 
-    @GetMapping("/cities/all")
+    @GetMapping("/all")
     public ResponseEntity<List<City>> getAllCities() {
         logger.info("You are getting the list of cities.");
         List<City> allCities = service.getAllCities();
         return ResponseEntity.ok().body(allCities);
     }
 
-    @PutMapping("/cities/{cityId}")
-    public ResponseEntity<City> update(@RequestBody  String newName, @PathVariable int cityId) {
-        service.update(cityId, newName);
-        logger.info("The city name for city ID {} is changing to {}", cityId, newName);
-        return ResponseEntity.ok().body(service.getCity(cityId));
+    @PutMapping("/")
+    public ResponseEntity<City> update(@RequestBody City city) {
+        service.update(city);
+        logger.info("The city name for city ID {} is changing to {}", city.getId(), city.getName());
+        return ResponseEntity.ok().body(service.getCity(city.getId()));
     }
 }
