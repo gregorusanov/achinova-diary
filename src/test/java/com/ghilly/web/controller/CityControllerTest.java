@@ -80,4 +80,13 @@ class CityControllerTest {
         );
     }
 
+    @Test
+    void deleteSuccess() {
+        controller.deleteCity(ID);
+
+        assertAll(
+                () -> verify(service).delete(ID),
+                () -> verifyNoMoreInteractions(service)
+        );
+    }
 }

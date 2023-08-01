@@ -61,6 +61,13 @@ public class CityServiceRest implements CityService {
         logger.info("The city with ID {} was updated, new name is {}.", city.getId(), city.getName());
     }
 
+    @Override
+    public void delete(int cityId) {
+        checkIdExists(cityId, cityRepository, "The city with the ID " + cityId + " is not found.");
+        cityRepository.deleteById(cityId);
+        logger.info("The city with ID {} is deleted", cityId);
+    }
+
 
     private void checkNameIsWrong(String countryName) {
         if (isWrongName(countryName)) {

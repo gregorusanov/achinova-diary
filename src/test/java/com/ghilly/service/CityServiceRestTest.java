@@ -189,8 +189,32 @@ class CityServiceRestTest {
                 () -> assertEquals(WRONG_NAME_EX_MSG + newName, exception.getMessage()),
                 () -> verify(countryRepository).findById(COUNTRY_ID),
                 () -> verify(cityRepository).findById(CITY_ID),
+                () -> verifyNoMoreInteractions(countryRepository, cityRepository)
+        );
+    }
+
+    @Test
+    void deleteSuccess() {
+        when(cityRepository.findById(CITY_ID)).thenReturn(Optional.of(MOS));
+
+        service.delete(CITY_ID);
+
+        assertAll(
+                () -> verify(cityRepository).findById(CITY_ID),
+                () -> verify(cityRepository).deleteById(CITY_ID),
                 () -> verifyNoMoreInteractions(cityRepository)
         );
     }
 
+    @Test
+    void deleteFail() {
+        IdNotFoundException exception = assertThrows(IdNotFoundException.class, () -> service.delete(CITY_ID));
+
+        assertAll(
+                () -> assertEquals(CITY_ID_NOT_FOUND_EX_MSG_BEGIN + CITY_ID + ID_NOT_FOUND_EX_MSG_END,
+                        exception.getMessage()),
+                () -> verify(cityRepository).findById(CITY_ID),
+                () -> verifyNoMoreInteractions(cityRepository)
+        );
+    }
 }

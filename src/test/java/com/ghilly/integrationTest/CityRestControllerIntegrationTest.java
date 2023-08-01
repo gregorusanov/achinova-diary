@@ -19,9 +19,9 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-
 import java.util.Objects;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -32,16 +32,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application.properties")
 public class CityRestControllerIntegrationTest {
+    private static String url = "/countries/cities/";
     @Autowired
     private MockMvc mvc;
-
     @Autowired
     private CountryRepository countryRepository;
-
     @Autowired
     private CityRepository cityRepository;
-
-    private static String url = "/countries/cities/";
 
     @Test
     public void createCityStatusOk200() throws Exception {
@@ -100,7 +97,7 @@ public class CityRestControllerIntegrationTest {
         int cityId = cityRepository.findByName(paris).get().getId();
 
         mvc.perform(MockMvcRequestBuilders
-                        .get(url+ cityId)
+                        .get(url + cityId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -117,7 +114,7 @@ public class CityRestControllerIntegrationTest {
         countryRepository.save(new Country(ger));
 
         mvc.perform(MockMvcRequestBuilders
-                        .get(url+ 30)
+                        .get(url + 30)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof IdNotFoundException))
@@ -182,5 +179,29 @@ public class CityRestControllerIntegrationTest {
 
         cityRepository.deleteAll();
         countryRepository.deleteAll();
+    }
+
+    @Test
+    public void deleteStatusOk200() throws Exception {
+        Country usa = new Country("USA");
+        countryRepository.save(usa);
+        String ny = "New York";
+        cityRepository.save(new City(ny, usa, false));
+        int cityId = cityRepository.findByName(ny).get().getId();
+
+        mvc.perform(MockMvcRequestBuilders
+                        .delete(url + cityId))
+                .andExpect(status().isOk());
+        assertFalse(cityRepository.existsById(cityId));
+
+        cityRepository.deleteAll();
+        countryRepository.deleteAll();
+    }
+
+    @Test
+    public void deleteStatusNotFound404() throws Exception {
+        mvc.perform(MockMvcRequestBuilders
+                        .delete(url + 300))
+                .andExpect(status().isNotFound());
     }
 }
