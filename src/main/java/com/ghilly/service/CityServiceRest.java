@@ -72,7 +72,7 @@ public class CityServiceRest implements CityService {
     @Override
     public List<City> getAllCitiesByCountry(int countryId) {
         checkIdExists(countryId, countryRepository, "The country with the ID " + countryId + " is not found.");
-        List<City> cities =  new ArrayList<>();
+        List<City> cities = new ArrayList<>();
         cityRepository.findAll().forEach(city -> {
             if (city.getCountry().getId() == countryId) {
                 cities.add(city);

@@ -240,7 +240,7 @@ public class CityRestControllerIntegrationTest {
 
     @Test
     public void getAllCitiesByCountryStatusIdNotFound404() throws Exception {
-    mvc.perform(MockMvcRequestBuilders
+        mvc.perform(MockMvcRequestBuilders
                         .get(url + "all/" + 100)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
