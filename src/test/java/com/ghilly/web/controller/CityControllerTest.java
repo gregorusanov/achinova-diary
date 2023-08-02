@@ -52,10 +52,9 @@ class CityControllerTest {
 
     @Test
     void getAllCities() {
-        String sochi = "Sochi";
+        String berlin = "Berlin";
         String spb = "Saint-Petersburg";
-        boolean notCapital = false;
-        List<City> cities = List.of(CITY, new City(sochi, RUS, notCapital), new City(spb, RUS, notCapital));
+        List<City> cities = List.of(CITY, new City(berlin, new Country("Germany"), true), new City(spb, RUS, false));
         when(service.getAllCities()).thenReturn(cities);
 
         controller.getAllCities();
@@ -86,6 +85,21 @@ class CityControllerTest {
 
         assertAll(
                 () -> verify(service).delete(ID),
+                () -> verifyNoMoreInteractions(service)
+        );
+    }
+
+    @Test
+    void getAllCitiesByCountry() {
+        String sochi = "Sochi";
+        String spb = "Saint-Petersburg";
+        List<City> cities = List.of(CITY, new City(sochi, RUS), new City(spb, RUS));
+        when(service.getAllCitiesByCountry(ID)).thenReturn(cities);
+
+        controller.getAllCitiesByCountry(ID);
+
+        assertAll(
+                () -> verify(service).getAllCitiesByCountry(ID),
                 () -> verifyNoMoreInteractions(service)
         );
     }

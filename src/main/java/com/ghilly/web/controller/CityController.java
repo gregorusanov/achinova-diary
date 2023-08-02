@@ -7,7 +7,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Objects;
 
 
 @RequestMapping("/countries/cities")
@@ -52,5 +51,12 @@ public class CityController {
     public ResponseEntity<String> deleteCity(@PathVariable int cityId) {
         service.delete(cityId);
         return ResponseEntity.ok().body("The city with the ID " + cityId + " is deleted");
+    }
+
+    @GetMapping("/all/{countryId}")
+    public ResponseEntity<List<City>> getAllCitiesByCountry(@PathVariable int countryId) {
+        logger.info("The ID {} is received, connecting to the service.", countryId);
+        List<City> allCitiesByCountry = service.getAllCitiesByCountry(countryId);
+        return ResponseEntity.ok().body(allCitiesByCountry);
     }
 }

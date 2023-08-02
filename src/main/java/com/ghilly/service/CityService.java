@@ -14,4 +14,5 @@ public interface CityService {
     void update(City city);
 
     void delete(int cityId);
+    List<City> getAllCitiesByCountry(int countryId);
 }

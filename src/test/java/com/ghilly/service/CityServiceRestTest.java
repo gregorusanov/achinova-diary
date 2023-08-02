@@ -217,4 +217,37 @@ class CityServiceRestTest {
                 () -> verifyNoMoreInteractions(cityRepository)
         );
     }
+
+    @Test
+    void getAllCitiesByCountrySuccess() {
+        String paris = "Paris";
+        String berlin = "Berlin";
+        String spb = "Saint-Petersburg";
+        List<City> cities = List.of(MOS, new City(paris, new Country("France"), true), new City(spb, RUS),
+                new City(berlin, new Country("Germany"), true));
+        when(countryRepository.findById(COUNTRY_ID)).thenReturn(Optional.of(RUS));
+        when(cityRepository.findAll()).thenReturn(cities);
+
+        List<City> allCitiesByCountry = service.getAllCitiesByCountry(COUNTRY_ID);
+
+        assertAll(
+                () -> assertEquals(2, allCitiesByCountry.size()),
+                () -> assertEquals(allCitiesByCountry.get(0).getName(), MOSCOW),
+                () -> assertEquals(allCitiesByCountry.get(1).getName(), spb),
+                () -> verify(countryRepository, times(2)).findById(COUNTRY_ID),
+                () -> verify(cityRepository).findAll(),
+                () -> verifyNoMoreInteractions(countryRepository, cityRepository)
+        );
+    }
+
+    @Test
+    void getAllCitiesByCountryFailIdNotFound() {
+        IdNotFoundException e = assertThrows(IdNotFoundException.class, () -> service.getAllCitiesByCountry(5));
+
+        assertAll(
+                () -> assertEquals(COUNTRY_ID_NOT_FOUND_EX_MSG_BEGIN + 5 + ID_NOT_FOUND_EX_MSG_END, e.getMessage()),
+                () -> verify(countryRepository).findById(5),
+                () -> verifyNoMoreInteractions(countryRepository)
+        );
+    }
 }

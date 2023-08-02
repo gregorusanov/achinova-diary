@@ -8,6 +8,7 @@ import com.ghilly.repository.CountryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.ghilly.utils.ValidationUtils.checkIdExists;
@@ -66,6 +67,19 @@ public class CityServiceRest implements CityService {
         checkIdExists(cityId, cityRepository, "The city with the ID " + cityId + " is not found.");
         cityRepository.deleteById(cityId);
         logger.info("The city with ID {} is deleted", cityId);
+    }
+
+    @Override
+    public List<City> getAllCitiesByCountry(int countryId) {
+        checkIdExists(countryId, countryRepository, "The country with the ID " + countryId + " is not found.");
+        List<City> cities =  new ArrayList<>();
+        cityRepository.findAll().forEach(city -> {
+            if (city.getCountry().getId() == countryId) {
+                cities.add(city);
+            }
+        });
+        logger.info("The city list for {} is received: {}", countryRepository.findById(countryId).get().getName(), cities);
+        return cities;
     }
 
     private void checkNameIsWrong(City city) {

@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application.properties")
 public class CityRestControllerIntegrationTest {
-    private static String url = "/countries/cities/";
+    private static final String url = "/countries/cities/";
     @Autowired
     private MockMvc mvc;
     @Autowired
@@ -202,6 +202,47 @@ public class CityRestControllerIntegrationTest {
     public void deleteStatusNotFound404() throws Exception {
         mvc.perform(MockMvcRequestBuilders
                         .delete(url + 300))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void getAllCitiesByCountryStatusOk200() throws Exception {
+        String mun = "Munich";
+        String koln = "Cologne";
+        String rus = "Russia";
+        String ger = "Germany";
+        String fr = "France";
+        Country russia = new Country(rus);
+        countryRepository.save(russia);
+        cityRepository.save(new City("Saint-Petersburg", russia));
+        Country germany = new Country(ger);
+        countryRepository.save(germany);
+        cityRepository.save(new City(mun, germany));
+        cityRepository.save(new City(koln, germany));
+        Country france = new Country(fr);
+        countryRepository.save(france);
+        cityRepository.save(new City("Paris", france, true));
+        int gerId = countryRepository.findByName(ger).get().getId();
+
+        mvc.perform(MockMvcRequestBuilders
+                        .get(url + "all/" + gerId)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].name").value(mun))
+                .andExpect(jsonPath("$[1].name").value(koln));
+        assertTrue(cityRepository.findByName(mun).isPresent());
+        assertTrue(cityRepository.findByName(koln).isPresent());
+
+        cityRepository.deleteAll();
+        countryRepository.deleteAll();
+    }
+
+    @Test
+    public void getAllCitiesByCountryStatusIdNotFound404() throws Exception {
+    mvc.perform(MockMvcRequestBuilders
+                        .get(url + "all/" + 100)
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
     }
 }
