@@ -23,15 +23,26 @@ public class City implements Serializable {
     @JoinColumn(name = "country_id", nullable = false)
     private Country country;
 
+
+    @Column(name = "capital", columnDefinition = "boolean default false")
+    private boolean capital;
+
     public City(int id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public City(int id, String name, Country country) {
+    public City(int id, String name, Country country, boolean capital) {
         this.id = id;
         this.name = name;
         this.country = country;
+        this.capital = capital;
+    }
+
+    public City(String name, Country country, boolean capital) {
+        this.name = name;
+        this.country = country;
+        this.capital = capital;
     }
 
     public City(String name, Country country) {
@@ -67,6 +78,14 @@ public class City implements Serializable {
         this.country = country;
     }
 
+    public boolean isCapital() {
+        return capital;
+    }
+
+    public void setCapital(boolean capital) {
+        this.capital = capital;
+    }
+
     @Override
     public int hashCode() {
         return Objects.hash(id, name, country);
@@ -80,9 +99,13 @@ public class City implements Serializable {
         return id == city.id && name.equals(city.name) && country == city.country;
     }
 
-
     @Override
     public String toString() {
-        return "\n City name = " + name + ", city id = " + id + ", country name = " + country.getName();
+        return "City{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", country=" + country +
+                ", capital=" + capital +
+                '}';
     }
 }

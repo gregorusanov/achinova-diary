@@ -3,7 +3,6 @@ package com.ghilly.service;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.exception.WrongNameException;
 import com.ghilly.model.City;
-import com.ghilly.model.Country;
 import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.CountryRepository;
 import org.slf4j.Logger;
@@ -26,14 +25,15 @@ public class CityServiceRest implements CityService {
     }
 
     @Override
-    public City create(String cityName, int countryId) {
-        checkIdExists(countryId, countryRepository, "The country with the ID " + countryId + " is not found.");
-        checkNameIsWrong(cityName);
-        if (cityRepository.findByName(cityName).isPresent())
-            throw new NameAlreadyExistsException("The city with the name " + cityName + " already exists.");
-        Country country = countryRepository.findById(countryId).get();
-        City city = cityRepository.save(new City(cityName, country));
-        logger.info("The city with the name {} is created, country name is {}", cityName, country);
+    public City create(City city) {
+        checkIdExists(city.getCountry().getCountry_id(), countryRepository, "The country with the ID " +
+                city.getCountry().getCountry_id() + " is not found.");
+        checkNameIsWrong(city.getName());
+        if (cityRepository.findByName(city.getName()).isPresent())
+            throw new NameAlreadyExistsException("The city with the name " + city.getName() + " already exists.");
+        cityRepository.save(city);
+        logger.info("The city with the name {} is created, country name is {}", city.getName(),
+                city.getCountry().getName());
         return city;
     }
 
@@ -51,13 +51,14 @@ public class CityServiceRest implements CityService {
     }
 
     @Override
-    public void update(int cityId, String newName) {
-        checkIdExists(cityId, cityRepository, "The city with the ID " + cityId + " is not found.");
-        checkNameIsWrong(newName);
-        Country country = cityRepository.findById(cityId).get().getCountry();
-        City city = new City(cityId, newName, country);
+    public void update(City city) {
+        checkIdExists(city.getCountry().getCountry_id(), countryRepository, "The country with the ID " +
+                city.getCountry().getCountry_id() + " is not found.");
+        checkIdExists(city.getId(), cityRepository, "The city with the ID " +
+                city.getId() + " is not found.");
+        checkNameIsWrong(city.getName());
         cityRepository.save(city);
-        logger.info("The city with ID {} was updated, new name is {}.", cityId, newName);
+        logger.info("The city with ID {} was updated, new name is {}.", city.getId(), city.getName());
     }
 
 

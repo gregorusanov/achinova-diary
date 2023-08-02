@@ -7,7 +7,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
-import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,7 +16,7 @@ class CityControllerTest {
     private static final int ID = 1;
     private static final String CITY_NAME = "Moscow";
     private static final Country RUS = new Country(ID, "Russia");
-    private static final City CITY = new City(CITY_NAME, RUS);
+    private static final City CITY = new City(CITY_NAME, RUS, true);
     private CityServiceRest service;
     private CityController controller;
 
@@ -29,10 +28,10 @@ class CityControllerTest {
 
     @Test
     void createCity() {
-        controller.create(CITY_NAME, ID);
+        controller.create(CITY);
 
         assertAll(
-                () -> verify(service).create(CITY_NAME, ID),
+                () -> verify(service).create(CITY),
                 () -> verifyNoMoreInteractions(service)
         );
     }
@@ -55,7 +54,8 @@ class CityControllerTest {
     void getAllCities() {
         String sochi = "Sochi";
         String spb = "Saint-Petersburg";
-        List<City> cities = List.of(CITY, new City(sochi,RUS), new City(spb, RUS));
+        boolean notCapital = false;
+        List<City> cities = List.of(CITY, new City(sochi, RUS, notCapital), new City(spb, RUS, notCapital));
         when(service.getAllCities()).thenReturn(cities);
 
         controller.getAllCities();
@@ -69,11 +69,12 @@ class CityControllerTest {
     @Test
     void updateSuccess() {
         String newName = "Moskvabad";
+        City toChange = new City(ID, newName, RUS, true);
 
-        controller.update(newName, ID);
+        controller.update(toChange);
 
         assertAll(
-                () -> verify(service).update(ID, newName),
+                () -> verify(service).update(toChange),
                 () -> verify(service).getCity(ID),
                 () -> verifyNoMoreInteractions(service)
         );

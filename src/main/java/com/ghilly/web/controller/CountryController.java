@@ -46,7 +46,7 @@ public class CountryController {
     public ResponseEntity<Country> update(@PathVariable int countryId, @RequestBody String newName) {
         Country country = new Country(countryId, newName);
         service.update(country);
-        logger.info("The country name for ID {} was changed to {}", country.getId(), country.getName());
+        logger.info("The country name for ID {} was changed to {}", country.getCountry_id(), country.getName());
         return ResponseEntity.ok().body(service.getCountryById(countryId));
     }
 
