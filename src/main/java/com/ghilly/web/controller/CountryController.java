@@ -45,8 +45,8 @@ public class CountryController {
     @PutMapping("/")
     public ResponseEntity<Country> update(@RequestBody Country country) {
         service.update(country);
-        logger.info("The country name for ID {} was changed to {}", country.getCountry_id(), country.getName());
-        return ResponseEntity.ok().body(service.getCountryById(country.getCountry_id()));
+        logger.info("The country name for ID {} was changed to {}", country.getId(), country.getName());
+        return ResponseEntity.ok().body(service.getCountryById(country.getId()));
     }
 
     @DeleteMapping("/{countryId}")

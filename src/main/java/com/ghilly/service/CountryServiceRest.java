@@ -24,12 +24,13 @@ public class CountryServiceRest implements CountryService {
 
     @Override
     public Country create(Country country) {
-        checkNameIsWrong(country.getName());
-        if (repository.findByName(country.getName()).isPresent()) {
-            throw new NameAlreadyExistsException("The country with this name " + country.getName() + " already exists.");
+        checkNameIsWrong(country);
+        String name = country.getName();
+        if (repository.findByName(name).isPresent()) {
+            throw new NameAlreadyExistsException("The country with this name " + name + " already exists.");
         }
         repository.save(country);
-        logger.info("The country {} was added by service.", country.getName());
+        logger.info("The country {} was added by service.", name);
         return country;
     }
 
@@ -49,10 +50,11 @@ public class CountryServiceRest implements CountryService {
 
     @Override
     public void update(Country country) {
-        checkIdExists(country.getCountry_id(), repository, "The country with the ID " + country.getCountry_id() + " is not found.");
-        checkNameIsWrong(country.getName());
-        repository.save(new Country(country.getCountry_id(), country.getName()));
-        logger.info("The country with ID {} was upgraded, new name is {}.", country.getCountry_id(), country.getName());
+        int id = country.getId();
+        checkIdExists(id, repository, "The country with the ID " + id + " is not found.");
+        checkNameIsWrong(country);
+        repository.save(country);
+        logger.info("The country with ID {} was upgraded, new name is {}.", id, country.getName());
     }
 
     @Override
@@ -62,10 +64,11 @@ public class CountryServiceRest implements CountryService {
         logger.info("The country with ID {} was deleted", countryId);
     }
 
-    private void checkNameIsWrong(String countryName) {
-        if (isWrongName(countryName)) {
+    private void checkNameIsWrong(Country country) {
+        String name = country.getName();
+        if (isWrongName(name)) {
             throw new WrongNameException("Warning! \n The legal country name consists of letters that could be " +
-                    "separated by one space or hyphen. \n The name is not allowed here: " + countryName);
+                    "separated by one space or hyphen. \n The name is not allowed here: " + name);
         }
     }
 }
