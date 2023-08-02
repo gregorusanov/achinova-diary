@@ -55,4 +55,11 @@ public class CountryController {
         logger.info("The country with ID {} was deleted.", countryId);
         return ResponseEntity.ok().body("The country with ID " + countryId + " was deleted.");
     }
+
+    @GetMapping("/city/{cityId}")
+    public ResponseEntity<Country> getCountryByCityId(@PathVariable int cityId) {
+        logger.info("Getting the country by the city ID {} ", cityId);
+        Country country = service.getCountryByCityId(cityId);
+        return ResponseEntity.ok().body(country);
+    }
 }

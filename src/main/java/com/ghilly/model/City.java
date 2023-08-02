@@ -27,11 +27,6 @@ public class City implements Serializable {
     @Column(name = "capital", columnDefinition = "boolean default false")
     private boolean capital;
 
-    public City(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
     public City(int id, String name, Country country, boolean capital) {
         this.id = id;
         this.name = name;

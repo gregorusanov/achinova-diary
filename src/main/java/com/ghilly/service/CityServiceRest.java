@@ -28,7 +28,7 @@ public class CityServiceRest implements CityService {
     public City create(City city) {
         int countryId = city.getCountry().getId();
         String name = city.getName();
-        checkIdExists(countryId, countryRepository, "The country with the ID " + countryId + " is not found.");
+        checkIdExists(countryId, countryRepository, "The country");
         checkNameIsWrong(city);
         if (cityRepository.findByName(name).isPresent())
             throw new NameAlreadyExistsException("The city with the name " + name + " already exists.");
@@ -39,7 +39,7 @@ public class CityServiceRest implements CityService {
 
     @Override
     public City getCity(int cityId) {
-        checkIdExists(cityId, cityRepository, "The city with the ID " + cityId + " is not found.");
+        checkIdExists(cityId, cityRepository, "The city");
         return cityRepository.findById(cityId).get();
     }
 
@@ -54,8 +54,8 @@ public class CityServiceRest implements CityService {
     public void update(City city) {
         int countryId = city.getCountry().getId();
         int cityId = city.getId();
-        checkIdExists(countryId, countryRepository, "The country with the ID " + countryId + " is not found.");
-        checkIdExists(cityId, cityRepository, "The city with the ID " + cityId + " is not found.");
+        checkIdExists(countryId, countryRepository, "The country");
+        checkIdExists(cityId, cityRepository, "The city");
         checkNameIsWrong(city);
         cityRepository.save(city);
         logger.info("The city with ID {} was updated, new name is {}.", cityId, city.getName());
@@ -63,7 +63,7 @@ public class CityServiceRest implements CityService {
 
     @Override
     public void delete(int cityId) {
-        checkIdExists(cityId, cityRepository, "The city with the ID " + cityId + " is not found.");
+        checkIdExists(cityId, cityRepository, "The city");
         cityRepository.deleteById(cityId);
         logger.info("The city with ID {} is deleted", cityId);
     }

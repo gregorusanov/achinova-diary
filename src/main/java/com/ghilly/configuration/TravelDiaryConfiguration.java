@@ -13,8 +13,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class TravelDiaryConfiguration {
     @Bean
-    public CountryServiceRest countryService(CountryRepository repository) {
-        return new CountryServiceRest(repository);
+    public CountryServiceRest countryService(CountryRepository countryRepository, CityRepository cityRepository) {
+        return new CountryServiceRest(countryRepository, cityRepository);
     }
 
     @Bean
