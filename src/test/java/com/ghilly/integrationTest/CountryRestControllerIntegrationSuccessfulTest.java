@@ -43,7 +43,7 @@ public class CountryRestControllerIntegrationSuccessfulTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.country_id").exists());
+                .andExpect(jsonPath("$.id").exists());
         assertTrue(repository.findByName(jp).isPresent());
 
         repository.deleteAll();
@@ -79,7 +79,7 @@ public class CountryRestControllerIntegrationSuccessfulTest {
     public void getCountryStatusOk200() throws Exception {
         String cn = "China";
         repository.save(new Country(cn));
-        int id = repository.findByName(cn).get().getCountry_id();
+        int id = repository.findByName(cn).get().getId();
 
         mvc.perform(MockMvcRequestBuilders
                         .get("/countries/{countryId}", id)
@@ -98,7 +98,7 @@ public class CountryRestControllerIntegrationSuccessfulTest {
     public void updateCountryStatusOk200() throws Exception {
         Country country = new Country("USSR");
         repository.save(country);
-        int id = repository.findByName("USSR").get().getCountry_id();
+        int id = repository.findByName("USSR").get().getId();
         String newName = "Russia";
         Country toUpdate = new Country(id, newName);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -121,7 +121,7 @@ public class CountryRestControllerIntegrationSuccessfulTest {
     public void deleteCountryStatusOk200() throws Exception {
         String gr = "Greece";
         repository.save(new Country(gr));
-        int id = repository.findByName(gr).get().getCountry_id();
+        int id = repository.findByName(gr).get().getId();
 
         mvc.perform(MockMvcRequestBuilders
                         .delete("/countries/{countryId}", id))

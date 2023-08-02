@@ -47,4 +47,10 @@ public class CityController {
         logger.info("The city name for city ID {} is changing to {}", city.getId(), city.getName());
         return ResponseEntity.ok().body(service.getCity(city.getId()));
     }
+
+    @DeleteMapping("/{cityId}")
+    public ResponseEntity<String> deleteCity(@PathVariable int cityId) {
+        service.delete(cityId);
+        return ResponseEntity.ok().body("The city with the ID " + cityId + " is deleted");
+    }
 }

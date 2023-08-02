@@ -26,14 +26,14 @@ public class CityServiceRest implements CityService {
 
     @Override
     public City create(City city) {
-        checkIdExists(city.getCountry().getCountry_id(), countryRepository, "The country with the ID " +
-                city.getCountry().getCountry_id() + " is not found.");
-        checkNameIsWrong(city.getName());
-        if (cityRepository.findByName(city.getName()).isPresent())
-            throw new NameAlreadyExistsException("The city with the name " + city.getName() + " already exists.");
+        int countryId = city.getCountry().getId();
+        String name = city.getName();
+        checkIdExists(countryId, countryRepository, "The country with the ID " + countryId + " is not found.");
+        checkNameIsWrong(city);
+        if (cityRepository.findByName(name).isPresent())
+            throw new NameAlreadyExistsException("The city with the name " + name + " already exists.");
         cityRepository.save(city);
-        logger.info("The city with the name {} is created, country name is {}", city.getName(),
-                city.getCountry().getName());
+        logger.info("The city with the name {} is created, country name is {}", name, city.getCountry().getName());
         return city;
     }
 
@@ -52,20 +52,27 @@ public class CityServiceRest implements CityService {
 
     @Override
     public void update(City city) {
-        checkIdExists(city.getCountry().getCountry_id(), countryRepository, "The country with the ID " +
-                city.getCountry().getCountry_id() + " is not found.");
-        checkIdExists(city.getId(), cityRepository, "The city with the ID " +
-                city.getId() + " is not found.");
-        checkNameIsWrong(city.getName());
+        int countryId = city.getCountry().getId();
+        int cityId = city.getId();
+        checkIdExists(countryId, countryRepository, "The country with the ID " + countryId + " is not found.");
+        checkIdExists(cityId, cityRepository, "The city with the ID " + cityId + " is not found.");
+        checkNameIsWrong(city);
         cityRepository.save(city);
-        logger.info("The city with ID {} was updated, new name is {}.", city.getId(), city.getName());
+        logger.info("The city with ID {} was updated, new name is {}.", cityId, city.getName());
     }
 
+    @Override
+    public void delete(int cityId) {
+        checkIdExists(cityId, cityRepository, "The city with the ID " + cityId + " is not found.");
+        cityRepository.deleteById(cityId);
+        logger.info("The city with ID {} is deleted", cityId);
+    }
 
-    private void checkNameIsWrong(String countryName) {
-        if (isWrongName(countryName)) {
+    private void checkNameIsWrong(City city) {
+        String name = city.getName();
+        if (isWrongName(name)) {
             throw new WrongNameException("Warning! \n The legal country name consists of letters that could be " +
-                    "separated by one space or hyphen. \n The name is not allowed here: " + countryName);
+                    "separated by one space or hyphen. \n The name is not allowed here: " + name);
         }
     }
 }

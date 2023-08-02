@@ -13,14 +13,14 @@ public class Country implements Serializable {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "countries_seq")
     @SequenceGenerator(name = "countries_seq", sequenceName = "countries_id_seq", allocationSize = 1)
     @Column(name = "country_id")
-    private int country_id;
+    private int id;
 
     @Column(name = "country")
     @NotBlank(message = "The country should have a name!")
     private String name;
 
-    public Country(int country_id, String name) {
-        this.country_id = country_id;
+    public Country(int id, String name) {
+        this.id = id;
         this.name = name;
     }
 
@@ -32,8 +32,8 @@ public class Country implements Serializable {
 
     }
 
-    public int getCountry_id() {
-        return country_id;
+    public int getId() {
+        return id;
     }
 
     public String getName() {
@@ -45,18 +45,18 @@ public class Country implements Serializable {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Country country = (Country) o;
-        return country_id == country.country_id && name.equals(country.name);
+        return id == country.id && name.equals(country.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(country_id, name);
+        return Objects.hash(id, name);
     }
 
     @Override
     public String toString() {
         return "Country{" +
-                "id=" + country_id +
+                "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
     }
