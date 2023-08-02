@@ -27,10 +27,10 @@ class CountryControllerTest {
 
     @Test
     void createCountry() {
-        controller.create(NAME);
+        controller.create(USSR);
 
         assertAll(
-                () -> verify(service).create(NAME),
+                () -> verify(service).create(USSR),
                 () -> verifyNoMoreInteractions(service)
         );
     }
@@ -66,7 +66,7 @@ class CountryControllerTest {
     void updateCountry() {
         String newName = "Russia";
 
-        controller.update(ID, newName);
+        controller.update(new Country(ID, newName));
 
         assertAll(
                () -> verify(service).update(new Country(ID, newName)),

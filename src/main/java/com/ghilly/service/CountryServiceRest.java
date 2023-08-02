@@ -23,13 +23,13 @@ public class CountryServiceRest implements CountryService {
     }
 
     @Override
-    public Country create(String countryName) {
-        checkNameIsWrong(countryName);
-        if (repository.findByName(countryName).isPresent()) {
-            throw new NameAlreadyExistsException("The country with this name " + countryName + " already exists.");
+    public Country create(Country country) {
+        checkNameIsWrong(country.getName());
+        if (repository.findByName(country.getName()).isPresent()) {
+            throw new NameAlreadyExistsException("The country with this name " + country.getName() + " already exists.");
         }
-        Country country = repository.save(new Country(countryName));
-        logger.info("The country {} was added by service.", countryName);
+        repository.save(country);
+        logger.info("The country {} was added by service.", country.getName());
         return country;
     }
 

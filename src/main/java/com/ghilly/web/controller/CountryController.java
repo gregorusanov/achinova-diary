@@ -22,9 +22,9 @@ public class CountryController {
 
 
     @PostMapping("/")
-    public ResponseEntity<Country> create(@RequestBody String countryName) {
-        Country country = service.create(countryName);
-        logger.info("{} was created", countryName);
+    public ResponseEntity<Country> create(@RequestBody Country country) {
+        service.create(country);
+        logger.info("{} was created", country.getName());
         return ResponseEntity.ok().body(country);
     }
 
@@ -42,12 +42,11 @@ public class CountryController {
         return ResponseEntity.ok().body(country);
     }
 
-    @PutMapping("/{countryId}")
-    public ResponseEntity<Country> update(@PathVariable int countryId, @RequestBody String newName) {
-        Country country = new Country(countryId, newName);
+    @PutMapping("/")
+    public ResponseEntity<Country> update(@RequestBody Country country) {
         service.update(country);
         logger.info("The country name for ID {} was changed to {}", country.getCountry_id(), country.getName());
-        return ResponseEntity.ok().body(service.getCountryById(countryId));
+        return ResponseEntity.ok().body(service.getCountryById(country.getCountry_id()));
     }
 
     @DeleteMapping("/{countryId}")

@@ -1,5 +1,6 @@
 package com.ghilly.integrationTest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ghilly.model.Country;
 import com.ghilly.repository.CountryRepository;
 import org.junit.Test;
@@ -33,10 +34,14 @@ public class CountryRestControllerIntegrationSuccessfulTest {
     @Test
     public void createCountryStatusOk200() throws Exception {
         String jp = "Japan";
+        Country japan = new Country(jp);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(japan);
 
         mvc.perform(MockMvcRequestBuilders
                         .post("/countries/")
-                        .content(jp))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.country_id").exists());
         assertTrue(repository.findByName(jp).isPresent());
@@ -91,14 +96,18 @@ public class CountryRestControllerIntegrationSuccessfulTest {
 
     @Test
     public void updateCountryStatusOk200() throws Exception {
-        String rus = "USSR";
+        Country country = new Country("USSR");
+        repository.save(country);
+        int id = repository.findByName("USSR").get().getCountry_id();
         String newName = "Russia";
-        repository.save(new Country(rus));
-        int id = repository.findByName(rus).get().getCountry_id();
+        Country toUpdate = new Country(id, newName);
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(toUpdate);
 
         mvc.perform(MockMvcRequestBuilders
-                        .put("/countries/{countryId}", id)
-                        .content(newName))
+                        .put("/countries/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
                 .andDo(System.out::println)
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
