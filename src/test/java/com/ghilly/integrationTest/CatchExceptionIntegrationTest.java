@@ -63,7 +63,7 @@ public class CatchExceptionIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof IdNotFoundException))
-                .andExpect(result -> assertEquals("The country with the ID " + id + " is not found.",
+                .andExpect(result -> assertEquals("The country ID " + id + " is not found.",
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
 
         repository.deleteAll();
@@ -82,7 +82,7 @@ public class CatchExceptionIntegrationTest {
                         .content(json))
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof WrongNameException))
-                .andExpect(result -> assertEquals("Warning! \n The legal country name consists of letters " +
+                .andExpect(result -> assertEquals("Warning! \n The legal name consists of letters " +
                                 "that could be separated by one space or hyphen. \n The name is not allowed here: " +
                                 wrongName, Objects.requireNonNull(result.getResolvedException()).getMessage()));
         repository.deleteAll();

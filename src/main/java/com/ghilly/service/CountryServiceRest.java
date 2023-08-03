@@ -1,7 +1,6 @@
 package com.ghilly.service;
 
 import com.ghilly.exception.NameAlreadyExistsException;
-import com.ghilly.exception.WrongNameException;
 import com.ghilly.model.Country;
 import com.ghilly.repository.CountryRepository;
 import org.slf4j.Logger;
@@ -11,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.ghilly.utils.ValidationUtils.checkIdExists;
-import static com.ghilly.utils.ValidationUtils.isWrongName;
+import static com.ghilly.utils.ValidationUtils.checkNameIsWrong;
 
 public class CountryServiceRest implements CountryService {
 
@@ -24,7 +23,7 @@ public class CountryServiceRest implements CountryService {
 
     @Override
     public Country create(Country country) {
-        checkNameIsWrong(country);
+        checkNameIsWrong(country.getName());
         String name = country.getName();
         if (repository.findByName(name).isPresent()) {
             throw new NameAlreadyExistsException("The country with this name " + name + " already exists.");
@@ -44,31 +43,23 @@ public class CountryServiceRest implements CountryService {
 
     @Override
     public Country getCountryById(int countryId) {
-        checkIdExists(countryId, repository, "The country with the ID " + countryId + " is not found.");
+        checkIdExists(countryId, repository, "The country ID ");
         return repository.findById(countryId).get();
     }
 
     @Override
     public void update(Country country) {
         int id = country.getId();
-        checkIdExists(id, repository, "The country with the ID " + id + " is not found.");
-        checkNameIsWrong(country);
+        checkIdExists(id, repository, "The country ID ");
+        checkNameIsWrong(country.getName());
         repository.save(country);
         logger.info("The country with ID {} was upgraded, new name is {}.", id, country.getName());
     }
 
     @Override
     public void delete(int countryId) {
-        checkIdExists(countryId, repository, "The country with the ID " + countryId + " is not found.");
+        checkIdExists(countryId, repository, "The country ID ");
         repository.deleteById(countryId);
         logger.info("The country with ID {} was deleted", countryId);
-    }
-
-    private void checkNameIsWrong(Country country) {
-        String name = country.getName();
-        if (isWrongName(name)) {
-            throw new WrongNameException("Warning! \n The legal country name consists of letters that could be " +
-                    "separated by one space or hyphen. \n The name is not allowed here: " + name);
-        }
     }
 }

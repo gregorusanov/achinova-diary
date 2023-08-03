@@ -1,8 +1,9 @@
-package com.ghilly.web;
+package com.ghilly.web.handler;
 
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.exception.WrongNameException;
+import com.ghilly.web.handler.ErrorHandler;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

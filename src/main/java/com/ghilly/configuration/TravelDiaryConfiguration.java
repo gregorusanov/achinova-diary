@@ -7,6 +7,7 @@ import com.ghilly.web.controller.CountryController;
 import com.ghilly.repository.CountryRepository;
 import com.ghilly.service.CountryService;
 import com.ghilly.service.CountryServiceRest;
+import com.ghilly.web.handler.CityHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -23,12 +24,18 @@ public class TravelDiaryConfiguration {
     }
 
     @Bean
-    public CityServiceRest cityService(CityRepository cityRepository, CountryRepository countryRepository) {
-        return new CityServiceRest(cityRepository, countryRepository);
+    public CityServiceRest cityService(CityRepository cityRepository) {
+        return new CityServiceRest(cityRepository);
     }
 
     @Bean
-    public CityController cityController(CityServiceRest service) {
-        return new CityController(service);
+    public CityHandler cityHandler(CityServiceRest cityServiceRest, CityRepository cityRepository, CountryRepository
+            countryRepository) {
+        return new CityHandler(cityServiceRest, cityRepository, countryRepository);
+    }
+
+    @Bean
+    public CityController cityController(CityHandler cityHandler) {
+        return new CityController(cityHandler);
     }
 }

@@ -18,8 +18,8 @@ class CountryServiceRestTest {
     private static final String NAME = "USSR";
     private static final int ID = 1;
     private static final Country USSR = new Country(ID, NAME);
-    private final String idNotFoundExMsg = "The country with the ID " + ID + " is not found.";
-    private final String wrongNameExMsg = "Warning! \n The legal country name consists of letters that could be separated " +
+    private final String idNotFoundExMsg = "The country ID " + ID + " is not found.";
+    private final String wrongNameExMsg = "Warning! \n The legal name consists of letters that could be separated " +
             "by one space or hyphen. \n The name is not allowed here: ";
     private CountryRepository repository;
     private CountryServiceRest service;
