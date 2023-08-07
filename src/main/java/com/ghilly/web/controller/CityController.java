@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 
-@RequestMapping("/cities")
+@RequestMapping("/countries")
 public class CityController {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CityController.class);
@@ -20,36 +20,37 @@ public class CityController {
         this.cityHandler = cityHandler;
     }
 
-    @PostMapping("/country_id/{countryId}")
+    @PostMapping("/{countryId}/cities")
     public ResponseEntity<CityDAO> create(@RequestBody City city, @PathVariable int countryId) {
         logger.info("The data are received from the user.");
         CityDAO cityDAO = cityHandler.create(city, countryId);
         return ResponseEntity.ok().body(cityDAO);
     }
 
-    @GetMapping("/city_id/{cityId}")
+    @GetMapping("/all/cities/{cityId}")
     public ResponseEntity<CityDAO> getCity(@PathVariable int cityId) {
-        logger.info("Data processing.");
+        logger.info("The data are received from the user.");
         CityDAO cityDAO = cityHandler.getCity(cityId);
         return ResponseEntity.ok().body(cityDAO);
     }
 
-    @GetMapping("/all")
+    @GetMapping("/all/cities/all")
     public ResponseEntity<List<CityDAO>> getAllCities() {
         logger.info("Data processing.");
         List<CityDAO> allCities = cityHandler.getAllCities();
         return ResponseEntity.ok().body(allCities);
     }
 
-    @PutMapping("/city_id/{cityId}")
+    @PutMapping("/all/cities/{cityId}")
     public ResponseEntity<CityDAO> update(@RequestBody City city, @PathVariable int cityId) {
         logger.info("The data are received from the user.");
         CityDAO cityDAO = cityHandler.update(city, cityId);
         return ResponseEntity.ok().body(cityDAO);
     }
 
-    @DeleteMapping("/city_id/{cityId}")
+    @DeleteMapping("/all/cities/{cityId}")
     public ResponseEntity<String> deleteCity(@PathVariable int cityId) {
+        logger.info("The data are received from the user.");
         cityHandler.delete(cityId);
         return ResponseEntity.ok().body("The city with the ID " + cityId + " is deleted");
     }

@@ -2,7 +2,7 @@ package com.ghilly.web.controller;
 
 import com.ghilly.model.City;
 import com.ghilly.model.entity.CityDAO;
-import com.ghilly.model.Country;
+import com.ghilly.model.entity.CountryDAO;
 import com.ghilly.web.handler.CityHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,13 +13,13 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-class CityDAOControllerTest {
+class CityControllerTest {
     private static final int COUNTRY_ID = 1;
     private static final int CITY_ID = 9;
     private static final String CITY_NAME = "Moscow";
-    private static final Country RUS = new Country(COUNTRY_ID, "Russia");
-    private static final City CITY = new City(CITY_NAME);
+    private static final CountryDAO RUS = new CountryDAO(COUNTRY_ID, "Russia");
     private static final CityDAO CITY_DAO = new CityDAO(CITY_NAME, RUS, true);
+    private static final City CITY = new City(CITY_NAME);
     private CityHandler handler;
     private CityController controller;
 

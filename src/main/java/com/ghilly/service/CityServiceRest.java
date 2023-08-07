@@ -12,15 +12,15 @@ public class CityServiceRest implements CityService {
     private static final Logger logger = LoggerFactory.getLogger(CityServiceRest.class);
     private final CityRepository cityRepository;
 
-    public CityServiceRest(CityRepository repository) {
-        this.cityRepository = repository;
+    public CityServiceRest(CityRepository cityRepository) {
+        this.cityRepository = cityRepository;
     }
 
     @Override
     public CityDAO create(CityDAO cityDAO) {
-        cityRepository.save(cityDAO);
-        logger.info("The city {} is created, the country is {}", cityDAO.getName(), cityDAO.getCountry().getName());
-        return cityDAO;
+        CityDAO toReturn = cityRepository.save(cityDAO);
+        logger.info("The city {} is created, the country is {}", toReturn.getName(), toReturn.getCountry().getName());
+        return toReturn;
     }
 
     @Override
@@ -47,6 +47,14 @@ public class CityServiceRest implements CityService {
     @Override
     public void delete(int cityId) {
         cityRepository.deleteById(cityId);
-        logger.info("The city with ID {} is deleted", cityId);
+        logger.info("The city with the ID {} is deleted", cityId);
+    }
+
+    public boolean cityIdExists(int id) {
+        return cityRepository.findById(id).isPresent();
+    }
+
+    public boolean cityNameExists(String name) {
+        return cityRepository.findByName(name).isPresent();
     }
 }

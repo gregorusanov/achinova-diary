@@ -1,13 +1,13 @@
 package com.ghilly.configuration;
 
 import com.ghilly.repository.CityRepository;
+import com.ghilly.repository.CountryRepository;
 import com.ghilly.service.CityServiceRest;
+import com.ghilly.service.CountryServiceRest;
 import com.ghilly.web.controller.CityController;
 import com.ghilly.web.controller.CountryController;
-import com.ghilly.repository.CountryRepository;
-import com.ghilly.service.CountryService;
-import com.ghilly.service.CountryServiceRest;
 import com.ghilly.web.handler.CityHandler;
+import com.ghilly.web.handler.CountryHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,8 +19,13 @@ public class TravelDiaryConfiguration {
     }
 
     @Bean
-    public CountryController countryController(CountryService service) {
-        return new CountryController(service);
+    public CountryHandler countryHandler(CountryServiceRest countryServiceRest) {
+        return new CountryHandler(countryServiceRest);
+    }
+
+    @Bean
+    public CountryController countryController(CountryHandler countryHandler) {
+        return new CountryController(countryHandler);
     }
 
     @Bean
@@ -29,9 +34,8 @@ public class TravelDiaryConfiguration {
     }
 
     @Bean
-    public CityHandler cityHandler(CityServiceRest cityServiceRest, CityRepository cityRepository, CountryRepository
-            countryRepository) {
-        return new CityHandler(cityServiceRest, cityRepository, countryRepository);
+    public CityHandler cityHandler(CityServiceRest cityServiceRest, CountryServiceRest countryServiceRest) {
+        return new CityHandler(cityServiceRest, countryServiceRest);
     }
 
     @Bean

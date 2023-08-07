@@ -1,7 +1,5 @@
 package com.ghilly.model.entity;
 
-import com.ghilly.model.Country;
-
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
@@ -23,7 +21,7 @@ public class CityDAO implements Serializable {
 
     @ManyToOne
     @JoinColumn(name = "country_id", nullable = false)
-    private Country country;
+    private CountryDAO countryDAO;
 
 
     @Column(name = "capital", columnDefinition = "boolean default false")
@@ -34,22 +32,22 @@ public class CityDAO implements Serializable {
         this.name = name;
     }
 
-    public CityDAO(int id, String name, Country country, boolean capital) {
+    public CityDAO(int id, String name, CountryDAO countryDAO, boolean capital) {
         this.id = id;
         this.name = name;
-        this.country = country;
+        this.countryDAO = countryDAO;
         this.capital = capital;
     }
 
-    public CityDAO(String name, Country country, boolean capital) {
+    public CityDAO(String name, CountryDAO countryDAO, boolean capital) {
         this.name = name;
-        this.country = country;
+        this.countryDAO = countryDAO;
         this.capital = capital;
     }
 
-    public CityDAO(String name, Country country) {
+    public CityDAO(String name, CountryDAO countryDAO) {
         this.name = name;
-        this.country = country;
+        this.countryDAO = countryDAO;
     }
 
     public CityDAO() {
@@ -72,12 +70,12 @@ public class CityDAO implements Serializable {
         this.name = name;
     }
 
-    public Country getCountry() {
-        return country;
+    public CountryDAO getCountry() {
+        return countryDAO;
     }
 
-    public void setCountry(Country country) {
-        this.country = country;
+    public void setCountry(CountryDAO countryDAO) {
+        this.countryDAO = countryDAO;
     }
 
     public boolean isCapital() {
@@ -90,7 +88,7 @@ public class CityDAO implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, country);
+        return Objects.hash(id, name, countryDAO);
     }
 
     @Override
@@ -98,7 +96,7 @@ public class CityDAO implements Serializable {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         CityDAO cityDAO = (CityDAO) obj;
-        return id == cityDAO.id && name.equals(cityDAO.name) && country == cityDAO.country;
+        return id == cityDAO.id && name.equals(cityDAO.name) && countryDAO == cityDAO.countryDAO;
     }
 
     @Override
@@ -106,7 +104,7 @@ public class CityDAO implements Serializable {
         return "City" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", country=" + country +
+                ", country=" + countryDAO +
                 ", capital=" + capital +
                 '}';
     }

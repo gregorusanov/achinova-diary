@@ -3,7 +3,6 @@ package com.ghilly.web.handler;
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.exception.WrongNameException;
-import com.ghilly.web.handler.ErrorHandler;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +27,7 @@ class ErrorHandlerTest {
 
     @Test
     void catchIdIsNotFoundExceptionTest() {
-        String message = "The country with this ID " + id + " is not found.";
+        String message = "The country ID " + id + " is not found.";
         ResponseEntity<String> actual = handler.catchIdIsNotFoundException
                 (new IdNotFoundException(message));
         HttpStatus status = HttpStatus.NOT_FOUND;
@@ -39,7 +38,7 @@ class ErrorHandlerTest {
 
     @Test
     void catchNameAlreadyExistsExceptionTest() {
-        String message = "The country with this ID " + usa + " is not found.";
+        String message = "The country name " + usa + " is not found.";
         ResponseEntity<String> actual = handler.catchNameAlreadyExistsException
                 (new NameAlreadyExistsException(message));
         HttpStatus status = HttpStatus.CONFLICT;
@@ -51,8 +50,8 @@ class ErrorHandlerTest {
     @Test
     void catchWrongNameExceptionTest() {
         String wrongName = "U.S.A.";
-        String message = "This field should contain only letters, that could be separated by one space or " +
-                "one hyphen. " + wrongName + " is not allowed here!";
+        String message = "Warning! \n The legal name consists of letters that " +
+                "could be separated by one space or hyphen. \n The name is not allowed here: " + wrongName;
         ResponseEntity<String> actual = handler.catchWrongArgumentNameException(new WrongNameException(message));
         HttpStatus status = HttpStatus.BAD_REQUEST;
 

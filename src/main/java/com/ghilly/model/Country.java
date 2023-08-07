@@ -1,23 +1,11 @@
 package com.ghilly.model;
 
-import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
 import java.util.Objects;
 
-@Entity
-@Table(name = "countries")
-public class Country implements Serializable {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "countries_seq")
-    @SequenceGenerator(name = "countries_seq", sequenceName = "countries_id_seq", allocationSize = 1)
-    @Column(name = "country_id")
+public class Country {
     private int id;
-
-    @Column(name = "country")
-    @NotBlank(message = "The country should have a name!")
-    private String name;
+    private final String name;
 
     public Country(int id, String name) {
         this.id = id;
@@ -26,10 +14,6 @@ public class Country implements Serializable {
 
     public Country(String name) {
         this.name = name;
-    }
-
-    public Country() {
-
     }
 
     public int getId() {
