@@ -4,7 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.model.City;
-import com.ghilly.model.Country;
+import com.ghilly.model.entity.CityDAO;
+import com.ghilly.model.entity.CountryDAO;
 import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.CountryRepository;
 import org.junit.Test;
@@ -31,8 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application.properties")
-public class CityRestControllerIntegrationTest {
-    private static String url = "/countries/cities/";
+public class CityDAORestControllerIntegrationTest {
+    private static final String url = "/countries/";
     @Autowired
     private MockMvc mvc;
     @Autowired
@@ -42,15 +43,17 @@ public class CityRestControllerIntegrationTest {
 
     @Test
     public void createCityStatusOk200() throws Exception {
-        Country country = new Country("Japan");
+        String jp = "Japan";
+        CountryDAO countryDAO = new CountryDAO(jp);
         String tokyo = "Tokyo";
-        countryRepository.save(country);
-        City city = new City(tokyo, country, true);
+        countryRepository.save(countryDAO);
+        int id = countryRepository.findByName(jp).get().getId();
+        City city = new City(tokyo, true);
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(city);
 
         mvc.perform(MockMvcRequestBuilders
-                        .post(url)
+                        .post(url + id + "/cities")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
@@ -64,22 +67,23 @@ public class CityRestControllerIntegrationTest {
     @Test
     public void createCityStatusConflict409() throws Exception {
         String jp = "Japan";
-        Country japan = new Country(jp);
+        CountryDAO japan = new CountryDAO(jp);
         countryRepository.save(japan);
+        int id = countryRepository.findByName(jp).get().getId();
         String tokyo = "Tokyo";
-        City city = new City(tokyo, japan, true);
-        cityRepository.save(city);
+        City city = new City(tokyo, true);
+        cityRepository.save(new CityDAO(tokyo, japan, true));
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(city);
 
         mvc.perform(MockMvcRequestBuilders
-                        .post(url)
+                        .post(url + id + "/cities")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isConflict())
                 .andExpect(result -> Assertions.assertTrue(result.getResolvedException() instanceof
                         NameAlreadyExistsException))
-                .andExpect(result -> assertEquals("The city with the name " + tokyo + " already exists.",
+                .andExpect(result -> assertEquals("The city name " + tokyo + " already exists.",
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
 
         cityRepository.deleteAll();
@@ -90,14 +94,14 @@ public class CityRestControllerIntegrationTest {
     public void getCityStatusOk200() throws Exception {
         String fr = "France";
         String paris = "Paris";
-        Country country = new Country(fr);
-        countryRepository.save(country);
-        City city = new City(paris, country, true);
-        cityRepository.save(city);
+        CountryDAO countryDAO = new CountryDAO(fr);
+        countryRepository.save(countryDAO);
+        CityDAO cityDAO = new CityDAO(paris, countryDAO, true);
+        cityRepository.save(cityDAO);
         int cityId = cityRepository.findByName(paris).get().getId();
 
         mvc.perform(MockMvcRequestBuilders
-                        .get(url + cityId)
+                        .get(url + "/all/cities/" + cityId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -111,14 +115,14 @@ public class CityRestControllerIntegrationTest {
     @Test
     public void getCityStatusNotFound404() throws Exception {
         String ger = "Germany";
-        countryRepository.save(new Country(ger));
+        countryRepository.save(new CountryDAO(ger));
 
         mvc.perform(MockMvcRequestBuilders
-                        .get(url + 30)
+                        .get(url + "/all/cities/" + 30)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof IdNotFoundException))
-                .andExpect(result -> assertEquals("The city with the ID " + 30 + " is not found.",
+                .andExpect(result -> assertEquals("The city ID " + 30 + " is not found.",
                         Objects.requireNonNull(Objects.requireNonNull(result.getResolvedException()).getMessage())));
 
         cityRepository.deleteAll();
@@ -132,16 +136,16 @@ public class CityRestControllerIntegrationTest {
         String spb = "Saint-Petersburg";
         String rus = "Russia";
         String ger = "Germany";
-        Country germany = new Country(ger);
+        CountryDAO germany = new CountryDAO(ger);
         countryRepository.save(germany);
-        cityRepository.save(new City(ber, germany, true));
-        Country russia = new Country(rus);
+        cityRepository.save(new CityDAO(ber, germany, true));
+        CountryDAO russia = new CountryDAO(rus);
         countryRepository.save(russia);
-        cityRepository.save(new City(mos, russia, true));
-        cityRepository.save(new City(spb, russia));
+        cityRepository.save(new CityDAO(mos, russia, true));
+        cityRepository.save(new CityDAO(spb, russia));
 
         mvc.perform(MockMvcRequestBuilders
-                        .get(url + "all")
+                        .get(url + "/all/cities/all")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -160,16 +164,16 @@ public class CityRestControllerIntegrationTest {
     public void updateStatusOk200() throws Exception {
         String oldName = "Stalingrad";
         String newName = "Volgograd";
-        Country rus = new Country("Russia");
+        CountryDAO rus = new CountryDAO("Russia");
         countryRepository.save(rus);
-        cityRepository.save(new City(oldName, rus, false));
+        cityRepository.save(new CityDAO(oldName, rus));
         int cityId = cityRepository.findByName(oldName).get().getId();
-        City volgograd = new City(cityId, newName, rus, false);
+        City volgograd = new City(cityId, newName);
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(volgograd);
 
         mvc.perform(MockMvcRequestBuilders
-                        .put(url)
+                        .put(url + "/all/cities/" + cityId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
@@ -183,14 +187,14 @@ public class CityRestControllerIntegrationTest {
 
     @Test
     public void deleteStatusOk200() throws Exception {
-        Country usa = new Country("USA");
+        CountryDAO usa = new CountryDAO("USA");
         countryRepository.save(usa);
         String ny = "New York";
-        cityRepository.save(new City(ny, usa, false));
+        cityRepository.save(new CityDAO(ny, usa, false));
         int cityId = cityRepository.findByName(ny).get().getId();
 
         mvc.perform(MockMvcRequestBuilders
-                        .delete(url + cityId))
+                        .delete(url + "/all/cities/" + cityId))
                 .andExpect(status().isOk());
         assertFalse(cityRepository.existsById(cityId));
 
@@ -201,7 +205,7 @@ public class CityRestControllerIntegrationTest {
     @Test
     public void deleteStatusNotFound404() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                        .delete(url + 300))
+                        .delete(url + "/all/cities/" + 300))
                 .andExpect(status().isNotFound());
     }
 }

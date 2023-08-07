@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.exception.WrongNameException;
-import com.ghilly.model.Country;
+import com.ghilly.model.entity.CountryDAO;
 import com.ghilly.repository.CountryRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,10 +37,10 @@ public class CatchExceptionIntegrationTest {
     @Test
     public void catchNameAlreadyExistsExceptionStatus409() throws Exception {
         String rus = "Russia";
-        Country country = new Country(rus);
-        repository.save(country);
+        CountryDAO countryDAO = new CountryDAO(rus);
+        repository.save(countryDAO);
         ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(country);
+        String json = objectMapper.writeValueAsString(countryDAO);
 
         mvc.perform(MockMvcRequestBuilders
                         .post("/countries/")
@@ -48,7 +48,7 @@ public class CatchExceptionIntegrationTest {
                         .content(json))
                 .andExpect(status().isConflict())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof NameAlreadyExistsException))
-                .andExpect(result -> assertEquals("The country with this name " + rus + " already exists.",
+                .andExpect(result -> assertEquals("The country name " + rus + " already exists.",
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
 
         repository.deleteAll();
@@ -63,7 +63,7 @@ public class CatchExceptionIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof IdNotFoundException))
-                .andExpect(result -> assertEquals("The country with the ID " + id + " is not found.",
+                .andExpect(result -> assertEquals("The country ID " + id + " is not found.",
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
 
         repository.deleteAll();
@@ -72,9 +72,9 @@ public class CatchExceptionIntegrationTest {
     @Test
     public void catchWrongArgumentNameExceptionStatus400() throws Exception {
         String wrongName = "Rus777";
-        Country country = new Country(wrongName);
+        CountryDAO countryDAO = new CountryDAO(wrongName);
         ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(country);
+        String json = objectMapper.writeValueAsString(countryDAO);
 
         mvc.perform(MockMvcRequestBuilders
                         .post("/countries/")
@@ -82,9 +82,9 @@ public class CatchExceptionIntegrationTest {
                         .content(json))
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof WrongNameException))
-                .andExpect(result -> assertEquals("Warning! \n The legal country name consists of letters " +
-                                "that could be separated by one space or hyphen. \n The name is not allowed here: " +
-                                wrongName, Objects.requireNonNull(result.getResolvedException()).getMessage()));
+                .andExpect(result -> assertEquals("Warning! \n The legal name consists of letters " +
+                        "that could be separated by one space or hyphen. \n The name is not allowed here: " +
+                        wrongName, Objects.requireNonNull(result.getResolvedException()).getMessage()));
         repository.deleteAll();
     }
 }

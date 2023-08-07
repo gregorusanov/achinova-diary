@@ -1,123 +1,53 @@
 package com.ghilly.service;
 
-import com.ghilly.exception.IdNotFoundException;
-import com.ghilly.exception.NameAlreadyExistsException;
-import com.ghilly.exception.WrongNameException;
-import com.ghilly.model.City;
-import com.ghilly.model.Country;
+import com.ghilly.model.entity.CityDAO;
+import com.ghilly.model.entity.CountryDAO;
 import com.ghilly.repository.CityRepository;
-import com.ghilly.repository.CountryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class CityServiceRestTest {
     private static final String MOSCOW = "Moscow";
     private static final int COUNTRY_ID = 1;
     private static final int CITY_ID = 7;
-    private static final Country RUS = new Country(COUNTRY_ID, "Russia");
-    private static final City MOS = new City(CITY_ID, MOSCOW, RUS, true);
-    private static final String COUNTRY_ID_NOT_FOUND_EX_MSG_BEGIN = "The country with the ID ";
-    private static final String CITY_ID_NOT_FOUND_EX_MSG_BEGIN = "The city with the ID ";
-    private static final String ID_NOT_FOUND_EX_MSG_END = " is not found.";
-    private static final String WRONG_NAME_EX_MSG = "Warning! \n The legal country name consists of letters that " +
-            "could be separated by one space or hyphen. \n The name is not allowed here: ";
+    private static final CountryDAO RUS = new CountryDAO(COUNTRY_ID, "Russia");
+    private static final CityDAO MOS = new CityDAO(CITY_ID, MOSCOW, RUS, true);
     private CityServiceRest service;
     private CityRepository cityRepository;
-    private CountryRepository countryRepository;
 
     @BeforeEach
     void init() {
-        countryRepository = mock(CountryRepository.class);
         cityRepository = mock(CityRepository.class);
-        service = new CityServiceRest(cityRepository, countryRepository);
+        service = new CityServiceRest(cityRepository);
     }
 
     @Test
-    void createSuccess() {
-        when(countryRepository.findById(COUNTRY_ID)).thenReturn(Optional.of(RUS));
-
+    void create() {
+        when(cityRepository.save(MOS)).thenReturn(MOS);
         service.create(MOS);
 
         assertAll(
-                () -> verify(countryRepository).findById(COUNTRY_ID),
-                () -> verify(cityRepository).findByName(MOSCOW),
                 () -> verify(cityRepository).save(MOS),
-                () -> verifyNoMoreInteractions(cityRepository, countryRepository)
-        );
-    }
-
-    @Test
-    void createIdIsNotFoundFail() {
-        IdNotFoundException exception = assertThrows(IdNotFoundException.class, () -> service.create(MOS));
-
-        assertAll(
-                () -> assertEquals(COUNTRY_ID_NOT_FOUND_EX_MSG_BEGIN + COUNTRY_ID + ID_NOT_FOUND_EX_MSG_END,
-                        exception.getMessage()),
-                () -> verify(countryRepository).findById(COUNTRY_ID),
-                () -> verifyNoMoreInteractions(countryRepository)
-        );
-    }
-
-    @Test
-    void createNameAlreadyExistsFail() {
-        when(countryRepository.findById(COUNTRY_ID)).thenReturn(Optional.of(RUS));
-        when(cityRepository.findByName(MOSCOW)).thenReturn(Optional.of(MOS));
-        NameAlreadyExistsException exception = assertThrows(NameAlreadyExistsException.class,
-                () -> service.create(MOS));
-
-        assertAll(
-                () -> assertEquals("The city with the name " + MOSCOW + " already exists.",
-                        exception.getMessage()),
-                () -> verify(countryRepository).findById(COUNTRY_ID),
-                () -> verify(cityRepository).findByName(MOSCOW),
-                () -> verifyNoMoreInteractions(countryRepository, cityRepository)
-        );
-    }
-
-    @Test
-    void createWrongNameFail() {
-        when(countryRepository.findById(COUNTRY_ID)).thenReturn(Optional.of(RUS));
-        String wrong = "777Mo$cow!";
-
-        WrongNameException exception = assertThrows(WrongNameException.class,
-                () -> service.create(new City(2, wrong, RUS, true)));
-
-        assertAll(
-                () -> assertEquals(WRONG_NAME_EX_MSG + wrong,
-                        exception.getMessage()),
-                () -> verify(countryRepository).findById(COUNTRY_ID),
-                () -> verifyNoMoreInteractions(countryRepository)
-        );
-    }
-
-    @Test
-    void getCitySuccess() {
-        when(cityRepository.findById(CITY_ID)).thenReturn(Optional.of(MOS));
-
-        City city = service.getCity(CITY_ID);
-
-        assertAll(
-                () -> assertEquals(city.getName(), MOSCOW),
-                () -> verify(cityRepository, times(2)).findById(CITY_ID),
                 () -> verifyNoMoreInteractions(cityRepository)
         );
     }
 
-    @Test
-    void getCityIdNotFound() {
-        when(countryRepository.findById(COUNTRY_ID)).thenReturn(Optional.of(RUS));
 
-        IdNotFoundException ex = assertThrows(IdNotFoundException.class, () -> service.getCity(CITY_ID));
+    @Test
+    void getCity() {
+        when(cityRepository.findById(CITY_ID)).thenReturn(Optional.of(MOS));
+
+        CityDAO cityDAO = service.getCity(CITY_ID);
 
         assertAll(
-                () -> assertEquals(CITY_ID_NOT_FOUND_EX_MSG_BEGIN + CITY_ID + ID_NOT_FOUND_EX_MSG_END,
-                        ex.getMessage()),
+                () -> assertEquals(cityDAO.getName(), MOSCOW),
                 () -> verify(cityRepository).findById(CITY_ID),
                 () -> verifyNoMoreInteractions(cityRepository)
         );
@@ -125,95 +55,45 @@ class CityServiceRestTest {
 
     @Test
     void getAllCities() {
-        String sochi = "Sochi";
-        String spb = "Saint-Petersburg";
-        List<City> cities = List.of(MOS, new City(sochi, RUS, false), new City(spb, RUS, false));
+        String berlin = "Berlin";
+        String paris = "Paris";
+        List<CityDAO> cities = List.of(new CityDAO(berlin, new CountryDAO("Germany"), true), MOS,
+                new CityDAO(paris, new CountryDAO("France"), true));
         when(cityRepository.findAll()).thenReturn(cities);
 
-        List<City> actual = service.getAllCities();
+        List<CityDAO> actual = service.getAllCities();
 
         assertAll(
                 () -> assertEquals(3, actual.size()),
-                () -> assertEquals(actual.get(0).getName(), MOSCOW),
-                () -> assertEquals(actual.get(1).getName(), sochi),
-                () -> assertEquals(actual.get(2).getName(), spb),
+                () -> assertEquals(actual.get(1).getName(), MOSCOW),
+                () -> assertEquals(actual.get(0).getName(), berlin),
+                () -> assertEquals(actual.get(2).getName(), paris),
                 () -> verify(cityRepository).findAll(),
                 () -> verifyNoMoreInteractions(cityRepository)
         );
     }
 
     @Test
-    void updateSuccess() {
-        when(countryRepository.findById(COUNTRY_ID)).thenReturn(Optional.of(RUS));
-        when(cityRepository.findById(CITY_ID)).thenReturn(Optional.of(MOS));
-        City toChange = new City(CITY_ID, "Moskvabad", RUS, true);
+    void update() {
+        String name = "Moskvabad";
+        CityDAO toChange = new CityDAO(CITY_ID, name, RUS, true);
+        when(cityRepository.findById(CITY_ID)).thenReturn(Optional.of(toChange));
 
         service.update(toChange);
 
         assertAll(
-                () -> verify(countryRepository).findById(COUNTRY_ID),
-                () -> verify(cityRepository).findById(CITY_ID),
                 () -> verify(cityRepository).save(toChange),
-                () -> verifyNoMoreInteractions(cityRepository, countryRepository)
-        );
-    }
-
-    @Test
-    void updateFailIdNotFound() {
-        when(countryRepository.findById(COUNTRY_ID)).thenReturn(Optional.of(RUS));
-        City toChange = new City(CITY_ID, "Moskvabad", RUS, true);
-
-        IdNotFoundException exception = assertThrows(IdNotFoundException.class,
-                () -> service.update(toChange));
-
-        assertAll(
-                () -> assertEquals(CITY_ID_NOT_FOUND_EX_MSG_BEGIN + CITY_ID + ID_NOT_FOUND_EX_MSG_END,
-                        exception.getMessage()),
-                () -> verify(countryRepository).findById(COUNTRY_ID),
                 () -> verify(cityRepository).findById(CITY_ID),
                 () -> verifyNoMoreInteractions(cityRepository)
-        );
-    }
-
-    @Test
-    void updateWrongNewNameFail() {
-        when(countryRepository.findById(COUNTRY_ID)).thenReturn(Optional.of(RUS));
-        when(cityRepository.findById(CITY_ID)).thenReturn(Optional.of(MOS));
-        String newName = "Moskv@b@d";
-        City toChange = new City(CITY_ID, newName, RUS, true);
-
-        WrongNameException exception = assertThrows(WrongNameException.class,
-                () -> service.update(toChange));
-
-        assertAll(
-                () -> assertEquals(WRONG_NAME_EX_MSG + newName, exception.getMessage()),
-                () -> verify(countryRepository).findById(COUNTRY_ID),
-                () -> verify(cityRepository).findById(CITY_ID),
-                () -> verifyNoMoreInteractions(countryRepository, cityRepository)
         );
     }
 
     @Test
     void deleteSuccess() {
-        when(cityRepository.findById(CITY_ID)).thenReturn(Optional.of(MOS));
-
         service.delete(CITY_ID);
 
         assertAll(
-                () -> verify(cityRepository).findById(CITY_ID),
                 () -> verify(cityRepository).deleteById(CITY_ID),
-                () -> verifyNoMoreInteractions(cityRepository)
-        );
-    }
-
-    @Test
-    void deleteFail() {
-        IdNotFoundException exception = assertThrows(IdNotFoundException.class, () -> service.delete(CITY_ID));
-
-        assertAll(
-                () -> assertEquals(CITY_ID_NOT_FOUND_EX_MSG_BEGIN + CITY_ID + ID_NOT_FOUND_EX_MSG_END,
-                        exception.getMessage()),
-                () -> verify(cityRepository).findById(CITY_ID),
                 () -> verifyNoMoreInteractions(cityRepository)
         );
     }

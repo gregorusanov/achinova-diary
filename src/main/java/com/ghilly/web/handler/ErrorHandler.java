@@ -1,4 +1,4 @@
-package com.ghilly.web;
+package com.ghilly.web.handler;
 
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;

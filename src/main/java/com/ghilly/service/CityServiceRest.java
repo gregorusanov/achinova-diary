@@ -1,78 +1,60 @@
 package com.ghilly.service;
 
-import com.ghilly.exception.NameAlreadyExistsException;
-import com.ghilly.exception.WrongNameException;
-import com.ghilly.model.City;
+import com.ghilly.model.entity.CityDAO;
 import com.ghilly.repository.CityRepository;
-import com.ghilly.repository.CountryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-import static com.ghilly.utils.ValidationUtils.checkIdExists;
-import static com.ghilly.utils.ValidationUtils.isWrongName;
-
 public class CityServiceRest implements CityService {
 
     private static final Logger logger = LoggerFactory.getLogger(CityServiceRest.class);
     private final CityRepository cityRepository;
-    private final CountryRepository countryRepository;
 
-    public CityServiceRest(CityRepository repository, CountryRepository countryRepository) {
-        this.cityRepository = repository;
-        this.countryRepository = countryRepository;
+    public CityServiceRest(CityRepository cityRepository) {
+        this.cityRepository = cityRepository;
     }
 
     @Override
-    public City create(City city) {
-        int countryId = city.getCountry().getId();
-        String name = city.getName();
-        checkIdExists(countryId, countryRepository, "The country with the ID " + countryId + " is not found.");
-        checkNameIsWrong(city);
-        if (cityRepository.findByName(name).isPresent())
-            throw new NameAlreadyExistsException("The city with the name " + name + " already exists.");
-        cityRepository.save(city);
-        logger.info("The city with the name {} is created, country name is {}", name, city.getCountry().getName());
-        return city;
+    public CityDAO create(CityDAO cityDAO) {
+        CityDAO toReturn = cityRepository.save(cityDAO);
+        logger.info("The city {} is created, the country is {}", toReturn.getName(), toReturn.getCountry().getName());
+        return toReturn;
     }
 
     @Override
-    public City getCity(int cityId) {
-        checkIdExists(cityId, cityRepository, "The city with the ID " + cityId + " is not found.");
+    public CityDAO getCity(int cityId) {
+        logger.info("The city with the ID {} is found.", cityId);
         return cityRepository.findById(cityId).get();
     }
 
     @Override
-    public List<City> getAllCities() {
-        List<City> cities = (List<City>) cityRepository.findAll();
+    public List<CityDAO> getAllCities() {
+        List<CityDAO> cities = (List<CityDAO>) cityRepository.findAll();
         logger.info("The list of cities is: {}", cities);
         return cities;
     }
 
     @Override
-    public void update(City city) {
-        int countryId = city.getCountry().getId();
-        int cityId = city.getId();
-        checkIdExists(countryId, countryRepository, "The country with the ID " + countryId + " is not found.");
-        checkIdExists(cityId, cityRepository, "The city with the ID " + cityId + " is not found.");
-        checkNameIsWrong(city);
-        cityRepository.save(city);
-        logger.info("The city with ID {} was updated, new name is {}.", cityId, city.getName());
+    public CityDAO update(CityDAO cityDAO) {
+        int id = cityDAO.getId();
+        cityRepository.save(cityDAO);
+        logger.info("The city with the ID {} is updated, new name is {}.", id, cityDAO.getName());
+        return cityRepository.findById(id).get();
     }
 
     @Override
     public void delete(int cityId) {
-        checkIdExists(cityId, cityRepository, "The city with the ID " + cityId + " is not found.");
         cityRepository.deleteById(cityId);
-        logger.info("The city with ID {} is deleted", cityId);
+        logger.info("The city with the ID {} is deleted", cityId);
     }
 
-    private void checkNameIsWrong(City city) {
-        String name = city.getName();
-        if (isWrongName(name)) {
-            throw new WrongNameException("Warning! \n The legal country name consists of letters that could be " +
-                    "separated by one space or hyphen. \n The name is not allowed here: " + name);
-        }
+    public boolean cityIdExists(int id) {
+        return cityRepository.findById(id).isPresent();
+    }
+
+    public boolean cityNameExists(String name) {
+        return cityRepository.findByName(name).isPresent();
     }
 }

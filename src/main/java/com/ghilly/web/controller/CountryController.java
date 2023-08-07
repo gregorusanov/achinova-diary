@@ -2,7 +2,8 @@ package com.ghilly.web.controller;
 
 
 import com.ghilly.model.Country;
-import com.ghilly.service.CountryService;
+import com.ghilly.model.entity.CountryDAO;
+import com.ghilly.web.handler.CountryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
@@ -14,45 +15,45 @@ import java.util.List;
 public class CountryController {
 
     private static final Logger logger = LoggerFactory.getLogger(CountryController.class);
-    private final CountryService service;
+    private final CountryHandler countryHandler;
 
-    public CountryController(CountryService service) {
-        this.service = service;
+    public CountryController(CountryHandler countryHandler) {
+        this.countryHandler = countryHandler;
     }
 
 
     @PostMapping("/")
-    public ResponseEntity<Country> create(@RequestBody Country country) {
-        service.create(country);
-        logger.info("{} was created", country.getName());
-        return ResponseEntity.ok().body(country);
+    public ResponseEntity<CountryDAO> create(@RequestBody Country country) {
+        logger.info("The data are received from the user.");
+        CountryDAO countryDAO = countryHandler.create(country);
+        return ResponseEntity.ok().body(countryDAO);
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<Country>> getAllCountries() {
-        logger.info("List of countries");
-        List<Country> allCountries = service.getAllCountries();
+    public ResponseEntity<List<CountryDAO>> getAllCountries() {
+        logger.info("Data processing.");
+        List<CountryDAO> allCountries = countryHandler.getAllCountries();
         return ResponseEntity.ok().body(allCountries);
     }
 
     @GetMapping("/{countryId}")
-    public ResponseEntity<Country> getCountry(@PathVariable int countryId) {
-        logger.info("The country with this ID {} is: ", countryId);
-        Country country = service.getCountryById(countryId);
-        return ResponseEntity.ok().body(country);
+    public ResponseEntity<CountryDAO> getCountry(@PathVariable int countryId) {
+        logger.info("The data are received from the user.");
+        CountryDAO countryDAO = countryHandler.getCountryById(countryId);
+        return ResponseEntity.ok().body(countryDAO);
     }
 
-    @PutMapping("/")
-    public ResponseEntity<Country> update(@RequestBody Country country) {
-        service.update(country);
-        logger.info("The country name for ID {} was changed to {}", country.getId(), country.getName());
-        return ResponseEntity.ok().body(service.getCountryById(country.getId()));
+    @PutMapping("/{countryId}")
+    public ResponseEntity<CountryDAO> update(@RequestBody Country country, @PathVariable int countryId) {
+        logger.info("The data are received from the user.");
+        CountryDAO countryDAO = countryHandler.update(country, countryId);
+        return ResponseEntity.ok().body(countryDAO);
     }
 
     @DeleteMapping("/{countryId}")
     public ResponseEntity<String> delete(@PathVariable int countryId) {
-        service.delete(countryId);
-        logger.info("The country with ID {} was deleted.", countryId);
-        return ResponseEntity.ok().body("The country with ID " + countryId + " was deleted.");
+        logger.info("The data are received from the user.");
+        countryHandler.delete(countryId);
+        return ResponseEntity.ok().body("The country with the ID " + countryId + " is deleted.");
     }
 }

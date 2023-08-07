@@ -1,8 +1,9 @@
 package com.ghilly.web.controller;
 
 import com.ghilly.model.City;
-import com.ghilly.model.Country;
-import com.ghilly.service.CityServiceRest;
+import com.ghilly.model.entity.CityDAO;
+import com.ghilly.model.entity.CountryDAO;
+import com.ghilly.web.handler.CityHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,39 +14,44 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class CityControllerTest {
-    private static final int ID = 1;
+    private static final int COUNTRY_ID = 1;
+    private static final int CITY_ID = 9;
     private static final String CITY_NAME = "Moscow";
-    private static final Country RUS = new Country(ID, "Russia");
-    private static final City CITY = new City(CITY_NAME, RUS, true);
-    private CityServiceRest service;
+    private static final CountryDAO RUS = new CountryDAO(COUNTRY_ID, "Russia");
+    private static final CityDAO CITY_DAO = new CityDAO(CITY_NAME, RUS, true);
+    private static final City CITY = new City(CITY_NAME);
+    private CityHandler handler;
     private CityController controller;
 
     @BeforeEach
     void init() {
-        service = mock(CityServiceRest.class);
-        controller = new CityController(service);
+        handler = mock(CityHandler.class);
+        controller = new CityController(handler);
     }
 
     @Test
     void createCity() {
-        controller.create(CITY);
+        controller.create(CITY, COUNTRY_ID);
 
         assertAll(
-                () -> verify(service).create(CITY),
-                () -> verifyNoMoreInteractions(service)
+                () -> verify(handler).create(CITY, COUNTRY_ID),
+                () -> verifyNoMoreInteractions(handler)
         );
     }
 
     @Test
     void getCity() {
-        when(service.getCity(ID)).thenReturn(CITY);
+        when(handler.getCity(CITY_ID)).thenReturn(CITY_DAO);
 
-        City actual = controller.getCity(ID).getBody();
+        CityDAO actual = controller.getCity(CITY_ID).getBody();
 
         assertAll(
-                () -> assertEquals(CITY_NAME, actual.getName()),
-                () -> verify(service).getCity(ID),
-                () -> verifyNoMoreInteractions(service)
+                () -> {
+                    assert actual != null;
+                    assertEquals(CITY_NAME, actual.getName());
+                },
+                () -> verify(handler).getCity(CITY_ID),
+                () -> verifyNoMoreInteractions(handler)
         );
 
     }
@@ -55,38 +61,37 @@ class CityControllerTest {
         String sochi = "Sochi";
         String spb = "Saint-Petersburg";
         boolean notCapital = false;
-        List<City> cities = List.of(CITY, new City(sochi, RUS, notCapital), new City(spb, RUS, notCapital));
-        when(service.getAllCities()).thenReturn(cities);
+        List<CityDAO> cities = List.of(CITY_DAO, new CityDAO(spb, RUS, notCapital), new CityDAO(sochi, RUS, notCapital));
+        when(handler.getAllCities()).thenReturn(cities);
 
         controller.getAllCities();
 
         assertAll(
-                () -> verify(service).getAllCities(),
-                () -> verifyNoMoreInteractions(service)
+                () -> verify(handler).getAllCities(),
+                () -> verifyNoMoreInteractions(handler)
         );
     }
 
     @Test
-    void updateSuccess() {
+    void update() {
         String newName = "Moskvabad";
-        City toChange = new City(ID, newName, RUS, true);
+        City city = new City(CITY_ID, newName);
 
-        controller.update(toChange);
+        controller.update(city, COUNTRY_ID);
 
         assertAll(
-                () -> verify(service).update(toChange),
-                () -> verify(service).getCity(ID),
-                () -> verifyNoMoreInteractions(service)
+                () -> verify(handler).update(city, COUNTRY_ID),
+                () -> verifyNoMoreInteractions(handler)
         );
     }
 
     @Test
-    void deleteSuccess() {
-        controller.deleteCity(ID);
+    void delete() {
+        controller.deleteCity(CITY_ID);
 
         assertAll(
-                () -> verify(service).delete(ID),
-                () -> verifyNoMoreInteractions(service)
+                () -> verify(handler).delete(CITY_ID),
+                () -> verifyNoMoreInteractions(handler)
         );
     }
 }
