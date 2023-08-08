@@ -1,7 +1,8 @@
 package com.ghilly.web.controller;
 
 import com.ghilly.model.Country;
-import com.ghilly.service.CountryServiceRest;
+import com.ghilly.model.entity.CountryDAO;
+import com.ghilly.web.handler.CountryHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,14 +16,15 @@ class CountryControllerTest {
 
     private static final int ID = 100;
     private static final String NAME = "USSR";
-    private static final Country USSR = new Country(ID, NAME);
-    private CountryServiceRest service;
+    private static final Country USSR = new Country(NAME);
+    private static final CountryDAO USSR_DAO = new CountryDAO(ID, NAME);
+    private CountryHandler countryHandler;
     private CountryController controller;
 
     @BeforeEach
     void init() {
-        service = mock(CountryServiceRest.class);
-        controller = new CountryController(service);
+        countryHandler = mock(CountryHandler.class);
+        controller = new CountryController(countryHandler);
     }
 
     @Test
@@ -30,48 +32,49 @@ class CountryControllerTest {
         controller.create(USSR);
 
         assertAll(
-                () -> verify(service).create(USSR),
-                () -> verifyNoMoreInteractions(service)
+                () -> verify(countryHandler).create(USSR),
+                () -> verifyNoMoreInteractions(countryHandler)
         );
     }
 
     @Test
     void getCountries() {
-        Country usa = new Country(2, "USA");
-        List<Country> expected = List.of(USSR, usa);
-        when(service.getAllCountries()).thenReturn(expected);
+        CountryDAO usa = new CountryDAO(2, "USA");
+        List<CountryDAO> expected = List.of(USSR_DAO, usa);
+        when(countryHandler.getAllCountries()).thenReturn(expected);
 
-        controller.getAllCountries();
+        List<CountryDAO> actual = controller.getAllCountries().getBody();
 
         assertAll(
-                () -> verify(service).getAllCountries(),
-                () -> verifyNoMoreInteractions(service)
+                () -> assertEquals(expected, actual),
+                () -> verify(countryHandler).getAllCountries(),
+                () -> verifyNoMoreInteractions(countryHandler)
         );
     }
 
     @Test
     void getCountry() {
-        when(service.getCountryById(ID)).thenReturn(USSR);
+        when(countryHandler.getCountryById(ID)).thenReturn(USSR_DAO);
 
-        Country actual = controller.getCountry(ID).getBody();
+        CountryDAO actual = controller.getCountry(ID).getBody();
 
         assertAll(
-                () -> assertEquals(USSR, actual),
-                () -> verify(service).getCountryById(ID),
-                () -> verifyNoMoreInteractions(service)
+                () -> assertEquals(USSR_DAO, actual),
+                () -> verify(countryHandler).getCountryById(ID),
+                () -> verifyNoMoreInteractions(countryHandler)
         );
     }
 
-   @Test
+    @Test
     void updateCountry() {
         String newName = "Russia";
+        Country toChange = new Country(newName);
 
-        controller.update(new Country(ID, newName));
+        controller.update(toChange, ID);
 
         assertAll(
-               () -> verify(service).update(new Country(ID, newName)),
-                () -> verify(service).getCountryById(ID),
-                () -> verifyNoMoreInteractions(service)
+                () -> verify(countryHandler).update(toChange, ID),
+                () -> verifyNoMoreInteractions(countryHandler)
         );
     }
 
@@ -80,8 +83,8 @@ class CountryControllerTest {
         controller.delete(ID);
 
         assertAll(
-                () -> verify(service).delete(ID),
-                () -> verifyNoMoreInteractions(service)
+                () -> verify(countryHandler).delete(ID),
+                () -> verifyNoMoreInteractions(countryHandler)
         );
     }
 }

@@ -1,60 +1,68 @@
 package com.ghilly.model;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
-import java.io.Serializable;
 import java.util.Objects;
 
-@Entity
-@Table(name = "cities")
-public class City implements Serializable {
+public class City {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cities_seq")
-    @SequenceGenerator(name = "cities_seq", sequenceName = "cities_id_seq", allocationSize = 1)
-    @Column(name = "id")
-    private int id;
-
-    @Column(name = "city")
-    @NotBlank(message = "The city should have a name!")
+    private int cityId;
     private String name;
-
-    @ManyToOne
-    @JoinColumn(name = "country_id", nullable = false)
-    private Country country;
-
-
-    @Column(name = "capital", columnDefinition = "boolean default false")
+    private int countryId;
     private boolean capital;
 
-    public City(int id, String name, Country country, boolean capital) {
-        this.id = id;
+    public City(int cityId, String name, int countryId, boolean capital) {
+        this.cityId = cityId;
         this.name = name;
-        this.country = country;
+        this.countryId = countryId;
         this.capital = capital;
     }
 
-    public City(String name, Country country, boolean capital) {
+    public City(int cityId, String name, int countryId) {
+        this.cityId = cityId;
         this.name = name;
-        this.country = country;
+        this.countryId = countryId;
+    }
+
+    public City(int cityId, String name, boolean capital) {
+        this.cityId = cityId;
+        this.name = name;
         this.capital = capital;
     }
 
-    public City(String name, Country country) {
+    public City(int cityId, String name) {
+        this.cityId = cityId;
         this.name = name;
-        this.country = country;
+    }
+
+    public City(String name) {
+        this.name = name;
+    }
+
+    public City(String name, int countryId, boolean capital) {
+        this.name = name;
+        this.countryId = countryId;
+        this.capital = capital;
+    }
+
+    public City(String name, int countryId) {
+        this.name = name;
+        this.countryId = countryId;
+    }
+
+    public City(String name, boolean capital) {
+        this.name = name;
+        this.capital = capital;
     }
 
     public City() {
 
     }
 
-    public int getId() {
-        return id;
+    public int getCityId() {
+        return cityId;
     }
 
-    public void setId(int id) {
-        this.id = id;
+    public void setCityId(int cityId) {
+        this.cityId = cityId;
     }
 
     public String getName() {
@@ -65,14 +73,6 @@ public class City implements Serializable {
         this.name = name;
     }
 
-    public Country getCountry() {
-        return country;
-    }
-
-    public void setCountry(Country country) {
-        this.country = country;
-    }
-
     public boolean isCapital() {
         return capital;
     }
@@ -81,9 +81,17 @@ public class City implements Serializable {
         this.capital = capital;
     }
 
+    public int getCountryId() {
+        return countryId;
+    }
+
+    public void setCountryId(int countryId) {
+        this.countryId = countryId;
+    }
+
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, country);
+        return Objects.hash(cityId, name, countryId);
     }
 
     @Override
@@ -91,15 +99,15 @@ public class City implements Serializable {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         City city = (City) obj;
-        return id == city.id && name.equals(city.name) && country == city.country;
+        return cityId == city.cityId && name.equals(city.name) && countryId == city.countryId;
     }
 
     @Override
     public String toString() {
         return "City{" +
-                "id=" + id +
+                "cityId=" + cityId +
                 ", name='" + name + '\'' +
-                ", country=" + country +
+                ", countryId=" + countryId +
                 ", capital=" + capital +
                 '}';
     }

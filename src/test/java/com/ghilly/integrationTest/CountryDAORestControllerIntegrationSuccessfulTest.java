@@ -1,7 +1,7 @@
 package com.ghilly.integrationTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ghilly.model.Country;
+import com.ghilly.model.entity.CountryDAO;
 import com.ghilly.repository.CountryRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,7 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application.properties")
-public class CountryRestControllerIntegrationSuccessfulTest {
+public class CountryDAORestControllerIntegrationSuccessfulTest {
 
     @Autowired
     private MockMvc mvc;
@@ -34,7 +34,7 @@ public class CountryRestControllerIntegrationSuccessfulTest {
     @Test
     public void createCountryStatusOk200() throws Exception {
         String jp = "Japan";
-        Country japan = new Country(jp);
+        CountryDAO japan = new CountryDAO(jp);
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(japan);
 
@@ -54,9 +54,9 @@ public class CountryRestControllerIntegrationSuccessfulTest {
         String rus = "Russia";
         String fr = "France";
         String de = "Deutschland";
-        repository.save(new Country(rus));
-        repository.save(new Country(fr));
-        repository.save(new Country(de));
+        repository.save(new CountryDAO(rus));
+        repository.save(new CountryDAO(fr));
+        repository.save(new CountryDAO(de));
 
         mvc.perform(MockMvcRequestBuilders
                         .get("/countries/all")
@@ -78,7 +78,7 @@ public class CountryRestControllerIntegrationSuccessfulTest {
     @Test
     public void getCountryStatusOk200() throws Exception {
         String cn = "China";
-        repository.save(new Country(cn));
+        repository.save(new CountryDAO(cn));
         int id = repository.findByName(cn).get().getId();
 
         mvc.perform(MockMvcRequestBuilders
@@ -96,16 +96,16 @@ public class CountryRestControllerIntegrationSuccessfulTest {
 
     @Test
     public void updateCountryStatusOk200() throws Exception {
-        Country country = new Country("USSR");
-        repository.save(country);
+        CountryDAO countryDAO = new CountryDAO("USSR");
+        repository.save(countryDAO);
         int id = repository.findByName("USSR").get().getId();
         String newName = "Russia";
-        Country toUpdate = new Country(id, newName);
+        CountryDAO toUpdate = new CountryDAO(id, newName);
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(toUpdate);
 
         mvc.perform(MockMvcRequestBuilders
-                        .put("/countries/")
+                        .put("/countries/" + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andDo(System.out::println)
@@ -120,7 +120,7 @@ public class CountryRestControllerIntegrationSuccessfulTest {
     @Test
     public void deleteCountryStatusOk200() throws Exception {
         String gr = "Greece";
-        repository.save(new Country(gr));
+        repository.save(new CountryDAO(gr));
         int id = repository.findByName(gr).get().getId();
 
         mvc.perform(MockMvcRequestBuilders
