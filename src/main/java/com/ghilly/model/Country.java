@@ -1,11 +1,10 @@
 package com.ghilly.model;
 
-import javax.validation.constraints.NotBlank;
 import java.util.Objects;
 
 public class Country {
-    private int id;
     private final String name;
+    private int id;
 
     public Country(int id, String name) {
         this.id = id;

@@ -14,6 +14,5 @@ public interface CountryService {
     CountryDAO update(CountryDAO countryDAO);
 
     void delete(int countryId);
-
-    Country getCountryByCityId(int countryId);
+    CountryDAO  getCountryByCityId(int cityId);
 }

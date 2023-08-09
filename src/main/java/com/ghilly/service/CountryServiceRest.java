@@ -49,6 +49,11 @@ public class CountryServiceRest implements CountryService {
         logger.info("The country with the ID {} is deleted", countryId);
     }
 
+    @Override
+    public CountryDAO getCountryByCityId(int cityId) {
+        return null;
+    }
+
     public boolean countryIdExists(int id) {
         return countryRepository.findById(id).isPresent();
     }
