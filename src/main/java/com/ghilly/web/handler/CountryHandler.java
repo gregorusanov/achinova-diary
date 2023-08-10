@@ -4,7 +4,6 @@ import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.model.Country;
 import com.ghilly.model.entity.CountryDAO;
-import com.ghilly.service.CityServiceRest;
 import com.ghilly.service.CountryServiceRest;
 import com.ghilly.web.controller.CityController;
 import org.slf4j.LoggerFactory;
@@ -16,11 +15,9 @@ import static com.ghilly.utils.ValidationUtils.checkNameIsWrong;
 public class CountryHandler {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CityController.class);
     private final CountryServiceRest countryServiceRest;
-    private final CityServiceRest cityServiceRest;
 
-    public CountryHandler(CountryServiceRest countryServiceRest, CityServiceRest cityServiceRest) {
+    public CountryHandler(CountryServiceRest countryServiceRest) {
         this.countryServiceRest = countryServiceRest;
-        this.cityServiceRest = cityServiceRest;
     }
 
     public CountryDAO create(Country country) {
@@ -56,12 +53,6 @@ public class CountryHandler {
         checkIdExists(countryId);
         logger.info("The user data are correct.");
         countryServiceRest.delete(countryId);
-    }
-
-    public CountryDAO getCountryByCityId(int cityId) {
-        if (!cityServiceRest.cityIdExists(cityId))
-            throw new IdNotFoundException("The city ID " + cityId + " is not found.");
-        return cityServiceRest.getCity(cityId).getCountry();
     }
 
     private void checkIdExists(int id) {

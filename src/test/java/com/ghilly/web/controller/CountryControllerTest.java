@@ -87,17 +87,4 @@ class CountryControllerTest {
                 () -> verifyNoMoreInteractions(countryHandler)
         );
     }
-
-    @Test
-    void getCountryByCityId() {
-        when(countryHandler.getCountryByCityId(3)).thenReturn(USSR_DAO);
-
-        CountryDAO actual = controller.getCountryByCityId(3).getBody();
-
-        assertAll(
-                () -> assertEquals(USSR_DAO, actual),
-                () -> verify(countryHandler).getCountryByCityId(3),
-                () -> verifyNoMoreInteractions(countryHandler)
-        );
-    }
 }

@@ -135,26 +135,4 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
 
         countryRepository.deleteAll();
     }
-
-//    @Test
-//    public void getCountryByCityIdStatusOk200() throws Exception {
-//        String country = "Belgium";
-//        String city = "Brussels";
-//        CountryDAO countryDAO = new CountryDAO(country);
-//        CityDAO cityDAO = new CityDAO(city, countryDAO, true);
-//        countryRepository.save(countryDAO);
-//        cityRepository.save(cityDAO);
-//        int cityId = cityRepository.findByName(city).get().getId();
-//
-//        mvc.perform(MockMvcRequestBuilders
-//                        .get("/countries/all/city/{cityId}", cityId)
-//                        .contentType(MediaType.APPLICATION_JSON))
-//                .andExpect(status().isOk())
-//                .andExpect(content()
-//                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-//                .andExpect(jsonPath("$.name").value(country));
-//
-//        countryRepository.deleteAll();
-//        cityRepository.deleteAll();
-//    }
 }

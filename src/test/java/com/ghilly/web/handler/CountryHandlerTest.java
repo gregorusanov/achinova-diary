@@ -27,13 +27,11 @@ class CountryHandlerTest {
             "could be separated by one space or hyphen. \n The name is not allowed here: ";
     private CountryHandler handler;
     private CountryServiceRest countryServiceRest;
-    private CityServiceRest cityServiceRest;
 
     @BeforeEach
     void init() {
-        cityServiceRest = mock(CityServiceRest.class);
         countryServiceRest = mock(CountryServiceRest.class);
-        handler = new CountryHandler(countryServiceRest, cityServiceRest);
+        handler = new CountryHandler(countryServiceRest);
     }
 
     @Test
@@ -205,36 +203,6 @@ class CountryHandlerTest {
                         exception.getMessage()),
                 () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
                 () -> verifyNoMoreInteractions(countryServiceRest)
-        );
-    }
-
-    @Test
-    void getCountryByCityIdSuccess() {
-        int cityId = 43;
-        CityDAO cityDAO = new CityDAO(cityId, "Grozny", RUS_DAO, false);
-        when(cityServiceRest.cityIdExists(cityId)).thenReturn(true);
-        when(cityServiceRest.getCity(cityId)).thenReturn(cityDAO);
-
-        CountryDAO countryDAO = handler.getCountryByCityId(cityId);
-
-        assertAll(
-                () -> assertEquals(countryDAO.getName(), NAME),
-                () -> verify(cityServiceRest).cityIdExists(cityId),
-                () -> verify(cityServiceRest).getCity(cityId),
-                () -> verifyNoMoreInteractions(cityServiceRest)
-        );
-    }
-
-    @Test
-    void getCountryByCityIdIdNotFound() {
-        IdNotFoundException ex = assertThrows(IdNotFoundException.class,
-                () -> handler.getCountryByCityId(90));
-
-        assertAll(
-                () -> assertEquals("The city ID 90 is not found.",
-                        ex.getMessage()),
-                () -> verify(cityServiceRest).cityIdExists(90),
-                () -> verifyNoMoreInteractions(cityServiceRest)
         );
     }
 }

@@ -63,6 +63,12 @@ public class CityHandler {
         cityServiceRest.delete(cityId);
     }
 
+    public CountryDAO getCountryByCityId(int cityId) {
+        if (!cityServiceRest.cityIdExists(cityId))
+            throw new IdNotFoundException("The city ID " + cityId + " is not found.");
+        return cityServiceRest.getCountryByCityId(cityId);
+    }
+
     private void checkCityIdExists(int cityId) {
         if (!cityServiceRest.cityIdExists(cityId))
             throw new IdNotFoundException("The city ID " + cityId + " is not found.");

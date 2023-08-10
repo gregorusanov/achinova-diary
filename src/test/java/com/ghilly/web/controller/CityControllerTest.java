@@ -94,4 +94,16 @@ class CityControllerTest {
                 () -> verifyNoMoreInteractions(handler)
         );
     }
+
+    @Test
+    void getCountryByCityId() {
+        when(handler.getCountryByCityId(3)).thenReturn(RUS);
+
+        controller.getCountryByCityId(3);
+
+        assertAll(
+                () -> verify(handler).getCountryByCityId(3),
+                () -> verifyNoMoreInteractions(handler)
+        );
+    }
 }

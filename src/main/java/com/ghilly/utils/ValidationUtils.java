@@ -15,6 +15,7 @@ public class ValidationUtils {
         return !Pattern.matches("^(?:[a-zA-Z]+[ -]?)+$", name);
     }
 
+
     public static void checkIdExists(int id, CrudRepository repository, String typeOfAreaAndId) {
         if (repository.findById(id).isEmpty())
             throw new IdNotFoundException(typeOfAreaAndId + id + " is not found.");
