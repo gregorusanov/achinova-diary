@@ -231,4 +231,16 @@ public class CityDAORestControllerIntegrationTest {
         cityRepository.deleteAll();
         countryRepository.deleteAll();
     }
+
+    @Test
+    public void getCountryByCityIdStatusNotFound404() throws Exception {
+        mvc.perform(MockMvcRequestBuilders
+                        .get(url + all + 404 + "/countries")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> Assertions.assertTrue(result.getResolvedException() instanceof IdNotFoundException))
+                .andExpect(result -> assertEquals("The city ID " + 404 + " is not found.",
+                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
+
+    }
 }
