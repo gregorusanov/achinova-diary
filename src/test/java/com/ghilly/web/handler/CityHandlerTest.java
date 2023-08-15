@@ -11,6 +11,7 @@ import com.ghilly.service.CountryServiceRest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import javax.naming.LimitExceededException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -239,5 +240,55 @@ class CityHandlerTest {
                 () -> verify(cityServiceRest).cityIdExists(CITY_ID),
                 () -> verifyNoMoreInteractions(cityServiceRest)
         );
+    }
+
+    @Test
+    void getCapitalSuccess() {
+        String name = "Dublin";
+        CountryDAO countryDAO = new CountryDAO("Ireland");
+        int id = countryDAO.getId();
+        List<CityDAO> list = List.of(new CityDAO(name, countryDAO, true),
+                new CityDAO("Limerick", countryDAO), MOS_DAO);
+        when(countryServiceRest.countryIdExists(id)).thenReturn(true);
+        when(cityServiceRest.getAllCities()).thenReturn(list);
+
+        CityDAO cityDAO = handler.getCapital(id);
+
+        assertAll(
+                () -> assertEquals(cityDAO.getName(), name),
+                () -> verify(countryServiceRest).countryIdExists(id),
+                () -> verify(cityServiceRest).getAllCities(),
+                () -> verifyNoMoreInteractions(cityServiceRest)
+        );
+    }
+
+    @Test
+    void getEmptyCapital() {
+        CountryDAO countryDAO = new CountryDAO("Ireland");
+        int id = countryDAO.getId();
+        List<CityDAO> list = List.of(new CityDAO("Limerick", countryDAO), MOS_DAO);
+        when(countryServiceRest.countryIdExists(id)).thenReturn(true);
+        when(cityServiceRest.getAllCities()).thenReturn(list);
+
+        CityDAO cityDAO = handler.getCapital(id);
+
+        assertAll(
+                () -> assertNull(cityDAO),
+                () -> verify(countryServiceRest).countryIdExists(id),
+                () -> verify(cityServiceRest).getAllCities(),
+                () -> verifyNoMoreInteractions(cityServiceRest)
+        );
+    }
+
+    @Test
+    void getCapitalCountryIdNotFound() {
+        int id = 13;
+        IdNotFoundException exception = assertThrows(IdNotFoundException.class, () -> handler.getCapital(id));
+
+        assertAll(
+                () -> assertEquals(COUNTRY_ID_NOT_FOUND_EX_MSG_BEGIN + id + ID_NOT_FOUND_EX_MSG_END,
+                        exception.getMessage()),
+                () -> verify(countryServiceRest).countryIdExists(id),
+                () -> verifyNoMoreInteractions(countryServiceRest));
     }
 }

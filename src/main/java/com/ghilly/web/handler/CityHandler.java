@@ -10,6 +10,7 @@ import com.ghilly.service.CountryServiceRest;
 import com.ghilly.web.controller.CityController;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.ghilly.utils.ValidationUtils.checkNameIsWrong;
@@ -63,6 +64,19 @@ public class CityHandler {
         cityServiceRest.delete(cityId);
     }
 
+    public CityDAO getCapital(int countryId) {
+        if (!countryServiceRest.countryIdExists(countryId))
+            throw new IdNotFoundException("The country ID " + countryId + " is not found.");
+        List<CityDAO> cities = cityServiceRest.getAllCities();
+        for (CityDAO city:cities) {
+            if (city.isCapital() & city.getCountry().getId() == countryId) {
+                logger.info("The capital for the country ID {} is found.", countryId);
+                return city;
+            }
+        }
+        logger.info("The capital for the country ID {} is not found.", countryId);
+        return null;
+    }
     private void checkCityIdExists(int cityId) {
         if (!cityServiceRest.cityIdExists(cityId))
             throw new IdNotFoundException("The city ID " + cityId + " is not found.");
