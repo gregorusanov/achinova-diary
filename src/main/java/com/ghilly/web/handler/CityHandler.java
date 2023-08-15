@@ -10,6 +10,7 @@ import com.ghilly.service.CountryServiceRest;
 import com.ghilly.web.controller.CityController;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.ghilly.utils.ValidationUtils.checkNameIsWrong;
@@ -25,8 +26,7 @@ public class CityHandler {
     }
 
     public CityDAO create(City city, int countryId) {
-        if (!countryServiceRest.countryIdExists(countryId))
-            throw new IdNotFoundException("The country ID " + countryId + " is not found.");
+        checkCountryIdExists(countryId);
         String name = city.getName();
         checkNameIsWrong(name);
         checkCityNameExists(name);
@@ -61,6 +61,22 @@ public class CityHandler {
         checkCityIdExists(cityId);
         logger.info("The user data are correct.");
         cityServiceRest.delete(cityId);
+    }
+
+    public List<CityDAO> getAllCitiesForOneCountry(int countryId) {
+        checkCountryIdExists(countryId);
+        logger.info("The user data are correct.");
+        List<CityDAO> all = cityServiceRest.getAllCities();
+        List<CityDAO> forOneCountry = new ArrayList<>();
+        for (CityDAO city : all) {
+            if (city.getCountry().getId() == countryId) forOneCountry.add(city);
+        }
+        return forOneCountry;
+    }
+
+    private void checkCountryIdExists(int countryId) {
+        if (!countryServiceRest.countryIdExists(countryId))
+            throw new IdNotFoundException("The country ID " + countryId + " is not found.");
     }
 
     private void checkCityIdExists(int cityId) {

@@ -54,4 +54,12 @@ public class CityController {
         cityHandler.delete(cityId);
         return ResponseEntity.ok().body("The city with the ID " + cityId + " is deleted");
     }
+
+    //change url
+    @GetMapping("/all/cities/allForOne/{countryId}")
+    public ResponseEntity<List<CityDAO>> getAllCitiesForOneCountry(@PathVariable int countryId) {
+        logger.info("Data processing.");
+        List<CityDAO> allCitiesForOneCountry = cityHandler.getAllCitiesForOneCountry(countryId);
+        return ResponseEntity.ok().body(allCitiesForOneCountry);
+    }
 }
