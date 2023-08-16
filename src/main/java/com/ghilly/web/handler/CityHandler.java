@@ -11,6 +11,7 @@ import com.ghilly.web.controller.CityController;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Optional;
 
 import static com.ghilly.utils.ValidationUtils.checkNameIsWrong;
 
@@ -66,6 +67,12 @@ public class CityHandler {
         checkCountryIdExists(countryId);
         CountryDAO countryDAO = countryServiceRest.getCountryById(countryId);
         return cityServiceRest.getCitiesByCountry(countryDAO);
+    }
+
+    public CityDAO getCapital(int countryId) {
+        checkCountryIdExists(countryId);
+        CountryDAO countryDAO = countryServiceRest.getCountryById(countryId);
+        return cityServiceRest.getCapital(countryDAO);
     }
 
     private void checkCountryIdExists(int countryId) {

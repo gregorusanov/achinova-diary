@@ -56,6 +56,11 @@ public class CityServiceRest implements CityService {
         return cityRepository.findAllByCountryDAO(countryDAO).get();
     }
 
+    @Override
+    public CityDAO getCapital(CountryDAO countryDAO) {
+        return cityRepository.findCityDAOByCountryDAOAndCapitalIsTrue(countryDAO).get();
+    }
+
     public boolean cityIdExists(int id) {
         return cityRepository.findById(id).isPresent();
     }
