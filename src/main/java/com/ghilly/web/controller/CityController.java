@@ -58,7 +58,6 @@ public class CityController {
 
     @GetMapping("/{cityId}/country")
     public ResponseEntity<CountryDAO> getCountryByCityId(@PathVariable int cityId) {
-        logger.info("Getting the country by the city ID {} ", cityId);
         CountryDAO country = cityHandler.getCity(cityId).getCountry();
         return ResponseEntity.ok().body(country);
     }
