@@ -56,10 +56,9 @@ public class CityController {
     }
 
     //change url
-    @GetMapping("/all/cities/allForOne/{countryId}")
-    public ResponseEntity<List<CityDAO>> getAllCitiesForOneCountry(@PathVariable int countryId) {
-        logger.info("Data processing.");
-        List<CityDAO> allCitiesForOneCountry = cityHandler.getAllCitiesForOneCountry(countryId);
+    @GetMapping("/cities/all/country/{countryId}")
+    public ResponseEntity<List<CityDAO>> getCitiesByCountry(@PathVariable int countryId) {
+        List<CityDAO> allCitiesForOneCountry = cityHandler.getCitiesByCountry(countryId);
         return ResponseEntity.ok().body(allCitiesForOneCountry);
     }
 }

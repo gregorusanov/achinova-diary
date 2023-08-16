@@ -247,18 +247,20 @@ class CityHandlerTest {
         String tokyo = "Tokyo";
         CountryDAO countryDAO = new CountryDAO("Japan");
         int id = countryDAO.getId();
-        List<CityDAO> cities = List.of(new CityDAO(kyoto, countryDAO, false), MOS_DAO, new CityDAO(tokyo, countryDAO, true));
+        List<CityDAO> cities = List.of(new CityDAO(kyoto, countryDAO, false), new CityDAO(tokyo, countryDAO, true));
         when(countryServiceRest.countryIdExists(id)).thenReturn(true);
-        when(cityServiceRest.getAllCities()).thenReturn(cities);
+        when(countryServiceRest.getCountryById(id)).thenReturn(countryDAO);
+        when(cityServiceRest.getCitiesByCountry(countryDAO)).thenReturn(cities);
 
-        List<CityDAO> actual = handler.getAllCitiesForOneCountry(id);
+        List<CityDAO> actual = handler.getCitiesByCountry(id);
 
         assertAll(
                 () -> assertEquals(2, actual.size()),
                 () -> assertEquals(actual.get(0).getName(), kyoto),
                 () -> assertEquals(actual.get(1).getName(), tokyo),
-                () -> verify(cityServiceRest).getAllCities(),
+                () -> verify(cityServiceRest).getCitiesByCountry(countryDAO),
                 () -> verify(countryServiceRest).countryIdExists(id),
+                () -> verify(countryServiceRest).getCountryById(id),
                 () -> verifyNoMoreInteractions(cityServiceRest, countryServiceRest)
         );
     }

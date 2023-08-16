@@ -10,7 +10,6 @@ import com.ghilly.service.CountryServiceRest;
 import com.ghilly.web.controller.CityController;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static com.ghilly.utils.ValidationUtils.checkNameIsWrong;
@@ -63,15 +62,10 @@ public class CityHandler {
         cityServiceRest.delete(cityId);
     }
 
-    public List<CityDAO> getAllCitiesForOneCountry(int countryId) {
+    public List<CityDAO> getCitiesByCountry(int countryId) {
         checkCountryIdExists(countryId);
-        logger.info("The user data are correct.");
-        List<CityDAO> all = cityServiceRest.getAllCities();
-        List<CityDAO> forOneCountry = new ArrayList<>();
-        for (CityDAO city : all) {
-            if (city.getCountry().getId() == countryId) forOneCountry.add(city);
-        }
-        return forOneCountry;
+        CountryDAO countryDAO = countryServiceRest.getCountryById(countryId);
+        return cityServiceRest.getCitiesByCountry(countryDAO);
     }
 
     private void checkCountryIdExists(int countryId) {

@@ -97,4 +97,20 @@ class CityServiceRestTest {
                 () -> verifyNoMoreInteractions(cityRepository)
         );
     }
+
+    @Test
+    void getAllCitiesForOneCountry() {
+        String first = "Dresden";
+        String second = "Leipzig";
+        CountryDAO countryDAO = new CountryDAO("Germany");
+        List<CityDAO> cities = List.of(new CityDAO(first, countryDAO), new CityDAO(second, countryDAO));
+        when(cityRepository.findAllByCountryDAO(countryDAO)).thenReturn(Optional.of(cities));
+
+        service.getCitiesByCountry(countryDAO);
+
+        assertAll(
+                () -> verify(cityRepository).findAllByCountryDAO(countryDAO),
+                () -> verifyNoMoreInteractions(cityRepository)
+        );
+    }
 }
