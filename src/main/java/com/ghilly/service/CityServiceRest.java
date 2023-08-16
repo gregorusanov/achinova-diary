@@ -51,11 +51,6 @@ public class CityServiceRest implements CityService {
         logger.info("The city with the ID {} is deleted", cityId);
     }
 
-    @Override
-    public CountryDAO getCountryByCityId(int cityId) {
-        return cityRepository.findById(cityId).get().getCountry();
-    }
-
     public boolean cityIdExists(int id) {
         return cityRepository.findById(id).isPresent();
     }

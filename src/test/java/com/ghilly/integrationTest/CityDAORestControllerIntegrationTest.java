@@ -34,7 +34,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @TestPropertySource(locations = "classpath:application.properties")
 public class CityDAORestControllerIntegrationTest {
     private static final String url = "/cities/";
-    private static final String all = "all/";
     @Autowired
     private MockMvc mvc;
     @Autowired
@@ -102,7 +101,7 @@ public class CityDAORestControllerIntegrationTest {
         int cityId = cityRepository.findByName(paris).get().getId();
 
         mvc.perform(MockMvcRequestBuilders
-                        .get(url + all + cityId)
+                        .get(url + cityId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -119,7 +118,7 @@ public class CityDAORestControllerIntegrationTest {
         countryRepository.save(new CountryDAO(ger));
 
         mvc.perform(MockMvcRequestBuilders
-                        .get(url + all + 30)
+                        .get(url + 30)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof IdNotFoundException))
@@ -146,7 +145,7 @@ public class CityDAORestControllerIntegrationTest {
         cityRepository.save(new CityDAO(spb, russia));
 
         mvc.perform(MockMvcRequestBuilders
-                        .get(url + all)
+                        .get(url + "all")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -174,7 +173,7 @@ public class CityDAORestControllerIntegrationTest {
         String json = objectMapper.writeValueAsString(volgograd);
 
         mvc.perform(MockMvcRequestBuilders
-                        .put(url + all + cityId)
+                        .put(url + cityId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
@@ -195,7 +194,7 @@ public class CityDAORestControllerIntegrationTest {
         int cityId = cityRepository.findByName(ny).get().getId();
 
         mvc.perform(MockMvcRequestBuilders
-                        .delete(url + all + cityId))
+                        .delete(url + cityId))
                 .andExpect(status().isOk());
         assertFalse(cityRepository.existsById(cityId));
 
@@ -206,7 +205,7 @@ public class CityDAORestControllerIntegrationTest {
     @Test
     public void deleteStatusNotFound404() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                        .delete(url + all + 300))
+                        .delete(url + 300))
                 .andExpect(status().isNotFound());
     }
 
@@ -221,7 +220,7 @@ public class CityDAORestControllerIntegrationTest {
         int cityId = cityRepository.findByName(city).get().getId();
 
         mvc.perform(MockMvcRequestBuilders
-                        .get(url + all + cityId + "/countries")
+                        .get(url + "all/" + cityId + "/countries")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content()
@@ -235,7 +234,7 @@ public class CityDAORestControllerIntegrationTest {
     @Test
     public void getCountryByCityIdStatusNotFound404() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                        .get(url + all + 404 + "/countries")
+                        .get(url + "all/" + 404 + "/countries")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> Assertions.assertTrue(result.getResolvedException() instanceof IdNotFoundException))

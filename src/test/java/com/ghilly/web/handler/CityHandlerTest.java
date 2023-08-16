@@ -240,33 +240,4 @@ class CityHandlerTest {
                 () -> verifyNoMoreInteractions(cityServiceRest)
         );
     }
-
-    @Test
-    void getCountryByCityIdSuccess() {
-        int cityId = 43;
-        when(cityServiceRest.cityIdExists(cityId)).thenReturn(true);
-        when(cityServiceRest.getCountryByCityId(cityId)).thenReturn(RUS);
-
-        CountryDAO countryDAO = handler.getCountryByCityId(cityId);
-
-        assertAll(
-                () -> assertEquals(countryDAO.getName(), RUS.getName()),
-                () -> verify(cityServiceRest).cityIdExists(cityId),
-                () -> verify(cityServiceRest).getCountryByCityId(cityId),
-                () -> verifyNoMoreInteractions(cityServiceRest)
-        );
-    }
-
-    @Test
-    void getCountryByCityIdIdNotFound() {
-        IdNotFoundException ex = assertThrows(IdNotFoundException.class,
-                () -> handler.getCountryByCityId(90));
-
-        assertAll(
-                () -> assertEquals("The city ID 90 is not found.",
-                        ex.getMessage()),
-                () -> verify(cityServiceRest).cityIdExists(90),
-                () -> verifyNoMoreInteractions(cityServiceRest)
-        );
-    }
 }

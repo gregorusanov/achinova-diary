@@ -97,12 +97,13 @@ class CityControllerTest {
 
     @Test
     void getCountryByCityId() {
-        when(handler.getCountryByCityId(3)).thenReturn(RUS);
+        int id = 900;
+        when(handler.getCity(id)).thenReturn(CITY_DAO);
 
-        controller.getCountryByCityId(3);
+        controller.getCountryByCityId(id);
 
         assertAll(
-                () -> verify(handler).getCountryByCityId(3),
+                () -> verify(handler).getCity(id),
                 () -> verifyNoMoreInteractions(handler)
         );
     }

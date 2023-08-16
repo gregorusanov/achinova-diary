@@ -97,17 +97,4 @@ class CityServiceRestTest {
                 () -> verifyNoMoreInteractions(cityRepository)
         );
     }
-
-    @Test
-    void getCountryByCityId() {
-        when(cityRepository.findById(CITY_ID)).thenReturn(Optional.of(MOS));
-
-        CountryDAO countryDAO = service.getCountryByCityId(CITY_ID);
-
-        assertAll(
-                () -> assertEquals(countryDAO.getName(), RUS.getName()),
-                () -> verify(cityRepository).findById(CITY_ID),
-                () -> verifyNoMoreInteractions(cityRepository)
-        );
-    }
 }

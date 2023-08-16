@@ -28,7 +28,7 @@ public class CityController {
         return ResponseEntity.ok().body(cityDAO);
     }
 
-    @GetMapping("/all/{cityId}")
+    @GetMapping("/{cityId}")
     public ResponseEntity<CityDAO> getCity(@PathVariable int cityId) {
         logger.info("The data are received from the user.");
         CityDAO cityDAO = cityHandler.getCity(cityId);
@@ -42,14 +42,14 @@ public class CityController {
         return ResponseEntity.ok().body(allCities);
     }
 
-    @PutMapping("/all/{cityId}")
+    @PutMapping("/{cityId}")
     public ResponseEntity<CityDAO> update(@RequestBody City city, @PathVariable int cityId) {
         logger.info("The data are received from the user.");
         CityDAO cityDAO = cityHandler.update(city, cityId);
         return ResponseEntity.ok().body(cityDAO);
     }
 
-    @DeleteMapping("/all/{cityId}")
+    @DeleteMapping("/{cityId}")
     public ResponseEntity<String> deleteCity(@PathVariable int cityId) {
         logger.info("The data are received from the user.");
         cityHandler.delete(cityId);
@@ -59,7 +59,7 @@ public class CityController {
     @GetMapping("/all/{cityId}/countries")
     public ResponseEntity<CountryDAO> getCountryByCityId(@PathVariable int cityId) {
         logger.info("Getting the country by the city ID {} ", cityId);
-        CountryDAO country = cityHandler.getCountryByCityId(cityId);
+        CountryDAO country = cityHandler.getCity(cityId).getCountry();
         return ResponseEntity.ok().body(country);
     }
 }

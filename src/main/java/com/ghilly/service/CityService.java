@@ -14,7 +14,5 @@ public interface CityService {
 
     CityDAO update(CityDAO cityDAO);
 
-    CountryDAO getCountryByCityId(int cityId);
-
     void delete(int cityId);
 }
