@@ -208,4 +208,43 @@ public class CityDAORestControllerIntegrationTest {
                         .delete(url + "/all/cities/" + 300))
                 .andExpect(status().isNotFound());
     }
+
+    @Test
+    public void getAllCitiesByCountryStatusOk200() throws Exception {
+        String ber = "Berlin";
+        String mos = "Moscow";
+        String spb = "Saint-Petersburg";
+        String rus = "Russia";
+        String ger = "Germany";
+        CountryDAO germany = new CountryDAO(ger);
+        countryRepository.save(germany);
+        cityRepository.save(new CityDAO(ber, germany, true));
+        CountryDAO russia = new CountryDAO(rus);
+        countryRepository.save(russia);
+        int id = countryRepository.findByName(rus).get().getId();
+        cityRepository.save(new CityDAO(mos, russia, true));
+        cityRepository.save(new CityDAO(spb, russia));
+
+        mvc.perform(MockMvcRequestBuilders
+                        .get(url + "/cities/all/country/" + id)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].name").value(mos))
+                .andExpect(jsonPath("$[1].name").value(spb));
+
+        cityRepository.deleteAll();
+        countryRepository.deleteAll();
+    }
+
+    @Test
+    public void getAllCitiesByCountryStatusNotFound404() throws Exception {
+        mvc.perform(MockMvcRequestBuilders
+                        .get(url + "/cities/all/country/" + 1)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IdNotFoundException))
+                .andExpect(result -> assertEquals("The country ID " + 1 + " is not found.",
+                        Objects.requireNonNull(Objects.requireNonNull(result.getResolvedException()).getMessage())));
+    }
 }
