@@ -214,13 +214,13 @@ public class CityDAORestControllerIntegrationTest {
         String country = "Belgium";
         String city = "Brussels";
         CountryDAO countryDAO = new CountryDAO(country);
-        CityDAO cityDAO = new CityDAO(city, countryDAO, true);
         countryRepository.save(countryDAO);
+        CityDAO cityDAO = new CityDAO(city, countryDAO, true);
         cityRepository.save(cityDAO);
         int cityId = cityRepository.findByName(city).get().getId();
 
         mvc.perform(MockMvcRequestBuilders
-                        .get(url + "all/" + cityId + "/countries")
+                        .get(url + cityId + "/country")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content()
@@ -234,7 +234,7 @@ public class CityDAORestControllerIntegrationTest {
     @Test
     public void getCountryByCityIdStatusNotFound404() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                        .get(url + "all/" + 404 + "/countries")
+                        .get(url + 404 + "/country")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> Assertions.assertTrue(result.getResolvedException() instanceof IdNotFoundException))

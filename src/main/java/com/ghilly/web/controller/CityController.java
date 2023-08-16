@@ -56,7 +56,7 @@ public class CityController {
         return ResponseEntity.ok().body("The city with the ID " + cityId + " is deleted");
     }
 
-    @GetMapping("/all/{cityId}/countries")
+    @GetMapping("/{cityId}/country")
     public ResponseEntity<CountryDAO> getCountryByCityId(@PathVariable int cityId) {
         logger.info("Getting the country by the city ID {} ", cityId);
         CountryDAO country = cityHandler.getCity(cityId).getCountry();
