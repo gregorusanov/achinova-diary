@@ -19,8 +19,8 @@ public class TravelDiaryConfiguration {
     }
 
     @Bean
-    public CountryHandler countryHandler(CountryServiceRest countryServiceRest) {
-        return new CountryHandler(countryServiceRest);
+    public CountryHandler countryHandler(CountryServiceRest countryServiceRest, CityServiceRest cityServiceRest) {
+        return new CountryHandler(countryServiceRest, cityServiceRest);
     }
 
     @Bean

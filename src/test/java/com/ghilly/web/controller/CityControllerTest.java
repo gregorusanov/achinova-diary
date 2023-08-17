@@ -94,21 +94,4 @@ class CityControllerTest {
                 () -> verifyNoMoreInteractions(handler)
         );
     }
-
-    @Test
-    void getAllCitiesForOneCountry() {
-        String kyoto = "Kyoto";
-        String tokyo = "Tokyo";
-        CountryDAO japan = new CountryDAO("Japan");
-        int id = japan.getId();
-        List<CityDAO> cities = List.of(new CityDAO(kyoto, japan, false), new CityDAO(tokyo, japan, true));
-        when(handler.getCitiesByCountry(id)).thenReturn(cities);
-
-        controller.getCitiesByCountry(id);
-
-        assertAll(
-                () -> verify(handler).getCitiesByCountry(id),
-                () -> verifyNoMoreInteractions(handler)
-        );
-    }
 }

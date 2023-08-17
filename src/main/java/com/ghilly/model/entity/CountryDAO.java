@@ -3,6 +3,7 @@ package com.ghilly.model.entity;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -19,6 +20,8 @@ public class CountryDAO implements Serializable {
     @NotBlank(message = "The country should have a name!")
     private String name;
 
+    @OneToMany(mappedBy = "countryDAO")
+    private List<CityDAO> cityList;
     public CountryDAO(int id, String name) {
         this.id = id;
         this.name = name;

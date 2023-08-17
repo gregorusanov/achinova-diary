@@ -33,7 +33,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application.properties")
 public class CityDAORestControllerIntegrationTest {
-    private static final String url = "/countries/";
+    private static final String url = "/cities/";
     @Autowired
     private MockMvc mvc;
     @Autowired
@@ -53,7 +53,7 @@ public class CityDAORestControllerIntegrationTest {
         String json = objectMapper.writeValueAsString(city);
 
         mvc.perform(MockMvcRequestBuilders
-                        .post(url + id + "/cities")
+                        .post(url + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
@@ -77,7 +77,7 @@ public class CityDAORestControllerIntegrationTest {
         String json = objectMapper.writeValueAsString(city);
 
         mvc.perform(MockMvcRequestBuilders
-                        .post(url + id + "/cities")
+                        .post(url + id)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isConflict())
@@ -101,7 +101,7 @@ public class CityDAORestControllerIntegrationTest {
         int cityId = cityRepository.findByName(paris).get().getId();
 
         mvc.perform(MockMvcRequestBuilders
-                        .get(url + "/all/cities/" + cityId)
+                        .get(url + cityId)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -118,7 +118,7 @@ public class CityDAORestControllerIntegrationTest {
         countryRepository.save(new CountryDAO(ger));
 
         mvc.perform(MockMvcRequestBuilders
-                        .get(url + "/all/cities/" + 30)
+                        .get(url + 30)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof IdNotFoundException))
@@ -145,7 +145,7 @@ public class CityDAORestControllerIntegrationTest {
         cityRepository.save(new CityDAO(spb, russia));
 
         mvc.perform(MockMvcRequestBuilders
-                        .get(url + "/all/cities/all")
+                        .get(url + "all/")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -173,7 +173,7 @@ public class CityDAORestControllerIntegrationTest {
         String json = objectMapper.writeValueAsString(volgograd);
 
         mvc.perform(MockMvcRequestBuilders
-                        .put(url + "/all/cities/" + cityId)
+                        .put(url + cityId)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
@@ -194,7 +194,7 @@ public class CityDAORestControllerIntegrationTest {
         int cityId = cityRepository.findByName(ny).get().getId();
 
         mvc.perform(MockMvcRequestBuilders
-                        .delete(url + "/all/cities/" + cityId))
+                        .delete(url + cityId))
                 .andExpect(status().isOk());
         assertFalse(cityRepository.existsById(cityId));
 
@@ -205,46 +205,7 @@ public class CityDAORestControllerIntegrationTest {
     @Test
     public void deleteStatusNotFound404() throws Exception {
         mvc.perform(MockMvcRequestBuilders
-                        .delete(url + "/all/cities/" + 300))
+                        .delete(url + 300))
                 .andExpect(status().isNotFound());
-    }
-
-    @Test
-    public void getAllCitiesByCountryStatusOk200() throws Exception {
-        String ber = "Berlin";
-        String mos = "Moscow";
-        String spb = "Saint-Petersburg";
-        String rus = "Russia";
-        String ger = "Germany";
-        CountryDAO germany = new CountryDAO(ger);
-        countryRepository.save(germany);
-        cityRepository.save(new CityDAO(ber, germany, true));
-        CountryDAO russia = new CountryDAO(rus);
-        countryRepository.save(russia);
-        int id = countryRepository.findByName(rus).get().getId();
-        cityRepository.save(new CityDAO(mos, russia, true));
-        cityRepository.save(new CityDAO(spb, russia));
-
-        mvc.perform(MockMvcRequestBuilders
-                        .get(url + "/cities/all/country/" + id)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].name").value(mos))
-                .andExpect(jsonPath("$[1].name").value(spb));
-
-        cityRepository.deleteAll();
-        countryRepository.deleteAll();
-    }
-
-    @Test
-    public void getAllCitiesByCountryStatusNotFound404() throws Exception {
-        mvc.perform(MockMvcRequestBuilders
-                        .get(url + "/cities/all/country/" + 1)
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isNotFound())
-                .andExpect(result -> assertTrue(result.getResolvedException() instanceof IdNotFoundException))
-                .andExpect(result -> assertEquals("The country ID " + 1 + " is not found.",
-                        Objects.requireNonNull(Objects.requireNonNull(result.getResolvedException()).getMessage())));
     }
 }

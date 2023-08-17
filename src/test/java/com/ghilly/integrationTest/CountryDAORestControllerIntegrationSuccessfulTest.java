@@ -1,7 +1,9 @@
 package com.ghilly.integrationTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ghilly.model.entity.CityDAO;
 import com.ghilly.model.entity.CountryDAO;
+import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.CountryRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -29,8 +31,10 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
     private MockMvc mvc;
 
     @Autowired
-    private CountryRepository repository;
+    private CountryRepository countryRepository;
 
+    @Autowired
+    private CityRepository cityRepository;
     @Test
     public void createCountryStatusOk200() throws Exception {
         String jp = "Japan";
@@ -44,9 +48,9 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
                         .content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").exists());
-        assertTrue(repository.findByName(jp).isPresent());
+        assertTrue(countryRepository.findByName(jp).isPresent());
 
-        repository.deleteAll();
+        countryRepository.deleteAll();
     }
 
     @Test
@@ -54,9 +58,9 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
         String rus = "Russia";
         String fr = "France";
         String de = "Deutschland";
-        repository.save(new CountryDAO(rus));
-        repository.save(new CountryDAO(fr));
-        repository.save(new CountryDAO(de));
+        countryRepository.save(new CountryDAO(rus));
+        countryRepository.save(new CountryDAO(fr));
+        countryRepository.save(new CountryDAO(de));
 
         mvc.perform(MockMvcRequestBuilders
                         .get("/countries/all")
@@ -68,18 +72,18 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
                 .andExpect(jsonPath("$[0].name").value(rus))
                 .andExpect(jsonPath("$[1].name").value(fr))
                 .andExpect(jsonPath("$[2].name").value(de));
-        assertTrue(repository.findByName(rus).isPresent());
-        assertTrue(repository.findByName(fr).isPresent());
-        assertTrue(repository.findByName(de).isPresent());
+        assertTrue(countryRepository.findByName(rus).isPresent());
+        assertTrue(countryRepository.findByName(fr).isPresent());
+        assertTrue(countryRepository.findByName(de).isPresent());
 
-        repository.deleteAll();
+        countryRepository.deleteAll();
     }
 
     @Test
     public void getCountryStatusOk200() throws Exception {
         String cn = "China";
-        repository.save(new CountryDAO(cn));
-        int id = repository.findByName(cn).get().getId();
+        countryRepository.save(new CountryDAO(cn));
+        int id = countryRepository.findByName(cn).get().getId();
 
         mvc.perform(MockMvcRequestBuilders
                         .get("/countries/{countryId}", id)
@@ -89,16 +93,16 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.name").value(cn));
-        assertTrue(repository.findByName(cn).isPresent());
+        assertTrue(countryRepository.findByName(cn).isPresent());
 
-        repository.deleteAll();
+        countryRepository.deleteAll();
     }
 
     @Test
     public void updateCountryStatusOk200() throws Exception {
         CountryDAO countryDAO = new CountryDAO("USSR");
-        repository.save(countryDAO);
-        int id = repository.findByName("USSR").get().getId();
+        countryRepository.save(countryDAO);
+        int id = countryRepository.findByName("USSR").get().getId();
         String newName = "Russia";
         CountryDAO toUpdate = new CountryDAO(id, newName);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -112,22 +116,50 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.name").value(newName));
-        assertTrue(repository.findByName(newName).isPresent());
+        assertTrue(countryRepository.findByName(newName).isPresent());
 
-        repository.deleteAll();
+        countryRepository.deleteAll();
     }
 
     @Test
     public void deleteCountryStatusOk200() throws Exception {
         String gr = "Greece";
-        repository.save(new CountryDAO(gr));
-        int id = repository.findByName(gr).get().getId();
+        countryRepository.save(new CountryDAO(gr));
+        int id = countryRepository.findByName(gr).get().getId();
 
         mvc.perform(MockMvcRequestBuilders
                         .delete("/countries/{countryId}", id))
                 .andExpect(status().isOk());
-        assertFalse(repository.findByName(gr).isPresent());
+        assertFalse(countryRepository.findByName(gr).isPresent());
 
-        repository.deleteAll();
+        countryRepository.deleteAll();
+    }
+
+    @Test
+    public void getAllCitiesByCountryStatusOk200() throws Exception {
+        String ber = "Berlin";
+        String mos = "Moscow";
+        String spb = "Saint-Petersburg";
+        String rus = "Russia";
+        String ger = "Germany";
+        CountryDAO germany = new CountryDAO(ger);
+        countryRepository.save(germany);
+        cityRepository.save(new CityDAO(ber, germany, true));
+        CountryDAO russia = new CountryDAO(rus);
+        countryRepository.save(russia);
+        int id = countryRepository.findByName(rus).get().getId();
+        cityRepository.save(new CityDAO(mos, russia, true));
+        cityRepository.save(new CityDAO(spb, russia));
+
+        mvc.perform(MockMvcRequestBuilders
+                        .get("/countries/" + id + "/cities")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].name").value(mos))
+                .andExpect(jsonPath("$[1].name").value(spb));
+
+        cityRepository.deleteAll();
+        countryRepository.deleteAll();
     }
 }

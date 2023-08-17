@@ -2,6 +2,7 @@ package com.ghilly.web.controller;
 
 
 import com.ghilly.model.Country;
+import com.ghilly.model.entity.CityDAO;
 import com.ghilly.model.entity.CountryDAO;
 import com.ghilly.web.handler.CountryHandler;
 import org.slf4j.Logger;
@@ -55,5 +56,11 @@ public class CountryController {
         logger.info("The data are received from the user.");
         countryHandler.delete(countryId);
         return ResponseEntity.ok().body("The country with the ID " + countryId + " is deleted.");
+    }
+
+    @GetMapping("/{countryId}/cities")
+    public ResponseEntity<List<CityDAO>> getCitiesByCountryId(@PathVariable int countryId) {
+        List<CityDAO> allCitiesForOneCountry = countryHandler.getCitiesByCountryId(countryId);
+        return ResponseEntity.ok().body(allCitiesForOneCountry);
     }
 }

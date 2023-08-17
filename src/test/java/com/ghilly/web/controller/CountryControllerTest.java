@@ -1,6 +1,7 @@
 package com.ghilly.web.controller;
 
 import com.ghilly.model.Country;
+import com.ghilly.model.entity.CityDAO;
 import com.ghilly.model.entity.CountryDAO;
 import com.ghilly.web.handler.CountryHandler;
 import org.junit.jupiter.api.BeforeEach;
@@ -84,6 +85,23 @@ class CountryControllerTest {
 
         assertAll(
                 () -> verify(countryHandler).delete(ID),
+                () -> verifyNoMoreInteractions(countryHandler)
+        );
+    }
+
+    @Test
+    void getAllCitiesForOneCountry() {
+        String kyoto = "Kyoto";
+        String tokyo = "Tokyo";
+        CountryDAO japan = new CountryDAO("Japan");
+        int id = japan.getId();
+        List<CityDAO> cities = List.of(new CityDAO(kyoto, japan, false), new CityDAO(tokyo, japan, true));
+        when(countryHandler.getCitiesByCountryId(id)).thenReturn(cities);
+
+        controller.getCitiesByCountryId(id);
+
+        assertAll(
+                () -> verify(countryHandler).getCitiesByCountryId(id),
                 () -> verifyNoMoreInteractions(countryHandler)
         );
     }

@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 
-@RequestMapping("/countries")
+@RequestMapping("/cities")
 public class CityController {
 
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CityController.class);
@@ -20,45 +20,40 @@ public class CityController {
         this.cityHandler = cityHandler;
     }
 
-    @PostMapping("/{countryId}/cities")
+    @PostMapping("/{countryId}")
     public ResponseEntity<CityDAO> create(@RequestBody City city, @PathVariable int countryId) {
         logger.info("The data are received from the user.");
         CityDAO cityDAO = cityHandler.create(city, countryId);
         return ResponseEntity.ok().body(cityDAO);
     }
 
-    @GetMapping("/all/cities/{cityId}")
+    @GetMapping("/{cityId}")
     public ResponseEntity<CityDAO> getCity(@PathVariable int cityId) {
         logger.info("The data are received from the user.");
         CityDAO cityDAO = cityHandler.getCity(cityId);
         return ResponseEntity.ok().body(cityDAO);
     }
 
-    @GetMapping("/all/cities/all")
+    @GetMapping("/all")
     public ResponseEntity<List<CityDAO>> getAllCities() {
         logger.info("Data processing.");
         List<CityDAO> allCities = cityHandler.getAllCities();
         return ResponseEntity.ok().body(allCities);
     }
 
-    @PutMapping("/all/cities/{cityId}")
+    @PutMapping("/{cityId}")
     public ResponseEntity<CityDAO> update(@RequestBody City city, @PathVariable int cityId) {
         logger.info("The data are received from the user.");
         CityDAO cityDAO = cityHandler.update(city, cityId);
         return ResponseEntity.ok().body(cityDAO);
     }
 
-    @DeleteMapping("/all/cities/{cityId}")
+    @DeleteMapping("/{cityId}")
     public ResponseEntity<String> deleteCity(@PathVariable int cityId) {
         logger.info("The data are received from the user.");
         cityHandler.delete(cityId);
         return ResponseEntity.ok().body("The city with the ID " + cityId + " is deleted");
     }
 
-    //change url
-    @GetMapping("/cities/all/country/{countryId}")
-    public ResponseEntity<List<CityDAO>> getCitiesByCountry(@PathVariable int countryId) {
-        List<CityDAO> allCitiesForOneCountry = cityHandler.getCitiesByCountry(countryId);
-        return ResponseEntity.ok().body(allCitiesForOneCountry);
-    }
+
 }

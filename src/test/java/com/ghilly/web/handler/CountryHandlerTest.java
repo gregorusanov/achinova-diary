@@ -4,7 +4,9 @@ import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.exception.WrongNameException;
 import com.ghilly.model.Country;
+import com.ghilly.model.entity.CityDAO;
 import com.ghilly.model.entity.CountryDAO;
+import com.ghilly.service.CityServiceRest;
 import com.ghilly.service.CountryServiceRest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -24,12 +26,14 @@ class CountryHandlerTest {
     private static final String WRONG_NAME_EX_MSG = "Warning! \n The legal name consists of letters that " +
             "could be separated by one space or hyphen. \n The name is not allowed here: ";
     private CountryHandler handler;
-    private CountryServiceRest service;
+    private CountryServiceRest countryServiceRest;
+    private CityServiceRest cityServiceRest;
 
     @BeforeEach
     void init() {
-        service = mock(CountryServiceRest.class);
-        handler = new CountryHandler(service);
+        countryServiceRest = mock(CountryServiceRest.class);
+        cityServiceRest = mock(CityServiceRest.class);
+        handler = new CountryHandler(countryServiceRest, cityServiceRest);
     }
 
     @Test
@@ -37,23 +41,23 @@ class CountryHandlerTest {
         handler.create(RUS);
 
         assertAll(
-                () -> verify(service).countryNameExists(NAME),
-                () -> verify(service).create(RUS_DAO),
-                () -> verifyNoMoreInteractions(service)
+                () -> verify(countryServiceRest).countryNameExists(NAME),
+                () -> verify(countryServiceRest).create(RUS_DAO),
+                () -> verifyNoMoreInteractions(countryServiceRest)
         );
     }
 
     @Test
     void createNameAlreadyExistsFail() {
-        when(service.countryNameExists(NAME)).thenReturn(true);
+        when(countryServiceRest.countryNameExists(NAME)).thenReturn(true);
         NameAlreadyExistsException exception = assertThrows(NameAlreadyExistsException.class,
                 () -> handler.create(RUS));
 
         assertAll(
                 () -> assertEquals("The country name " + NAME + " already exists.",
                         exception.getMessage()),
-                () -> verify(service).countryNameExists(NAME),
-                () -> verifyNoMoreInteractions(service)
+                () -> verify(countryServiceRest).countryNameExists(NAME),
+                () -> verifyNoMoreInteractions(countryServiceRest)
         );
     }
 
@@ -68,22 +72,22 @@ class CountryHandlerTest {
         assertAll(
                 () -> assertEquals(WRONG_NAME_EX_MSG + wrong,
                         exception.getMessage()),
-                () -> verifyNoInteractions(service)
+                () -> verifyNoInteractions(countryServiceRest)
         );
     }
 
     @Test
     void getSuccess() {
-        when(service.countryIdExists(COUNTRY_ID)).thenReturn(true);
-        when(service.getCountryById(COUNTRY_ID)).thenReturn(RUS_DAO);
+        when(countryServiceRest.countryIdExists(COUNTRY_ID)).thenReturn(true);
+        when(countryServiceRest.getCountryById(COUNTRY_ID)).thenReturn(RUS_DAO);
 
         CountryDAO countryDAO = handler.getCountryById(COUNTRY_ID);
 
         assertAll(
                 () -> assertEquals(countryDAO.getName(), NAME),
-                () -> verify(service).countryIdExists(COUNTRY_ID),
-                () -> verify(service).getCountryById(COUNTRY_ID),
-                () -> verifyNoMoreInteractions(service)
+                () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
+                () -> verify(countryServiceRest).getCountryById(COUNTRY_ID),
+                () -> verifyNoMoreInteractions(countryServiceRest)
         );
     }
 
@@ -94,8 +98,8 @@ class CountryHandlerTest {
         assertAll(
                 () -> assertEquals(COUNTRY_ID_NOT_FOUND_EX_MSG_BEGIN + COUNTRY_ID + ID_NOT_FOUND_EX_MSG_END,
                         ex.getMessage()),
-                () -> verify(service).countryIdExists(COUNTRY_ID),
-                () -> verifyNoMoreInteractions(service)
+                () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
+                () -> verifyNoMoreInteractions(countryServiceRest)
         );
     }
 
@@ -105,14 +109,14 @@ class CountryHandlerTest {
         CountryDAO fr = new CountryDAO("France");
         CountryDAO cn = new CountryDAO("China");
         List<CountryDAO> expected = List.of(af, fr, cn);
-        when(service.getAllCountries()).thenReturn(expected);
+        when(countryServiceRest.getAllCountries()).thenReturn(expected);
 
-        List<CountryDAO> actual = service.getAllCountries();
+        List<CountryDAO> actual = countryServiceRest.getAllCountries();
 
         assertAll(
                 () -> assertEquals(expected, actual),
-                () -> verify(service).getAllCountries(),
-                () -> verifyNoMoreInteractions(service)
+                () -> verify(countryServiceRest).getAllCountries(),
+                () -> verifyNoMoreInteractions(countryServiceRest)
         );
     }
 
@@ -120,15 +124,15 @@ class CountryHandlerTest {
     void updateSuccess() {
         CountryDAO ussr = new CountryDAO(COUNTRY_ID, "USSR");
         CountryDAO countryDAO = new CountryDAO(COUNTRY_ID, NAME);
-        when(service.countryIdExists(COUNTRY_ID)).thenReturn(true);
-        when(service.getCountryById(COUNTRY_ID)).thenReturn(ussr);
+        when(countryServiceRest.countryIdExists(COUNTRY_ID)).thenReturn(true);
+        when(countryServiceRest.getCountryById(COUNTRY_ID)).thenReturn(ussr);
 
         handler.update(new Country(NAME), COUNTRY_ID);
         assertAll(
-                () -> verify(service).countryIdExists(COUNTRY_ID),
-                () -> verify(service).countryNameExists(NAME),
-                () -> verify(service).update(countryDAO),
-                () -> verifyNoMoreInteractions(service)
+                () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
+                () -> verify(countryServiceRest).countryNameExists(NAME),
+                () -> verify(countryServiceRest).update(countryDAO),
+                () -> verifyNoMoreInteractions(countryServiceRest)
         );
     }
 
@@ -140,14 +144,14 @@ class CountryHandlerTest {
         assertAll(
                 () -> assertEquals(COUNTRY_ID_NOT_FOUND_EX_MSG_BEGIN + COUNTRY_ID + ID_NOT_FOUND_EX_MSG_END,
                         exception.getMessage()),
-                () -> verify(service).countryIdExists(COUNTRY_ID),
-                () -> verifyNoMoreInteractions(service)
+                () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
+                () -> verifyNoMoreInteractions(countryServiceRest)
         );
     }
 
     @Test
     void updateWrongNewNameFail() {
-        when(service.countryIdExists(COUNTRY_ID)).thenReturn(true);
+        when(countryServiceRest.countryIdExists(COUNTRY_ID)).thenReturn(true);
         String newName = "Ru$$i@";
 
         WrongNameException exception = assertThrows(WrongNameException.class,
@@ -155,16 +159,16 @@ class CountryHandlerTest {
 
         assertAll(
                 () -> assertEquals(WRONG_NAME_EX_MSG + newName, exception.getMessage()),
-                () -> verify(service).countryIdExists(COUNTRY_ID),
-                () -> verifyNoMoreInteractions(service)
+                () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
+                () -> verifyNoMoreInteractions(countryServiceRest)
         );
     }
 
 
     @Test
     void updateExistingNewNameFail() {
-        when(service.countryIdExists(COUNTRY_ID)).thenReturn(true);
-        when(service.countryNameExists(NAME)).thenReturn(true);
+        when(countryServiceRest.countryIdExists(COUNTRY_ID)).thenReturn(true);
+        when(countryServiceRest.countryNameExists(NAME)).thenReturn(true);
 
         NameAlreadyExistsException exception = assertThrows(NameAlreadyExistsException.class,
                 () -> handler.update(new Country(NAME), COUNTRY_ID));
@@ -172,22 +176,22 @@ class CountryHandlerTest {
         assertAll(
                 () -> assertEquals("The country name " + NAME + " already exists.",
                         exception.getMessage()),
-                () -> verify(service).countryIdExists(COUNTRY_ID),
-                () -> verify(service).countryNameExists(NAME),
-                () -> verifyNoMoreInteractions(service)
+                () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
+                () -> verify(countryServiceRest).countryNameExists(NAME),
+                () -> verifyNoMoreInteractions(countryServiceRest)
         );
     }
 
     @Test
     void deleteSuccess() {
-        when(service.countryIdExists(COUNTRY_ID)).thenReturn(true);
+        when(countryServiceRest.countryIdExists(COUNTRY_ID)).thenReturn(true);
 
         handler.delete(COUNTRY_ID);
 
         assertAll(
-                () -> verify(service).countryIdExists(COUNTRY_ID),
-                () -> verify(service).delete(COUNTRY_ID),
-                () -> verifyNoMoreInteractions(service)
+                () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
+                () -> verify(countryServiceRest).delete(COUNTRY_ID),
+                () -> verifyNoMoreInteractions(countryServiceRest)
         );
     }
 
@@ -199,8 +203,30 @@ class CountryHandlerTest {
         assertAll(
                 () -> assertEquals(COUNTRY_ID_NOT_FOUND_EX_MSG_BEGIN + COUNTRY_ID + ID_NOT_FOUND_EX_MSG_END,
                         exception.getMessage()),
-                () -> verify(service).countryIdExists(COUNTRY_ID),
-                () -> verifyNoMoreInteractions(service)
+                () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
+                () -> verifyNoMoreInteractions(countryServiceRest)
+        );
+    }
+
+    @Test
+    void getAllCitiesForOneCountry() {
+        String kyoto = "Kyoto";
+        String tokyo = "Tokyo";
+        CountryDAO countryDAO = new CountryDAO("Japan");
+        int id = countryDAO.getId();
+        List<CityDAO> cities = List.of(new CityDAO(kyoto, countryDAO, false), new CityDAO(tokyo, countryDAO, true));
+        when(countryServiceRest.countryIdExists(id)).thenReturn(true);
+        when(cityServiceRest.getCitiesByCountryId(id)).thenReturn(cities);
+
+        List<CityDAO> actual = handler.getCitiesByCountryId(id);
+
+        assertAll(
+                () -> assertEquals(2, actual.size()),
+                () -> assertEquals(actual.get(0).getName(), kyoto),
+                () -> assertEquals(actual.get(1).getName(), tokyo),
+                () -> verify(cityServiceRest).getCitiesByCountryId(id),
+                () -> verify(countryServiceRest).countryIdExists(id),
+                () -> verifyNoMoreInteractions(cityServiceRest, countryServiceRest)
         );
     }
 }

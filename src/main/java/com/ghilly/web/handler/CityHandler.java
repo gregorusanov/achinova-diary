@@ -62,11 +62,7 @@ public class CityHandler {
         cityServiceRest.delete(cityId);
     }
 
-    public List<CityDAO> getCitiesByCountry(int countryId) {
-        checkCountryIdExists(countryId);
-        CountryDAO countryDAO = countryServiceRest.getCountryById(countryId);
-        return cityServiceRest.getCitiesByCountry(countryDAO);
-    }
+
 
     private void checkCountryIdExists(int countryId) {
         if (!countryServiceRest.countryIdExists(countryId))

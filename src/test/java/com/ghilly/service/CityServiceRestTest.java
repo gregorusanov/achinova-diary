@@ -104,12 +104,12 @@ class CityServiceRestTest {
         String second = "Leipzig";
         CountryDAO countryDAO = new CountryDAO("Germany");
         List<CityDAO> cities = List.of(new CityDAO(first, countryDAO), new CityDAO(second, countryDAO));
-        when(cityRepository.findAllByCountryDAO(countryDAO)).thenReturn(Optional.of(cities));
+        when(cityRepository.findAllByCountryDAOId(1)).thenReturn(Optional.of(cities));
 
-        service.getCitiesByCountry(countryDAO);
+        service.getCitiesByCountryId(1);
 
         assertAll(
-                () -> verify(cityRepository).findAllByCountryDAO(countryDAO),
+                () -> verify(cityRepository).findAllByCountryDAOId(1),
                 () -> verifyNoMoreInteractions(cityRepository)
         );
     }

@@ -1,7 +1,6 @@
 package com.ghilly.service;
 
 import com.ghilly.model.entity.CityDAO;
-import com.ghilly.model.entity.CountryDAO;
 import com.ghilly.repository.CityRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,8 +51,8 @@ public class CityServiceRest implements CityService {
     }
 
     @Override
-    public List<CityDAO> getCitiesByCountry(CountryDAO countryDAO) {
-        return cityRepository.findAllByCountryDAO(countryDAO).get();
+    public List<CityDAO> getCitiesByCountryId(int countryId) {
+        return cityRepository.findAllByCountryDAOId(countryId).get();
     }
 
     public boolean cityIdExists(int id) {
