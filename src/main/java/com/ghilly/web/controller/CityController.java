@@ -1,19 +1,21 @@
 package com.ghilly.web.controller;
 
-import com.ghilly.model.City;
-import com.ghilly.model.entity.CityDAO;
-import com.ghilly.web.handler.CityHandler;
+import com.ghilly.model.DTO.CityDTO;
+import com.ghilly.transformer.TransformerDAODTO;
+import com.ghilly.web.validator.CityHandler;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RequestMapping("/cities")
 public class CityController {
 
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CityController.class);
+    private static final Logger logger = LoggerFactory.getLogger(CityController.class);
     private final CityHandler cityHandler;
 
     public CityController(CityHandler cityHandler) {
@@ -21,39 +23,49 @@ public class CityController {
     }
 
     @PostMapping("/{countryId}")
-    public ResponseEntity<CityDAO> create(@RequestBody City city, @PathVariable int countryId) {
-        logger.info("The data are received from the user.");
-        CityDAO cityDAO = cityHandler.create(city, countryId);
-        return ResponseEntity.ok().body(cityDAO);
+    public ResponseEntity<CityDTO> create(@RequestBody CityDTO city, @PathVariable int countryId) {
+        logger.info("The data {} are received from the user.", city);
+        return Optional.of(city)
+                .map(TransformerDAODTO::transformToCityDAO)
+                .map(cityDAO -> cityHandler.create(cityDAO, countryId))
+                .map(TransformerDAODTO::transformToCityDTO)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/{cityId}")
-    public ResponseEntity<CityDAO> getCity(@PathVariable int cityId) {
+    public ResponseEntity<CityDTO> getCity(@PathVariable int cityId) {
         logger.info("The data are received from the user.");
-        CityDAO cityDAO = cityHandler.getCity(cityId);
-        return ResponseEntity.ok().body(cityDAO);
+        return Optional.of(cityHandler.getCity(cityId))
+                .map(TransformerDAODTO::transformToCityDTO)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<CityDAO>> getAllCities() {
+    public ResponseEntity<List<CityDTO>> getAllCities() {
         logger.info("Data processing.");
-        List<CityDAO> allCities = cityHandler.getAllCities();
-        return ResponseEntity.ok().body(allCities);
+        List<CityDTO> cityDTOS = cityHandler.getAllCities().stream()
+                .map(TransformerDAODTO::transformToCityDTO)
+                .toList();
+        return ResponseEntity.ok(cityDTOS);
     }
 
     @PutMapping("/{cityId}")
-    public ResponseEntity<CityDAO> update(@RequestBody City city, @PathVariable int cityId) {
+    public ResponseEntity<CityDTO> update(@RequestBody CityDTO city, @PathVariable int cityId) {
         logger.info("The data are received from the user.");
-        CityDAO cityDAO = cityHandler.update(city, cityId);
-        return ResponseEntity.ok().body(cityDAO);
+        return Optional.of(city)
+                .map(TransformerDAODTO::transformToCityDAO)
+                .map(cityDAO -> cityHandler.update(cityDAO, cityId))
+                .map(TransformerDAODTO::transformToCityDTO)
+                .map(ResponseEntity::ok)
+                .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{cityId}")
     public ResponseEntity<String> deleteCity(@PathVariable int cityId) {
         logger.info("The data are received from the user.");
         cityHandler.delete(cityId);
-        return ResponseEntity.ok().body("The city with the ID " + cityId + " is deleted");
+        return ResponseEntity.ok().build();
     }
-
-
 }

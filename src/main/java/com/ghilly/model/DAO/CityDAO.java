@@ -1,4 +1,4 @@
-package com.ghilly.model.entity;
+package com.ghilly.model.DAO;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -7,7 +7,8 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "cities")
-public class CityDAO implements Serializable {
+//TODO remove redundant constructors
+public class CityDAO implements Serializable, Cloneable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cities_seq")
@@ -36,6 +37,12 @@ public class CityDAO implements Serializable {
         this.id = id;
         this.name = name;
         this.countryDAO = countryDAO;
+        this.capital = capital;
+    }
+
+    public CityDAO(int id, String name,  boolean capital) {
+        this.id = id;
+        this.name = name;
         this.capital = capital;
     }
 
@@ -107,5 +114,16 @@ public class CityDAO implements Serializable {
                 ", country=" + countryDAO +
                 ", capital=" + capital +
                 '}';
+    }
+
+    @Override
+    public CityDAO clone() {
+        try {
+            CityDAO clone = (CityDAO) super.clone();
+            if (Objects.nonNull(countryDAO)) clone.setCountry(countryDAO.clone());
+            return clone;
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

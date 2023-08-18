@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.exception.WrongNameException;
-import com.ghilly.model.entity.CountryDAO;
+import com.ghilly.model.DAO.CountryDAO;
 import com.ghilly.repository.CountryRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;

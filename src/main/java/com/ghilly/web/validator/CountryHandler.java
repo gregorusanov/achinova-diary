@@ -1,11 +1,9 @@
-package com.ghilly.web.handler;
+package com.ghilly.web.validator;
 
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
-import com.ghilly.model.Country;
-import com.ghilly.model.entity.CityDAO;
-import com.ghilly.model.entity.CountryDAO;
-import com.ghilly.service.CityServiceRest;
+import com.ghilly.model.DAO.CityDAO;
+import com.ghilly.model.DAO.CountryDAO;
 import com.ghilly.service.CountryServiceRest;
 import com.ghilly.web.controller.CityController;
 import org.slf4j.LoggerFactory;
@@ -17,20 +15,17 @@ import static com.ghilly.utils.ValidationUtils.checkNameIsWrong;
 public class CountryHandler {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CityController.class);
     private final CountryServiceRest countryServiceRest;
-    private final CityServiceRest cityServiceRest;
 
-    public CountryHandler(CountryServiceRest countryServiceRest, CityServiceRest cityServiceRest) {
+    public CountryHandler(CountryServiceRest countryServiceRest) {
         this.countryServiceRest = countryServiceRest;
-        this.cityServiceRest = cityServiceRest;
     }
 
-    public CountryDAO create(Country country) {
+    public CountryDAO create(CountryDAO country) {
         String name = country.getName();
         checkNameIsWrong(name);
         checkNameExists(name);
         logger.info("The user data are correct.");
-        CountryDAO countryDAO = new CountryDAO(name);
-        return countryServiceRest.create(countryDAO);
+        return countryServiceRest.create(country);
     }
 
     public List<CountryDAO> getAllCountries() {
@@ -44,13 +39,13 @@ public class CountryHandler {
         return countryServiceRest.getCountryById(countryId);
     }
 
-    public CountryDAO update(Country country, int countryId) {
-        checkIdExists(countryId);
+    public CountryDAO update(CountryDAO country) {
+        checkIdExists(country.getId());
         String name = country.getName();
         checkNameIsWrong(name);
         checkNameExists(name);
         logger.info("The user data are correct.");
-        return countryServiceRest.update(new CountryDAO(countryId, name));
+        return countryServiceRest.update(country);
     }
 
     public void delete(int countryId) {
@@ -59,9 +54,9 @@ public class CountryHandler {
         countryServiceRest.delete(countryId);
     }
 
-    public List<CityDAO> getCitiesByCountryId(int countryId) {
+    public List<CityDAO> getAllCitiesByCountryId(int countryId) {
         checkIdExists(countryId);
-        return cityServiceRest.getCitiesByCountryId(countryId);
+        return countryServiceRest.getAllCitiesByCountryId(countryId);
     }
 
     private void checkIdExists(int id) {

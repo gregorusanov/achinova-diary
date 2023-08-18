@@ -1,4 +1,4 @@
-package com.ghilly.model.entity;
+package com.ghilly.model.DAO;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -8,7 +8,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "countries")
-public class CountryDAO implements Serializable {
+public class CountryDAO implements Serializable, Cloneable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "countries_seq")
@@ -22,6 +22,16 @@ public class CountryDAO implements Serializable {
 
     @OneToMany(mappedBy = "countryDAO")
     private List<CityDAO> cityList;
+
+    public List<CityDAO> getCityList() {
+        return cityList;
+    }
+
+    public CountryDAO(int id, String name, List<CityDAO> cityList) {
+        this.id = id;
+        this.name = name;
+        this.cityList = cityList;
+    }
     public CountryDAO(int id, String name) {
         this.id = id;
         this.name = name;
@@ -53,7 +63,7 @@ public class CountryDAO implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(id, name, cityList);
     }
 
     @Override
@@ -62,5 +72,14 @@ public class CountryDAO implements Serializable {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
+    }
+
+    @Override
+    public CountryDAO clone() {
+        try {
+            return (CountryDAO) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new AssertionError();
+        }
     }
 }

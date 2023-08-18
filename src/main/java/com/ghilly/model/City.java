@@ -2,6 +2,7 @@ package com.ghilly.model;
 
 import java.util.Objects;
 
+//TODO remove it
 public class City {
 
     private int cityId;

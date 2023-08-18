@@ -1,6 +1,6 @@
 package com.ghilly.service;
 
-import com.ghilly.model.entity.CityDAO;
+import com.ghilly.model.DAO.CityDAO;
 import com.ghilly.repository.CityRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,11 +48,6 @@ public class CityServiceRest implements CityService {
     public void delete(int cityId) {
         cityRepository.deleteById(cityId);
         logger.info("The city with the ID {} is deleted", cityId);
-    }
-
-    @Override
-    public List<CityDAO> getCitiesByCountryId(int countryId) {
-        return cityRepository.findAllByCountryDAOId(countryId).get();
     }
 
     public boolean cityIdExists(int id) {

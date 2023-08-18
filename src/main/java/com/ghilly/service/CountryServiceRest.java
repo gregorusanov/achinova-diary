@@ -1,6 +1,7 @@
 package com.ghilly.service;
 
-import com.ghilly.model.entity.CountryDAO;
+import com.ghilly.model.DAO.CityDAO;
+import com.ghilly.model.DAO.CountryDAO;
 import com.ghilly.repository.CountryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +34,7 @@ public class CountryServiceRest implements CountryService {
     @Override
     public CountryDAO getCountryById(int countryId) {
         logger.info("The country with the ID {} is found.", countryId);
-        return countryRepository.findById(countryId).get();
+        return countryRepository.findById(countryId).orElseThrow();
     }
 
     @Override
@@ -47,6 +48,14 @@ public class CountryServiceRest implements CountryService {
     public void delete(int countryId) {
         countryRepository.deleteById(countryId);
         logger.info("The country with the ID {} is deleted", countryId);
+    }
+
+    @Override
+    public List<CityDAO> getAllCitiesByCountryId(int countryId) {
+        CountryDAO countryDAO = countryRepository.findById(countryId).orElseThrow();
+        List<CityDAO> cityList = countryDAO.getCityList();
+        logger.info("cityList = {}", cityList);
+        return cityList;
     }
 
     public boolean countryIdExists(int id) {

@@ -1,7 +1,7 @@
 package com.ghilly.service;
 
-import com.ghilly.model.entity.CityDAO;
-import com.ghilly.model.entity.CountryDAO;
+import com.ghilly.model.DAO.CityDAO;
+import com.ghilly.model.DAO.CountryDAO;
 import com.ghilly.repository.CityRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -94,22 +94,6 @@ class CityServiceRestTest {
 
         assertAll(
                 () -> verify(cityRepository).deleteById(CITY_ID),
-                () -> verifyNoMoreInteractions(cityRepository)
-        );
-    }
-
-    @Test
-    void getAllCitiesForOneCountry() {
-        String first = "Dresden";
-        String second = "Leipzig";
-        CountryDAO countryDAO = new CountryDAO("Germany");
-        List<CityDAO> cities = List.of(new CityDAO(first, countryDAO), new CityDAO(second, countryDAO));
-        when(cityRepository.findAllByCountryDAOId(1)).thenReturn(Optional.of(cities));
-
-        service.getCitiesByCountryId(1);
-
-        assertAll(
-                () -> verify(cityRepository).findAllByCountryDAOId(1),
                 () -> verifyNoMoreInteractions(cityRepository)
         );
     }

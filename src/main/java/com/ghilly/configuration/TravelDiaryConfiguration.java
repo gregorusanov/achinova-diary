@@ -6,8 +6,8 @@ import com.ghilly.service.CityServiceRest;
 import com.ghilly.service.CountryServiceRest;
 import com.ghilly.web.controller.CityController;
 import com.ghilly.web.controller.CountryController;
-import com.ghilly.web.handler.CityHandler;
-import com.ghilly.web.handler.CountryHandler;
+import com.ghilly.web.validator.CityHandler;
+import com.ghilly.web.validator.CountryHandler;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -19,8 +19,8 @@ public class TravelDiaryConfiguration {
     }
 
     @Bean
-    public CountryHandler countryHandler(CountryServiceRest countryServiceRest, CityServiceRest cityServiceRest) {
-        return new CountryHandler(countryServiceRest, cityServiceRest);
+    public CountryHandler countryValidator(CountryServiceRest countryServiceRest) {
+        return new CountryHandler(countryServiceRest);
     }
 
     @Bean

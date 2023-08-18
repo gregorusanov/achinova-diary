@@ -1,10 +1,10 @@
-package com.ghilly.web.handler;
+package com.ghilly.web.validator;
 
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.model.City;
-import com.ghilly.model.entity.CityDAO;
-import com.ghilly.model.entity.CountryDAO;
+import com.ghilly.model.DAO.CityDAO;
+import com.ghilly.model.DAO.CountryDAO;
 import com.ghilly.service.CityServiceRest;
 import com.ghilly.service.CountryServiceRest;
 import com.ghilly.web.controller.CityController;
@@ -14,6 +14,7 @@ import java.util.List;
 
 import static com.ghilly.utils.ValidationUtils.checkNameIsWrong;
 
+//TODO refactoring from creating new city to cloning it
 public class CityHandler {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CityController.class);
     private final CityServiceRest cityServiceRest;
@@ -24,14 +25,15 @@ public class CityHandler {
         this.countryServiceRest = countryServiceRest;
     }
 
-    public CityDAO create(City city, int countryId) {
+    public CityDAO create(CityDAO city, int countryId) {
         checkCountryIdExists(countryId);
         String name = city.getName();
         checkNameIsWrong(name);
         checkCityNameExists(name);
         logger.info("The user data are correct.");
-        CountryDAO countryDAO = countryServiceRest.getCountryById(countryId);
-        return cityServiceRest.create(new CityDAO(name, countryDAO, city.isCapital()));
+        CityDAO newCity = city.clone();
+        newCity.setCountry(countryServiceRest.getCountryById(countryId));
+        return cityServiceRest.create(newCity);
     }
 
     public CityDAO getCity(int cityId) {
@@ -45,7 +47,7 @@ public class CityHandler {
         return cityServiceRest.getAllCities();
     }
 
-    public CityDAO update(City city, int cityId) {
+    public CityDAO update(CityDAO city, int cityId) {
         checkCityIdExists(cityId);
         String name = city.getName();
         checkNameIsWrong(name);
@@ -61,8 +63,6 @@ public class CityHandler {
         logger.info("The user data are correct.");
         cityServiceRest.delete(cityId);
     }
-
-
 
     private void checkCountryIdExists(int countryId) {
         if (!countryServiceRest.countryIdExists(countryId))
