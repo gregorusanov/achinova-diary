@@ -6,7 +6,6 @@ import com.ghilly.model.DTO.CityDTO;
 import com.ghilly.model.DTO.CountryDTO;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class TransformerDAODTO {
 
@@ -20,10 +19,7 @@ public class TransformerDAODTO {
     public static CountryDTO transformToCountryDTO(CountryDAO countryDAO) {
         int id = countryDAO.getId();
         String name = countryDAO.getName();
-        List<String> cityList = countryDAO.getCityList() == null
-                ? new ArrayList<>()
-                : countryDAO.getCityList().stream().map(CityDAO::getName).toList();
-        return new CountryDTO(id, name, cityList);
+        return new CountryDTO(id, name);
     }
 
     public static CityDTO transformToCityDTO(CityDAO cityDAO) {

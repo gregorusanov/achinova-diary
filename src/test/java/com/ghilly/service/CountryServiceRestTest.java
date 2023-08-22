@@ -1,5 +1,6 @@
 package com.ghilly.service;
 
+import com.ghilly.model.DAO.CityDAO;
 import com.ghilly.model.DAO.CountryDAO;
 import com.ghilly.repository.CountryRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -8,8 +9,7 @@ import org.junit.jupiter.api.Test;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 class CountryServiceRestTest {
@@ -89,6 +89,25 @@ class CountryServiceRestTest {
 
         assertAll(
                 () -> verify(repository).deleteById(ID),
+                () -> verifyNoMoreInteractions(repository)
+        );
+    }
+
+    @Test
+    void getAllCitiesByCountry() {
+        CountryDAO countryDAO = new CountryDAO("Germany");
+        int id = countryDAO.getId();
+        CityDAO br = new CityDAO("Berlin", countryDAO, true);
+        CityDAO munich = new CityDAO("Munich", countryDAO);
+        CityDAO dresden = new CityDAO("Dresden", countryDAO);
+        countryDAO.setCityList(List.of(br, munich, dresden));
+        when(repository.findById(id)).thenReturn(Optional.of(countryDAO));
+
+        List <CityDAO> actual = service.getAllCitiesByCountryId(id);
+
+        assertAll(
+                () -> assertEquals(3, actual.size()),
+                () -> verify(repository).findById(id),
                 () -> verifyNoMoreInteractions(repository)
         );
     }

@@ -26,7 +26,7 @@ public class CityServiceRest implements CityService {
     @Override
     public CityDAO getCity(int cityId) {
         logger.info("The city with the ID {} is found.", cityId);
-        return cityRepository.findById(cityId).get();
+        return cityRepository.findById(cityId).orElseThrow();
     }
 
     @Override
@@ -41,7 +41,7 @@ public class CityServiceRest implements CityService {
         int id = cityDAO.getId();
         cityRepository.save(cityDAO);
         logger.info("The city with the ID {} is updated, new name is {}.", id, cityDAO.getName());
-        return cityRepository.findById(id).get();
+        return cityRepository.findById(id).orElseThrow();
     }
 
     @Override

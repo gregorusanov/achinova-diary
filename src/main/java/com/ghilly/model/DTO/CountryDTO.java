@@ -1,18 +1,17 @@
 package com.ghilly.model.DTO;
 
-import java.util.List;
 import java.util.Objects;
 
 public class CountryDTO {
     private int id;
     private String name;
-    //TODO remove this list
-    private List<String> cityList;
 
-    public CountryDTO(int id, String name, List<String> cityList) {
+    public CountryDTO(int id, String name) {
         this.id = id;
         this.name = name;
-        this.cityList = cityList;
+    }
+
+    public CountryDTO() {
     }
 
     public CountryDTO(String name) {
@@ -21,7 +20,7 @@ public class CountryDTO {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name, cityList);
+        return Objects.hash(id, name);
     }
 
     @Override
@@ -36,8 +35,7 @@ public class CountryDTO {
     public String toString() {
         return "Country{" +
                 "id=" + id +
-                ", name='" + name + '\'' +
-                ", cities=" + cityList +
+                ", name='" + name +
                 '}';
     }
 

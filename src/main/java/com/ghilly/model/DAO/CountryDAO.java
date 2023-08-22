@@ -20,18 +20,19 @@ public class CountryDAO implements Serializable, Cloneable {
     @NotBlank(message = "The country should have a name!")
     private String name;
 
+    public void setCityList(List<CityDAO> cityList) {
+        this.cityList = cityList;
+    }
+
     @OneToMany(mappedBy = "countryDAO")
     private List<CityDAO> cityList;
-
-    public List<CityDAO> getCityList() {
-        return cityList;
-    }
 
     public CountryDAO(int id, String name, List<CityDAO> cityList) {
         this.id = id;
         this.name = name;
         this.cityList = cityList;
     }
+
     public CountryDAO(int id, String name) {
         this.id = id;
         this.name = name;
@@ -43,6 +44,10 @@ public class CountryDAO implements Serializable, Cloneable {
 
     public CountryDAO() {
 
+    }
+
+    public List<CityDAO> getCityList() {
+        return cityList;
     }
 
     public int getId() {

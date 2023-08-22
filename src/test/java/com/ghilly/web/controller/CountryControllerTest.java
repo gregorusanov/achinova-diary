@@ -2,7 +2,8 @@ package com.ghilly.web.controller;
 
 import com.ghilly.model.DAO.CityDAO;
 import com.ghilly.model.DAO.CountryDAO;
-import com.ghilly.web.validator.CountryHandler;
+import com.ghilly.model.DTO.CountryDTO;
+import com.ghilly.web.handler.CountryHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +16,7 @@ class CountryControllerTest {
 
     private static final int ID = 100;
     private static final String NAME = "USSR";
-    private static final com.ghilly.model.DTO.CountryDTO USSR_DTO = new com.ghilly.model.DTO.CountryDTO(NAME);
+    private static final CountryDTO USSR_DTO = new CountryDTO(NAME);
     private static final CountryDAO USSR_DAO = new CountryDAO(NAME);
     private static final CountryDAO USSR_DAO_FROM_REPO = new CountryDAO(ID, NAME);
     private CountryHandler countryHandler;
@@ -67,7 +68,7 @@ class CountryControllerTest {
     @Test
     void updateCountry() {
         String newName = "Russia";
-        com.ghilly.model.DTO.CountryDTO toChange = new com.ghilly.model.DTO.CountryDTO(newName);
+        CountryDTO toChange = new CountryDTO(newName);
         CountryDAO updated = new CountryDAO(ID, newName);
         when(countryHandler.update(updated)).thenReturn(updated);
 

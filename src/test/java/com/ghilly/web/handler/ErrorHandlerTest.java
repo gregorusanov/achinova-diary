@@ -1,4 +1,4 @@
-package com.ghilly.web.validator;
+package com.ghilly.web.handler;
 
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
@@ -23,7 +23,7 @@ class ErrorHandlerTest {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
         assertEquals(status, actual.getStatusCode());
-        assertEquals("Runtime exception " + exception.getMessage(), actual.getBody());
+        assertEquals("Runtime exception: " + exception.getMessage(), actual.getBody());
     }
 
     @Test

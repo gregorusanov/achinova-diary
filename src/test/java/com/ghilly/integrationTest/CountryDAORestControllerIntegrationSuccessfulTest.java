@@ -3,6 +3,7 @@ package com.ghilly.integrationTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ghilly.model.DAO.CityDAO;
 import com.ghilly.model.DAO.CountryDAO;
+import com.ghilly.model.DTO.CountryDTO;
 import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.CountryRepository;
 import org.junit.Test;
@@ -15,6 +16,8 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+
+import java.util.Objects;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -35,10 +38,11 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
 
     @Autowired
     private CityRepository cityRepository;
+
     @Test
     public void createCountryStatusOk200() throws Exception {
         String jp = "Japan";
-        CountryDAO japan = new CountryDAO(jp);
+        CountryDTO japan = new CountryDTO(jp);
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(japan);
 
@@ -58,9 +62,9 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
         String rus = "Russia";
         String fr = "France";
         String de = "Deutschland";
-        countryRepository.save(new CountryDAO(rus));
-        countryRepository.save(new CountryDAO(fr));
         countryRepository.save(new CountryDAO(de));
+        countryRepository.save(new CountryDAO(fr));
+        countryRepository.save(new CountryDAO(rus));
 
         mvc.perform(MockMvcRequestBuilders
                         .get("/countries/all")
@@ -69,9 +73,9 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
                 .andExpect(status().isOk())
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$[0].name").value(rus))
+                .andExpect(jsonPath("$[0].name").value(de))
                 .andExpect(jsonPath("$[1].name").value(fr))
-                .andExpect(jsonPath("$[2].name").value(de));
+                .andExpect(jsonPath("$[2].name").value(rus));
         assertTrue(countryRepository.findByName(rus).isPresent());
         assertTrue(countryRepository.findByName(fr).isPresent());
         assertTrue(countryRepository.findByName(de).isPresent());
@@ -86,9 +90,8 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
         int id = countryRepository.findByName(cn).get().getId();
 
         mvc.perform(MockMvcRequestBuilders
-                        .get("/countries/{countryId}", id)
+                        .get("/countries/" + id)
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(System.out::println)
                 .andExpect(status().isOk())
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -102,9 +105,9 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
     public void updateCountryStatusOk200() throws Exception {
         CountryDAO countryDAO = new CountryDAO("USSR");
         countryRepository.save(countryDAO);
-        int id = countryRepository.findByName("USSR").get().getId();
+        int id = Objects.requireNonNull(countryRepository.findByName("USSR").orElse(null)).getId();
         String newName = "Russia";
-        CountryDAO toUpdate = new CountryDAO(id, newName);
+        CountryDTO toUpdate = new CountryDTO(id, newName);
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(toUpdate);
 
@@ -147,12 +150,12 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
         cityRepository.save(new CityDAO(ber, germany, true));
         CountryDAO russia = new CountryDAO(rus);
         countryRepository.save(russia);
-        int id = countryRepository.findByName(rus).get().getId();
+        int id = Objects.requireNonNull(countryRepository.findByName(rus).orElse(null)).getId();
         cityRepository.save(new CityDAO(mos, russia, true));
         cityRepository.save(new CityDAO(spb, russia));
 
         mvc.perform(MockMvcRequestBuilders
-                        .get("/countries/" + id + "/cities")
+                        .get("/countries/" + id + "/cities/all")
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
