@@ -3,7 +3,6 @@ package com.ghilly.integrationTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
-import com.ghilly.model.City;
 import com.ghilly.model.DAO.CityDAO;
 import com.ghilly.model.DAO.CountryDAO;
 import com.ghilly.model.DTO.CityDTO;
@@ -72,7 +71,7 @@ public class CityDAORestControllerIntegrationTest {
         countryRepository.save(japan);
         int id = Objects.requireNonNull(countryRepository.findByName(jp).orElse(null)).getId();
         String tokyo = "Tokyo";
-        City city = new City(tokyo, id, true);
+        CityDTO city = new CityDTO(tokyo, id, true);
         cityRepository.save(new CityDAO(tokyo, japan, true));
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(city);
@@ -167,9 +166,10 @@ public class CityDAORestControllerIntegrationTest {
         String newName = "Volgograd";
         CountryDAO rus = new CountryDAO("Russia");
         countryRepository.save(rus);
+        int countryId = countryRepository.findByName(rus.getName()).orElseThrow().getId();
         cityRepository.save(new CityDAO(oldName, rus));
         int cityId = cityRepository.findByName(oldName).orElseThrow().getId();
-        City volgograd = new City(cityId, newName);
+        CityDTO volgograd = new CityDTO(newName, countryId);
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(volgograd);
 

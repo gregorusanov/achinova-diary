@@ -2,6 +2,7 @@ package com.ghilly.service;
 
 import com.ghilly.model.DAO.CityDAO;
 import com.ghilly.model.DAO.CountryDAO;
+import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.CountryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,9 +13,11 @@ public class CountryServiceRest implements CountryService {
 
     private static final Logger logger = LoggerFactory.getLogger(CountryServiceRest.class);
     private final CountryRepository countryRepository;
+    private final CityRepository cityRepository;
 
-    public CountryServiceRest(CountryRepository countryRepository) {
+    public CountryServiceRest(CountryRepository countryRepository, CityRepository cityRepository) {
         this.countryRepository = countryRepository;
+        this.cityRepository = cityRepository;
     }
 
     @Override
@@ -56,6 +59,12 @@ public class CountryServiceRest implements CountryService {
         List<CityDAO> cityList = countryDAO.getCityList();
         logger.info("cityList = {}", cityList);
         return cityList;
+    }
+
+    @Override
+    public CityDAO getCapitalByCountryId(int countryId) {
+        CountryDAO countryDAO = countryRepository.findById(countryId).orElseThrow();
+        return cityRepository.findCityDAOByCountryDAOAndCapitalIsTrue(countryDAO).orElseThrow();
     }
 
     public boolean countryIdExists(int id) {

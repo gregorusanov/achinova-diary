@@ -1,8 +1,10 @@
 package com.ghilly.web.handler;
 
+import com.ghilly.exception.CapitalAlreadyExistsException;
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.model.DAO.CityDAO;
+import com.ghilly.model.DAO.CountryDAO;
 import com.ghilly.service.CityServiceRest;
 import com.ghilly.service.CountryServiceRest;
 import com.ghilly.web.controller.CityController;
@@ -23,13 +25,15 @@ public class CityHandler {
     }
 
     public CityDAO create(CityDAO city, int countryId) {
+        CountryDAO countryDAO = countryServiceRest.getCountryById(countryId);
         checkCountryIdExists(countryId);
         String name = city.getName();
         checkNameIsWrong(name);
         checkCityNameExists(name);
+        setCapitalOrThrowCapitalAlreadyExistsEx(countryDAO, city);
         logger.info("The user data are correct.");
         CityDAO newCity = city.clone();
-        newCity.setCountry(countryServiceRest.getCountryById(countryId));
+        newCity.setCountry(countryDAO);
         return cityServiceRest.create(newCity);
     }
 
@@ -75,5 +79,11 @@ public class CityHandler {
     private void checkCityNameExists(String name) {
         if (cityServiceRest.cityNameExists(name))
             throw new NameAlreadyExistsException("The city name " + name + " already exists.");
+    }
+
+    private void setCapitalOrThrowCapitalAlreadyExistsEx(CountryDAO countryDAO, CityDAO cityDAO) {
+        if (cityDAO.isCapital() & countryServiceRest.getCapitalByCountryId(countryDAO.getId()) != null)
+            throw new CapitalAlreadyExistsException("The capital for the country ID " + countryDAO.getId() +
+                    " is already set. Try to update this city.");
     }
 }

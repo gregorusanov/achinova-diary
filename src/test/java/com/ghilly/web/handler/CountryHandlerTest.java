@@ -225,4 +225,30 @@ class CountryHandlerTest {
                 () -> verifyNoMoreInteractions(countryServiceRest)
         );
     }
+
+    @Test
+    void getCapitalByCountryIdSuccess() {
+        when(countryServiceRest.countryIdExists(COUNTRY_ID)).thenReturn(true);
+        when(countryServiceRest.getCapitalByCountryId(COUNTRY_ID)).thenReturn(new CityDAO("Moscow", RUS, true));
+
+        countryHandler.getCapitalByCountryId(COUNTRY_ID);
+
+        assertAll(
+                () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
+                () -> verify(countryServiceRest).getCapitalByCountryId(COUNTRY_ID),
+                () -> verifyNoMoreInteractions(countryServiceRest)
+        );
+    }
+
+    @Test
+    void getCapitalByCountryIdIdNotFound() {
+        IdNotFoundException ex = assertThrows(IdNotFoundException.class, () -> countryHandler.getCapitalByCountryId(COUNTRY_ID));
+
+        assertAll(
+                () -> assertEquals(COUNTRY_ID_NOT_FOUND_EX_MSG_BEGIN + COUNTRY_ID + ID_NOT_FOUND_EX_MSG_END,
+                        ex.getMessage()),
+                () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
+                () -> verifyNoMoreInteractions(countryServiceRest)
+        );
+    }
 }

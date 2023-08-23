@@ -106,4 +106,16 @@ class CountryControllerTest {
                 () -> verifyNoMoreInteractions(countryHandler)
         );
     }
+
+    @Test
+    void getCapitalByCountryId() {
+        when(countryHandler.getCapitalByCountryId(ID)).thenReturn(new CityDAO("Moscow", USSR_DAO_FROM_REPO, true));
+
+        controller.getCapitalByCountryId(ID);
+
+        assertAll(
+                () -> verify(countryHandler).getCapitalByCountryId(ID),
+                () -> verifyNoMoreInteractions(countryHandler)
+        );
+    }
 }

@@ -27,6 +27,7 @@ public class CountryDAO implements Serializable, Cloneable {
     @OneToMany(mappedBy = "countryDAO")
     private List<CityDAO> cityList;
 
+
     public CountryDAO(int id, String name, List<CityDAO> cityList) {
         this.id = id;
         this.name = name;

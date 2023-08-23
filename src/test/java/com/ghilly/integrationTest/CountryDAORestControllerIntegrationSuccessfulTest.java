@@ -150,7 +150,7 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
         cityRepository.save(new CityDAO(ber, germany, true));
         CountryDAO russia = new CountryDAO(rus);
         countryRepository.save(russia);
-        int id = Objects.requireNonNull(countryRepository.findByName(rus).orElse(null)).getId();
+        int id = countryRepository.findByName(rus).orElseThrow().getId();
         cityRepository.save(new CityDAO(mos, russia, true));
         cityRepository.save(new CityDAO(spb, russia));
 
@@ -161,6 +161,27 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$[0].name").value(mos))
                 .andExpect(jsonPath("$[1].name").value(spb));
+
+        cityRepository.deleteAll();
+        countryRepository.deleteAll();
+    }
+
+    @Test
+    public void getCapitalByCountryIdStatusOk() throws Exception {
+        String cn = "China";
+        String bj = "Beijing";
+        CountryDAO china = new CountryDAO(cn);
+        countryRepository.save(china);
+        int id = countryRepository.findByName(cn).orElseThrow().getId();
+        cityRepository.save(new CityDAO(bj, china, true));
+
+        mvc.perform(MockMvcRequestBuilders
+                        .get("/countries/" + id + "/capital")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content()
+                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$.name").value(bj));
 
         cityRepository.deleteAll();
         countryRepository.deleteAll();
