@@ -35,7 +35,7 @@ public class CatchExceptionIntegrationTest {
     private CountryRepository repository;
 
     @Test
-    public void catchNameAlreadyExistsExceptionStatus409() throws Exception {
+    public void catchNameAlreadyExistsExceptionStatus() throws Exception {
         String rus = "Russia";
         CountryDAO countryDAO = new CountryDAO(rus);
         repository.save(countryDAO);
@@ -55,7 +55,7 @@ public class CatchExceptionIntegrationTest {
     }
 
     @Test
-    public void catchIdIsNotFoundStatus404() throws Exception {
+    public void catchIdIsNotFoundStatus() throws Exception {
         int id = 400;
 
         mvc.perform(MockMvcRequestBuilders
@@ -70,7 +70,7 @@ public class CatchExceptionIntegrationTest {
     }
 
     @Test
-    public void catchWrongArgumentNameExceptionStatus400() throws Exception {
+    public void catchWrongArgumentNameExceptionStatus() throws Exception {
         String wrongName = "Rus777";
         CountryDAO countryDAO = new CountryDAO(wrongName);
         ObjectMapper objectMapper = new ObjectMapper();

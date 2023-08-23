@@ -40,7 +40,7 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
     private CityRepository cityRepository;
 
     @Test
-    public void createCountryStatusOk200() throws Exception {
+    public void createCountryStatusOk() throws Exception {
         String jp = "Japan";
         CountryDTO japan = new CountryDTO(jp);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -58,7 +58,7 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
     }
 
     @Test
-    public void getAllCountriesStatusOk200() throws Exception {
+    public void getAllCountriesStatusOk() throws Exception {
         String rus = "Russia";
         String fr = "France";
         String de = "Deutschland";
@@ -84,7 +84,7 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
     }
 
     @Test
-    public void getCountryStatusOk200() throws Exception {
+    public void getCountryStatusOk() throws Exception {
         String cn = "China";
         countryRepository.save(new CountryDAO(cn));
         int id = countryRepository.findByName(cn).get().getId();
@@ -102,7 +102,7 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
     }
 
     @Test
-    public void updateCountryStatusOk200() throws Exception {
+    public void updateCountryStatusOk() throws Exception {
         CountryDAO countryDAO = new CountryDAO("USSR");
         countryRepository.save(countryDAO);
         int id = Objects.requireNonNull(countryRepository.findByName("USSR").orElse(null)).getId();
@@ -125,7 +125,7 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
     }
 
     @Test
-    public void deleteCountryStatusOk200() throws Exception {
+    public void deleteCountryStatusOk() throws Exception {
         String gr = "Greece";
         countryRepository.save(new CountryDAO(gr));
         int id = countryRepository.findByName(gr).get().getId();
@@ -139,7 +139,7 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
     }
 
     @Test
-    public void getAllCitiesByCountryStatusOk200() throws Exception {
+    public void getAllCitiesByCountryStatusOk() throws Exception {
         String ber = "Berlin";
         String mos = "Moscow";
         String spb = "Saint-Petersburg";
@@ -150,7 +150,7 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
         cityRepository.save(new CityDAO(ber, germany, true));
         CountryDAO russia = new CountryDAO(rus);
         countryRepository.save(russia);
-        int id = Objects.requireNonNull(countryRepository.findByName(rus).orElse(null)).getId();
+        int id = countryRepository.findByName(rus).orElseThrow().getId();
         cityRepository.save(new CityDAO(mos, russia, true));
         cityRepository.save(new CityDAO(spb, russia));
 

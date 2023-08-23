@@ -43,7 +43,7 @@ public class CityDAORestControllerIntegrationTest {
     private CityRepository cityRepository;
 
     @Test
-    public void createCityStatusOk200() throws Exception {
+    public void createCityStatusOk() throws Exception {
         String jp = "Japan";
         CountryDAO countryDAO = new CountryDAO(jp);
         countryRepository.save(countryDAO);
@@ -66,7 +66,7 @@ public class CityDAORestControllerIntegrationTest {
     }
 
     @Test
-    public void createCityStatusConflict409() throws Exception {
+    public void createCityStatusConflict() throws Exception {
         String jp = "Japan";
         CountryDAO japan = new CountryDAO(jp);
         countryRepository.save(japan);
@@ -92,7 +92,7 @@ public class CityDAORestControllerIntegrationTest {
     }
 
     @Test
-    public void getCityStatusOk200() throws Exception {
+    public void getCityStatusOk() throws Exception {
         String fr = "France";
         String paris = "Paris";
         CountryDAO countryDAO = new CountryDAO(fr);
@@ -114,7 +114,7 @@ public class CityDAORestControllerIntegrationTest {
     }
 
     @Test
-    public void getCityStatusNotFound404() throws Exception {
+    public void getCityStatusNotFound() throws Exception {
         String ger = "Germany";
         countryRepository.save(new CountryDAO(ger));
 
@@ -131,7 +131,7 @@ public class CityDAORestControllerIntegrationTest {
     }
 
     @Test
-    public void getAllCitiesStatusOk200() throws Exception {
+    public void getAllCitiesStatusOk() throws Exception {
         String ber = "Berlin";
         String mos = "Moscow";
         String spb = "Saint-Petersburg";
@@ -162,7 +162,7 @@ public class CityDAORestControllerIntegrationTest {
     }
 
     @Test
-    public void updateStatusOk200() throws Exception {
+    public void updateStatusOk() throws Exception {
         String oldName = "Stalingrad";
         String newName = "Volgograd";
         CountryDAO rus = new CountryDAO("Russia");
@@ -187,7 +187,7 @@ public class CityDAORestControllerIntegrationTest {
     }
 
     @Test
-    public void deleteStatusOk200() throws Exception {
+    public void deleteStatusOk() throws Exception {
         CountryDAO usa = new CountryDAO("USA");
         countryRepository.save(usa);
         String ny = "New York";
@@ -204,7 +204,7 @@ public class CityDAORestControllerIntegrationTest {
     }
 
     @Test
-    public void deleteStatusNotFound404() throws Exception {
+    public void deleteStatusNotFound() throws Exception {
         mvc.perform(MockMvcRequestBuilders
                         .delete(url + 300))
                 .andExpect(status().isNotFound());
