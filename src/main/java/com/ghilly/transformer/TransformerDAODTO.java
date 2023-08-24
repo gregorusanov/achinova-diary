@@ -8,7 +8,6 @@ import com.ghilly.model.DTO.CountryDTO;
 import java.util.ArrayList;
 
 public class TransformerDAODTO {
-
     private TransformerDAODTO() {
     }
 

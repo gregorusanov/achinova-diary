@@ -25,16 +25,9 @@ public class CityHandler {
     }
 
     public CityDAO create(CityDAO city, int countryId) {
-        CountryDAO countryDAO = countryServiceRest.getCountryById(countryId);
-        checkCountryIdExists(countryId);
-        String name = city.getName();
-        checkNameIsWrong(name);
-        checkCityNameExists(name);
-        setCapitalOrThrowCapitalAlreadyExistsEx(countryDAO, city);
+        checkBeforeSaving(city, countryId);
         logger.info("The user data are correct.");
-        CityDAO newCity = city.clone();
-        newCity.setCountry(countryDAO);
-        return cityServiceRest.create(newCity);
+        return cityServiceRest.create(city);
     }
 
     public CityDAO getCity(int cityId) {
@@ -48,16 +41,11 @@ public class CityHandler {
         return cityServiceRest.getAllCities();
     }
 
-    public CityDAO update(CityDAO city) {
-        int id = city.getId();
-        checkCityIdExists(id);
-        String name = city.getName();
-        checkNameIsWrong(name);
-        checkCityNameExists(name);
+    public CityDAO update(CityDAO city, int countryId) {
+        checkCityIdExists(city.getId());
+        checkBeforeSaving(city, countryId);
         logger.info("The user data are correct.");
-        CityDAO cityDAO = city.clone();
-        cityDAO.setCountry(cityServiceRest.getCity(id).getCountry());
-        return cityServiceRest.update(cityDAO);
+        return cityServiceRest.update(city);
     }
 
     public void delete(int cityId) {
@@ -66,9 +54,12 @@ public class CityHandler {
         cityServiceRest.delete(cityId);
     }
 
-    private void checkCountryIdExists(int countryId) {
-        if (!countryServiceRest.countryIdExists(countryId))
-            throw new IdNotFoundException("The country ID " + countryId + " is not found.");
+    private void checkBeforeSaving(CityDAO city, int countryId) {
+        checkCountryIdExists(countryId);
+        checkNameIsWrong(city.getName());
+        setCountryDAO(city, countryId);
+        checkCityNameExistsBeforeSaving(city);
+        checkCapitalExists(city);
     }
 
     private void checkCityIdExists(int cityId) {
@@ -76,13 +67,29 @@ public class CityHandler {
             throw new IdNotFoundException("The city ID " + cityId + " is not found.");
     }
 
-    private void checkCityNameExists(String name) {
-        if (cityServiceRest.cityNameExists(name))
-            throw new NameAlreadyExistsException("The city name " + name + " already exists.");
+    private void checkCountryIdExists(int countryId) {
+        if (!countryServiceRest.countryIdExists(countryId))
+            throw new IdNotFoundException("The country ID " + countryId + " is not found.");
     }
 
-    private void setCapitalOrThrowCapitalAlreadyExistsEx(CountryDAO countryDAO, CityDAO cityDAO) {
-        if (cityDAO.isCapital() & countryServiceRest.getCapitalByCountryId(countryDAO.getId()) != null)
+    private void setCountryDAO(CityDAO city, int countryId) {
+        CountryDAO countryDAO = countryServiceRest.getCountryById(countryId);
+        city.setCountry(countryDAO);
+    }
+
+    private void checkCityNameExistsBeforeSaving(CityDAO cityDAO) {
+        String name = cityDAO.getName();
+        List<CityDAO> list = cityServiceRest.findAllCitiesWithTheSameName(name);
+        list.forEach(cityDAO1 -> {
+            if (cityDAO1.equals(cityDAO)) {
+                throw new NameAlreadyExistsException("The city " + cityDAO + " already exists.");
+            }
+        });
+    }
+
+    private void checkCapitalExists(CityDAO cityDAO) {
+        CountryDAO countryDAO = cityDAO.getCountry();
+        if (cityDAO.isCapital() && countryServiceRest.getCapitalByCountryId(countryDAO.getId()) != null)
             throw new CapitalAlreadyExistsException("The capital for the country ID " + countryDAO.getId() +
                     " is already set. Try to update this city.");
     }

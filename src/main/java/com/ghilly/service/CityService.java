@@ -14,4 +14,6 @@ public interface CityService {
     CityDAO update(CityDAO cityDAO);
 
     void delete(int cityId);
+
+    List<CityDAO> findAllCitiesWithTheSameName(String name);
 }

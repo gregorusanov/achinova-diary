@@ -33,7 +33,6 @@ public class CityDAO implements Serializable, Cloneable {
     }
 
 
-
     public CityDAO(int id, String name, CountryDAO countryDAO, boolean capital) {
         this.id = id;
         this.name = name;
@@ -41,13 +40,13 @@ public class CityDAO implements Serializable, Cloneable {
         this.capital = capital;
     }
 
-    public CityDAO(int id, String name,  boolean capital) {
+    public CityDAO(int id, String name, boolean capital) {
         this.id = id;
         this.name = name;
         this.capital = capital;
     }
 
-    public CityDAO(String name,  boolean capital) {
+    public CityDAO(String name, boolean capital) {
         this.name = name;
         this.capital = capital;
     }
@@ -109,7 +108,7 @@ public class CityDAO implements Serializable, Cloneable {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         CityDAO cityDAO = (CityDAO) obj;
-        return id == cityDAO.id && name.equals(cityDAO.name) && countryDAO == cityDAO.countryDAO;
+        return id == cityDAO.id && name.equals(cityDAO.name) && countryDAO == cityDAO.countryDAO && capital == cityDAO.capital;
     }
 
     @Override

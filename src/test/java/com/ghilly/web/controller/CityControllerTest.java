@@ -20,7 +20,7 @@ class CityControllerTest {
     private static final CountryDAO RUS = new CountryDAO(COUNTRY_ID, "Russia");
     private static final CityDAO CITY_DAO_FROM_REPO = new CityDAO(CITY_ID, CITY_NAME, RUS, true);
     private static final CityDTO CITY_DTO = new CityDTO(CITY_NAME, COUNTRY_ID, true);
-    private static final CityDAO CITY_DAO = new CityDAO(CITY_NAME, null);
+    private static final CityDAO CITY_DAO = new CityDAO(CITY_NAME, null, true);
     private CityHandler handler;
     private CityController controller;
 
@@ -82,13 +82,13 @@ class CityControllerTest {
     @Test
     void update() {
         String newName = "Moskvabad";
-        CityDTO city = new CityDTO(newName);
+        CityDTO city = new CityDTO(newName, COUNTRY_ID);
         CityDAO transformedCity = new CityDAO(CITY_ID, newName);
 
         controller.update(city, CITY_ID);
 
         assertAll(
-                () -> verify(handler).update(transformedCity),
+                () -> verify(handler).update(transformedCity, COUNTRY_ID),
                 () -> verifyNoMoreInteractions(handler)
         );
     }

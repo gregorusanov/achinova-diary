@@ -1,5 +1,6 @@
 package com.ghilly.web;
 
+import com.ghilly.exception.CapitalAlreadyExistsException;
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.exception.WrongNameException;
@@ -37,6 +38,13 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<String> catchWrongArgumentNameException(WrongNameException exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
+                .body(exception.getMessage());
+    }
+
+    @ExceptionHandler(CapitalAlreadyExistsException.class)
+    public ResponseEntity<String> catchCapitalAlreadyExistsException(CapitalAlreadyExistsException exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_ACCEPTABLE)
                 .body(exception.getMessage());
     }
 }
