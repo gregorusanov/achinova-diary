@@ -2,9 +2,7 @@ package com.ghilly.web.handler;
 
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
-import com.ghilly.model.City;
-import com.ghilly.model.entity.CityDAO;
-import com.ghilly.model.entity.CountryDAO;
+import com.ghilly.model.DAO.CityDAO;
 import com.ghilly.service.CityServiceRest;
 import com.ghilly.service.CountryServiceRest;
 import com.ghilly.web.controller.CityController;
@@ -24,15 +22,14 @@ public class CityHandler {
         this.countryServiceRest = countryServiceRest;
     }
 
-    public CityDAO create(City city, int countryId) {
-        if (!countryServiceRest.countryIdExists(countryId))
-            throw new IdNotFoundException("The country ID " + countryId + " is not found.");
+    public CityDAO create(CityDAO city, int countryId) {
+        checkCountryIdExists(countryId);
         String name = city.getName();
         checkNameIsWrong(name);
         checkCityNameExists(name);
         logger.info("The user data are correct.");
-        CountryDAO countryDAO = countryServiceRest.getCountryById(countryId);
-        return cityServiceRest.create(new CityDAO(name, countryDAO, city.isCapital()));
+        city.setCountry(countryServiceRest.getCountryById(countryId));
+        return cityServiceRest.create(city);
     }
 
     public CityDAO getCity(int cityId) {
@@ -46,21 +43,26 @@ public class CityHandler {
         return cityServiceRest.getAllCities();
     }
 
-    public CityDAO update(City city, int cityId) {
-        checkCityIdExists(cityId);
+    public CityDAO update(CityDAO city) {
+        int id = city.getId();
+        checkCityIdExists(id);
         String name = city.getName();
         checkNameIsWrong(name);
         checkCityNameExists(name);
         logger.info("The user data are correct.");
-        CountryDAO countryDAO = cityServiceRest.getCity(cityId).getCountry();
-        CityDAO cityDAO = new CityDAO(cityId, name, countryDAO, city.isCapital());
-        return cityServiceRest.update(cityDAO);
+        city.setCountry(cityServiceRest.getCity(id).getCountry());
+        return cityServiceRest.update(city);
     }
 
     public void delete(int cityId) {
         checkCityIdExists(cityId);
         logger.info("The user data are correct.");
         cityServiceRest.delete(cityId);
+    }
+
+    private void checkCountryIdExists(int countryId) {
+        if (!countryServiceRest.countryIdExists(countryId))
+            throw new IdNotFoundException("The country ID " + countryId + " is not found.");
     }
 
     private void checkCityIdExists(int cityId) {

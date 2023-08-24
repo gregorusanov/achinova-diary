@@ -3,9 +3,8 @@ package com.ghilly.web.handler;
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.exception.WrongNameException;
-import com.ghilly.model.City;
-import com.ghilly.model.entity.CityDAO;
-import com.ghilly.model.entity.CountryDAO;
+import com.ghilly.model.DAO.CityDAO;
+import com.ghilly.model.DAO.CountryDAO;
 import com.ghilly.service.CityServiceRest;
 import com.ghilly.service.CountryServiceRest;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,13 +20,15 @@ class CityHandlerTest {
     private static final int COUNTRY_ID = 1;
     private static final int CITY_ID = 7;
     private static final CountryDAO RUS = new CountryDAO(COUNTRY_ID, "Russia");
+    private static final CityDAO MOS_DAO_FROM_REPO = new CityDAO(CITY_ID, MOSCOW, RUS, true);
     private static final CityDAO MOS_DAO = new CityDAO(MOSCOW, RUS, true);
-    private static final City MOS = new City(MOSCOW, true);
     private static final String COUNTRY_ID_NOT_FOUND_EX_MSG_BEGIN = "The country ID ";
     private static final String CITY_ID_NOT_FOUND_EX_MSG_BEGIN = "The city ID ";
     private static final String ID_NOT_FOUND_EX_MSG_END = " is not found.";
-    private static final String WRONG_NAME_EX_MSG = "Warning! \n The legal name consists of letters that " +
-            "could be separated by one space or hyphen. \n The name is not allowed here: ";
+    private static final String WRONG_NAME_EX_MSG = """
+            Warning!\s
+             The legal name consists of letters that could be separated by one space or hyphen.\s
+             The name is not allowed here:\s""";
     private CityHandler handler;
     private CityServiceRest cityServiceRest;
     private CountryServiceRest countryServiceRest;
@@ -41,10 +42,11 @@ class CityHandlerTest {
 
     @Test
     void createSuccess() {
+        CityDAO toCreate = new CityDAO(MOSCOW, true);
         when(countryServiceRest.countryIdExists(COUNTRY_ID)).thenReturn(true);
         when(countryServiceRest.getCountryById(COUNTRY_ID)).thenReturn(RUS);
 
-        handler.create(MOS, COUNTRY_ID);
+        handler.create(toCreate, COUNTRY_ID);
 
         assertAll(
                 () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
@@ -57,7 +59,7 @@ class CityHandlerTest {
 
     @Test
     void createIdIsNotFoundFail() {
-        IdNotFoundException exception = assertThrows(IdNotFoundException.class, () -> handler.create(MOS, COUNTRY_ID));
+        IdNotFoundException exception = assertThrows(IdNotFoundException.class, () -> handler.create(MOS_DAO, COUNTRY_ID));
 
         assertAll(
                 () -> assertEquals(COUNTRY_ID_NOT_FOUND_EX_MSG_BEGIN + COUNTRY_ID + ID_NOT_FOUND_EX_MSG_END,
@@ -73,7 +75,7 @@ class CityHandlerTest {
         when(countryServiceRest.getCountryById(COUNTRY_ID)).thenReturn(RUS);
         when(cityServiceRest.cityNameExists(MOSCOW)).thenReturn(true);
         NameAlreadyExistsException exception = assertThrows(NameAlreadyExistsException.class,
-                () -> handler.create(MOS, COUNTRY_ID));
+                () -> handler.create(MOS_DAO, COUNTRY_ID));
 
         assertAll(
                 () -> assertEquals("The city name " + MOSCOW + " already exists.",
@@ -88,7 +90,7 @@ class CityHandlerTest {
     void createWrongNameFail() {
         when(countryServiceRest.countryIdExists(COUNTRY_ID)).thenReturn(true);
         String wrong = "777Mo$cow!";
-        City city = new City(wrong);
+        CityDAO city = new CityDAO(wrong, RUS);
 
         WrongNameException exception = assertThrows(WrongNameException.class,
                 () -> handler.create(city, COUNTRY_ID));
@@ -150,12 +152,11 @@ class CityHandlerTest {
     @Test
     void updateSuccess() {
         when(cityServiceRest.cityIdExists(CITY_ID)).thenReturn(true);
-        when(cityServiceRest.getCity(CITY_ID)).thenReturn(MOS_DAO);
+        when(cityServiceRest.getCity(CITY_ID)).thenReturn(MOS_DAO_FROM_REPO);
         String newName = "NeRezinovaya";
-        City toChange = new City(CITY_ID, newName, true);
         CityDAO cityDAO = new CityDAO(CITY_ID, newName, RUS, true);
 
-        handler.update(toChange, CITY_ID);
+        handler.update(cityDAO);
 
         assertAll(
                 () -> verify(cityServiceRest).cityIdExists(CITY_ID),
@@ -168,10 +169,8 @@ class CityHandlerTest {
 
     @Test
     void updateFailIdNotFound() {
-        City toChange = new City(CITY_ID, "Moskvabad", true);
-
         IdNotFoundException exception = assertThrows(IdNotFoundException.class,
-                () -> handler.update(toChange, CITY_ID));
+                () -> handler.update(MOS_DAO_FROM_REPO));
 
         assertAll(
                 () -> assertEquals(CITY_ID_NOT_FOUND_EX_MSG_BEGIN + CITY_ID + ID_NOT_FOUND_EX_MSG_END,
@@ -185,10 +184,10 @@ class CityHandlerTest {
     void updateWrongNewNameFail() {
         when(cityServiceRest.cityIdExists(CITY_ID)).thenReturn(true);
         String newName = "Moskv@b@d";
-        City toChange = new City(CITY_ID, newName, true);
+        CityDAO toChange = new CityDAO(CITY_ID, newName, RUS, true);
 
         WrongNameException exception = assertThrows(WrongNameException.class,
-                () -> handler.update(toChange, CITY_ID));
+                () -> handler.update(toChange));
 
         assertAll(
                 () -> assertEquals(WRONG_NAME_EX_MSG + newName, exception.getMessage()),
@@ -202,10 +201,10 @@ class CityHandlerTest {
         when(cityServiceRest.cityIdExists(CITY_ID)).thenReturn(true);
         String newName = "Saint-Petersburg";
         when(cityServiceRest.cityNameExists(newName)).thenReturn(true);
-        City toChange = new City(CITY_ID, newName, false);
+        CityDAO toChange = new CityDAO(CITY_ID, newName, RUS, false);
 
         NameAlreadyExistsException exception = assertThrows(NameAlreadyExistsException.class,
-                () -> handler.update(toChange, CITY_ID));
+                () -> handler.update(toChange));
 
         assertAll(
                 () -> assertEquals("The city name " + newName + " already exists.",

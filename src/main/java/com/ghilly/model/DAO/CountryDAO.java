@@ -1,8 +1,9 @@
-package com.ghilly.model.entity;
+package com.ghilly.model.DAO;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -18,6 +19,14 @@ public class CountryDAO implements Serializable {
     @Column(name = "country")
     @NotBlank(message = "The country should have a name!")
     private String name;
+    @OneToMany(mappedBy = "countryDAO")
+    private List<CityDAO> cityList;
+
+    public CountryDAO(int id, String name, List<CityDAO> cityList) {
+        this.id = id;
+        this.name = name;
+        this.cityList = cityList;
+    }
 
     public CountryDAO(int id, String name) {
         this.id = id;
@@ -30,6 +39,14 @@ public class CountryDAO implements Serializable {
 
     public CountryDAO() {
 
+    }
+
+    public List<CityDAO> getCityList() {
+        return cityList;
+    }
+
+    public void setCityList(List<CityDAO> cityList) {
+        this.cityList = cityList;
     }
 
     public int getId() {
@@ -50,7 +67,7 @@ public class CountryDAO implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, name);
+        return Objects.hash(id, name, cityList);
     }
 
     @Override

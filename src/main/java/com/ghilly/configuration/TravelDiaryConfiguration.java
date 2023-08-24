@@ -19,7 +19,7 @@ public class TravelDiaryConfiguration {
     }
 
     @Bean
-    public CountryHandler countryHandler(CountryServiceRest countryServiceRest) {
+    public CountryHandler countryValidator(CountryServiceRest countryServiceRest) {
         return new CountryHandler(countryServiceRest);
     }
 

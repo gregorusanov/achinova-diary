@@ -1,6 +1,6 @@
 package com.ghilly.repository;
 
-import com.ghilly.model.entity.CountryDAO;
+import com.ghilly.model.DAO.CountryDAO;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

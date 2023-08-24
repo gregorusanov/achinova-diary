@@ -1,6 +1,7 @@
 package com.ghilly.service;
 
-import com.ghilly.model.entity.CountryDAO;
+import com.ghilly.model.DAO.CityDAO;
+import com.ghilly.model.DAO.CountryDAO;
 
 import java.util.List;
 
@@ -14,4 +15,6 @@ public interface CountryService {
     CountryDAO update(CountryDAO countryDAO);
 
     void delete(int countryId);
+
+    List<CityDAO> getAllCitiesByCountryId(int countryId);
 }
