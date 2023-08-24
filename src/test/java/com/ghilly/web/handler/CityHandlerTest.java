@@ -1,9 +1,6 @@
 package com.ghilly.web.handler;
 
-import com.ghilly.exception.CapitalAlreadyExistsException;
-import com.ghilly.exception.IdNotFoundException;
-import com.ghilly.exception.NameAlreadyExistsException;
-import com.ghilly.exception.WrongNameException;
+import com.ghilly.exception.*;
 import com.ghilly.model.DAO.CityDAO;
 import com.ghilly.model.DAO.CountryDAO;
 import com.ghilly.service.CityServiceRest;
@@ -11,7 +8,6 @@ import com.ghilly.service.CountryServiceRest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import javax.naming.LimitExceededException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -59,6 +55,7 @@ class CityHandlerTest {
                 () -> verifyNoMoreInteractions(cityServiceRest, countryServiceRest)
         );
     }
+
     @Test
     void createCapitalCityWhenCapitalAlreadyExists() {
         CityDAO toCreate = new CityDAO(MOSCOW, true);
@@ -79,6 +76,7 @@ class CityHandlerTest {
                 () -> verifyNoMoreInteractions(cityServiceRest, countryServiceRest)
         );
     }
+
     @Test
     void createIdIsNotFoundFail() {
         IdNotFoundException exception = assertThrows(IdNotFoundException.class, () -> handler.create(MOS_DAO, COUNTRY_ID));
@@ -91,23 +89,24 @@ class CityHandlerTest {
         );
     }
 
-//    @Test
-//    void createNameAlreadyExistsFail() {
-//        when(countryServiceRest.countryIdExists(COUNTRY_ID)).thenReturn(true);
-//        when(countryServiceRest.getCountryById(COUNTRY_ID)).thenReturn(RUS);
-//        when(cityServiceRest.cityNameExists(MOSCOW)).thenReturn(true);
-//        NameAlreadyExistsException exception = assertThrows(NameAlreadyExistsException.class,
-//                () -> handler.create(MOS_DAO, COUNTRY_ID));
-//
-//        assertAll(
-//
-//                () -> assertEquals("The city name " + MOSCOW + " already exists.",
-//                        exception.getMessage()),
-//                () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
-//                () -> verify(cityServiceRest).cityNameExists(MOSCOW),
-//                () -> verifyNoMoreInteractions(countryServiceRest, cityServiceRest)
-//        );
-//    }
+    @Test
+    void createCityAlreadyExistsFail() {
+        when(countryServiceRest.countryIdExists(COUNTRY_ID)).thenReturn(true);
+        when(countryServiceRest.getCountryById(COUNTRY_ID)).thenReturn(RUS);
+        when(cityServiceRest.findAllCitiesWithTheSameName(MOSCOW)).thenReturn(List.of(MOS_DAO_FROM_REPO));
+        CityAlreadyExistsException exception = assertThrows(CityAlreadyExistsException.class,
+                () -> handler.create(MOS_DAO_FROM_REPO, COUNTRY_ID));
+
+        assertAll(
+
+                () -> assertEquals("The city " + MOSCOW + " already exists.",
+                        exception.getMessage()),
+                () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
+                () -> verify(countryServiceRest).getCountryById(COUNTRY_ID),
+                () -> verify(cityServiceRest).findAllCitiesWithTheSameName(MOSCOW),
+                () -> verifyNoMoreInteractions(countryServiceRest, cityServiceRest)
+        );
+    }
 
     @Test
     void createWrongNameFail() {
@@ -121,7 +120,7 @@ class CityHandlerTest {
 
         assertAll(
                 () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
-                () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
+                () -> verify(countryServiceRest).getCountryById(COUNTRY_ID),
                 () -> assertEquals(WRONG_NAME_EX_MSG + wrong,
                         exception.getMessage()),
                 () -> verifyNoMoreInteractions(countryServiceRest)
@@ -235,11 +234,11 @@ class CityHandlerTest {
         when(countryServiceRest.getCountryById(COUNTRY_ID)).thenReturn(RUS);
         when(cityServiceRest.findAllCitiesWithTheSameName(newName)).thenReturn(List.of(toChange));
 
-        NameAlreadyExistsException exception = assertThrows(NameAlreadyExistsException.class,
+        CityAlreadyExistsException exception = assertThrows(CityAlreadyExistsException.class,
                 () -> handler.update(toChange, COUNTRY_ID));
 
         assertAll(
-                () -> assertEquals("The city " + toChange + " already exists.",
+                () -> assertEquals("The city " + newName + " already exists.",
                         exception.getMessage()),
                 () -> verify(cityServiceRest).cityIdExists(CITY_ID),
                 () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
@@ -272,55 +271,5 @@ class CityHandlerTest {
                 () -> verify(cityServiceRest).cityIdExists(CITY_ID),
                 () -> verifyNoMoreInteractions(cityServiceRest)
         );
-    }
-
-    @Test
-    void getCapitalSuccess() {
-        String name = "Dublin";
-        CountryDAO countryDAO = new CountryDAO("Ireland");
-        int id = countryDAO.getId();
-        List<CityDAO> list = List.of(new CityDAO(name, countryDAO, true),
-                new CityDAO("Limerick", countryDAO), MOS_DAO);
-        when(countryServiceRest.countryIdExists(id)).thenReturn(true);
-        when(cityServiceRest.getAllCities()).thenReturn(list);
-
-        CityDAO cityDAO = handler.getCapital(id);
-
-        assertAll(
-                () -> assertEquals(cityDAO.getName(), name),
-                () -> verify(countryServiceRest).countryIdExists(id),
-                () -> verify(cityServiceRest).getAllCities(),
-                () -> verifyNoMoreInteractions(cityServiceRest)
-        );
-    }
-
-    @Test
-    void getEmptyCapital() {
-        CountryDAO countryDAO = new CountryDAO("Ireland");
-        int id = countryDAO.getId();
-        List<CityDAO> list = List.of(new CityDAO("Limerick", countryDAO), MOS_DAO);
-        when(countryServiceRest.countryIdExists(id)).thenReturn(true);
-        when(cityServiceRest.getAllCities()).thenReturn(list);
-
-        CityDAO cityDAO = handler.getCapital(id);
-
-        assertAll(
-                () -> assertNull(cityDAO),
-                () -> verify(countryServiceRest).countryIdExists(id),
-                () -> verify(cityServiceRest).getAllCities(),
-                () -> verifyNoMoreInteractions(cityServiceRest)
-        );
-    }
-
-    @Test
-    void getCapitalCountryIdNotFound() {
-        int id = 13;
-        IdNotFoundException exception = assertThrows(IdNotFoundException.class, () -> handler.getCapital(id));
-
-        assertAll(
-                () -> assertEquals(COUNTRY_ID_NOT_FOUND_EX_MSG_BEGIN + id + ID_NOT_FOUND_EX_MSG_END,
-                        exception.getMessage()),
-                () -> verify(countryServiceRest).countryIdExists(id),
-                () -> verifyNoMoreInteractions(countryServiceRest));
     }
 }

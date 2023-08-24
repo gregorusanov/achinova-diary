@@ -1,10 +1,11 @@
 package com.ghilly.integrationTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ghilly.exception.IdNotFoundException;
-import com.ghilly.exception.NameAlreadyExistsException;
-import com.ghilly.exception.WrongNameException;
+import com.ghilly.exception.*;
+import com.ghilly.model.DAO.CityDAO;
 import com.ghilly.model.DAO.CountryDAO;
+import com.ghilly.model.DTO.CityDTO;
+import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.CountryRepository;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -32,13 +33,16 @@ public class CatchExceptionIntegrationTest {
     private MockMvc mvc;
 
     @Autowired
-    private CountryRepository repository;
+    private CountryRepository countryRepository;
+
+    @Autowired
+    private CityRepository cityRepository;
 
     @Test
-    public void catchNameAlreadyExistsExceptionStatus() throws Exception {
+    public void catchNameAlreadyExistsExceptionStatusBadRequest() throws Exception {
         String rus = "Russia";
         CountryDAO countryDAO = new CountryDAO(rus);
-        repository.save(countryDAO);
+        countryRepository.save(countryDAO);
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(countryDAO);
 
@@ -46,16 +50,16 @@ public class CatchExceptionIntegrationTest {
                         .post("/countries/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isConflict())
+                .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof NameAlreadyExistsException))
                 .andExpect(result -> assertEquals("The country name " + rus + " already exists.",
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
 
-        repository.deleteAll();
+        countryRepository.deleteAll();
     }
 
     @Test
-    public void catchIdIsNotFoundStatus() throws Exception {
+    public void catchIdIsNotFoundStatusNotFound() throws Exception {
         int id = 400;
 
         mvc.perform(MockMvcRequestBuilders
@@ -66,11 +70,11 @@ public class CatchExceptionIntegrationTest {
                 .andExpect(result -> assertEquals("The country ID " + id + " is not found.",
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
 
-        repository.deleteAll();
+        countryRepository.deleteAll();
     }
 
     @Test
-    public void catchWrongArgumentNameExceptionStatus() throws Exception {
+    public void catchWrongArgumentNameExceptionStatusNotAcceptable() throws Exception {
         String wrongName = "Rus777";
         CountryDAO countryDAO = new CountryDAO(wrongName);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -80,11 +84,60 @@ public class CatchExceptionIntegrationTest {
                         .post("/countries/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isBadRequest())
+                .andExpect(status().isNotAcceptable())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof WrongNameException))
                 .andExpect(result -> assertEquals("Warning! \n The legal name consists of letters " +
                         "that could be separated by one space or hyphen. \n The name is not allowed here: " +
                         wrongName, Objects.requireNonNull(result.getResolvedException()).getMessage()));
-        repository.deleteAll();
+        countryRepository.deleteAll();
+    }
+
+    @Test
+    public void catchCapitalAlreadyExistsStatusBadRequest() throws Exception {
+        String rus = "Russia";
+        countryRepository.save(new CountryDAO(rus));
+        CountryDAO countryDAO = countryRepository.findByName(rus).orElseThrow();
+        int countryId = countryDAO.getId();
+        String moscow = "Moscow";
+        cityRepository.save(new CityDAO(moscow, countryDAO, true));
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(new CityDTO("Saint-Petersburg", countryId, true));
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/cities/")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof CapitalAlreadyExistsException))
+                .andExpect(result -> assertEquals("The capital for the country ID " + countryId +
+                                " is already set. Try to update this city.",
+                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
+        cityRepository.deleteAll();
+        countryRepository.deleteAll();
+    }
+
+    @Test
+    public void catchCityAlreadyExistsStatusBadRequest() throws Exception {
+        String rus = "Russia";
+        countryRepository.save(new CountryDAO(rus));
+        CountryDAO countryDAO = countryRepository.findByName(rus).orElseThrow();
+        int countryId = countryDAO.getId();
+        String moscow = "Moscow";
+        cityRepository.save(new CityDAO(moscow, countryDAO, true));
+        CityDAO cityDAO = cityRepository.findByName(moscow).orElseThrow();
+        int id = cityDAO.getId();
+        ObjectMapper objectMapper = new ObjectMapper();
+        String json = objectMapper.writeValueAsString(new CityDTO(id,moscow, countryId, true));
+
+        mvc.perform(MockMvcRequestBuilders
+                        .put("/cities/" + id)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof CityAlreadyExistsException))
+                .andExpect(result -> assertEquals("The city " + moscow + " already exists.",
+                        Objects.requireNonNull(result.getResolvedException()).getMessage()));
+        cityRepository.deleteAll();
+        countryRepository.deleteAll();
     }
 }

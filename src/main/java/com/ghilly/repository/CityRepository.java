@@ -12,7 +12,6 @@ import java.util.Optional;
 public interface CityRepository extends CrudRepository<CityDAO, Integer> {
     Optional<CityDAO> findByName(String cityName);
 
-    Optional<CityDAO> findCityDAOByCountryDAOAndCapitalIsTrue(CountryDAO countryDAO);
-
+    Optional<CityDAO> findCityDAOByCountryDAOIdAndCapitalIsTrue(int countryId);
     Optional<List<CityDAO>> findAllByName(String name);
 }

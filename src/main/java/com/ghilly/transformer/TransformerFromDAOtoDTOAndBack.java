@@ -7,8 +7,8 @@ import com.ghilly.model.DTO.CountryDTO;
 
 import java.util.ArrayList;
 
-public class TransformerDAODTO {
-    private TransformerDAODTO() {
+public class TransformerFromDAOtoDTOAndBack {
+    private TransformerFromDAOtoDTOAndBack() {
     }
 
     public static CountryDAO transformToCountryDAO(CountryDTO countryDTO) {

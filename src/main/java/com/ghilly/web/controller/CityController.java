@@ -1,7 +1,7 @@
 package com.ghilly.web.controller;
 
 import com.ghilly.model.DTO.CityDTO;
-import com.ghilly.transformer.TransformerDAODTO;
+import com.ghilly.transformer.TransformerFromDAOtoDTOAndBack;
 import com.ghilly.web.handler.CityHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,9 +29,9 @@ public class CityController {
         logger.info("The data are received from the user. City: [{}]", city);
 
         return Optional.of(city)
-                .map(cityDTO -> TransformerDAODTO.transformToCityDAO(city))
+                .map(cityDTO -> TransformerFromDAOtoDTOAndBack.transformToCityDAO(city))
                 .map(cityDAO -> cityHandler.create(cityDAO, city.getCountryId()))
-                .map(TransformerDAODTO::transformToCityDTO)
+                .map(TransformerFromDAOtoDTOAndBack::transformToCityDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
     }
@@ -40,7 +40,7 @@ public class CityController {
     public ResponseEntity<CityDTO> getCity(@PathVariable int cityId) {
         logger.info("The data are received from the user.");
         return Optional.of(cityHandler.getCity(cityId))
-                .map(TransformerDAODTO::transformToCityDTO)
+                .map(TransformerFromDAOtoDTOAndBack::transformToCityDTO)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -49,7 +49,7 @@ public class CityController {
     public ResponseEntity<List<CityDTO>> getAllCities() {
         logger.info("Data processing.");
         List<CityDTO> cityDTOS = cityHandler.getAllCities().stream()
-                .map(TransformerDAODTO::transformToCityDTO)
+                .map(TransformerFromDAOtoDTOAndBack::transformToCityDTO)
                 .sorted(Comparator.comparing(CityDTO::getName))
                 .toList();
         return ResponseEntity.ok(cityDTOS);
@@ -60,9 +60,9 @@ public class CityController {
         logger.info("The data are received from the user.");
         city.setId(cityId);
         return Optional.of(city)
-                .map(cityDTO -> TransformerDAODTO.transformToCityDAO(city))
+                .map(cityDTO -> TransformerFromDAOtoDTOAndBack.transformToCityDAO(city))
                 .map(cityDAO -> cityHandler.update(cityDAO, city.getCountryId()))
-                .map(TransformerDAODTO::transformToCityDTO)
+                .map(TransformerFromDAOtoDTOAndBack::transformToCityDTO)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -72,13 +72,5 @@ public class CityController {
         logger.info("The data are received from the user.");
         cityHandler.delete(cityId);
         return ResponseEntity.ok().body("The city with the ID " + cityId + " is deleted.");
-    }
-
-    //change url
-    @GetMapping("/all/cities/all/{countryId}")
-    public ResponseEntity<CityDAO> getCapital(@PathVariable int countryId) {
-        logger.info("Data processing.");
-        CityDAO cityDAO = cityHandler.getCapital(countryId);
-        return ResponseEntity.ok().body(cityDAO);
     }
 }

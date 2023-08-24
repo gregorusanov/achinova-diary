@@ -102,18 +102,4 @@ class CityControllerTest {
                 () -> verifyNoMoreInteractions(handler)
         );
     }
-
-    @Test
-    void getCapital() {
-        int id = 45;
-        CountryDAO countryDAO = new CountryDAO("Great Britain");
-        when(handler.getCapital(id)).thenReturn(new CityDAO("London", countryDAO, true));
-
-        controller.getCapital(id);
-
-        assertAll(
-                () -> verify(handler).getCapital(id),
-                () -> verifyNoMoreInteractions(handler)
-        );
-    }
 }

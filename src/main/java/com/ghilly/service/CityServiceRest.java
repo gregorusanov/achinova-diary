@@ -58,8 +58,4 @@ public class CityServiceRest implements CityService {
     public boolean cityIdExists(int id) {
         return cityRepository.findById(id).isPresent();
     }
-
-    public boolean cityNameExists(String name) {
-        return cityRepository.findByName(name).isPresent();
-    }
 }

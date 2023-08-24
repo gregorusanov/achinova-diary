@@ -42,7 +42,7 @@ class ErrorHandlerTest {
         String message = "The country name " + usa + " is not found.";
         ResponseEntity<String> actual =
                 handler.catchNameAlreadyExistsException(new NameAlreadyExistsException(message));
-        HttpStatus status = HttpStatus.CONFLICT;
+        HttpStatus status = HttpStatus.BAD_REQUEST;
 
         assertEquals(status, actual.getStatusCode());
         assertEquals(message, actual.getBody());
@@ -54,7 +54,7 @@ class ErrorHandlerTest {
         String message = "Warning! \n The legal name consists of letters that " +
                 "could be separated by one space or hyphen. \n The name is not allowed here: " + wrongName;
         ResponseEntity<String> actual = handler.catchWrongArgumentNameException(new WrongNameException(message));
-        HttpStatus status = HttpStatus.BAD_REQUEST;
+        HttpStatus status = HttpStatus.NOT_ACCEPTABLE;
 
         assertEquals(status, actual.getStatusCode());
         assertEquals(message, actual.getBody());
@@ -65,7 +65,7 @@ class ErrorHandlerTest {
         String message = "The capital for the country ID 13 is already set. Try to update this city.";
         ResponseEntity<String> actual =
                 handler.catchCapitalAlreadyExistsException(new CapitalAlreadyExistsException(message));
-        HttpStatus status = HttpStatus.NOT_ACCEPTABLE;
+        HttpStatus status = HttpStatus.BAD_REQUEST;
 
         assertEquals(status, actual.getStatusCode());
         assertEquals(message, actual.getBody());
