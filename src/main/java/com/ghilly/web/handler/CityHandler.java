@@ -28,9 +28,8 @@ public class CityHandler {
         checkNameIsWrong(name);
         checkCityNameExists(name);
         logger.info("The user data are correct.");
-        CityDAO newCity = city.clone();
-        newCity.setCountry(countryServiceRest.getCountryById(countryId));
-        return cityServiceRest.create(newCity);
+        city.setCountry(countryServiceRest.getCountryById(countryId));
+        return cityServiceRest.create(city);
     }
 
     public CityDAO getCity(int cityId) {
@@ -51,9 +50,8 @@ public class CityHandler {
         checkNameIsWrong(name);
         checkCityNameExists(name);
         logger.info("The user data are correct.");
-        CityDAO cityDAO = city.clone();
-        cityDAO.setCountry(cityServiceRest.getCity(id).getCountry());
-        return cityServiceRest.update(cityDAO);
+        city.setCountry(cityServiceRest.getCity(id).getCountry());
+        return cityServiceRest.update(city);
     }
 
     public void delete(int cityId) {

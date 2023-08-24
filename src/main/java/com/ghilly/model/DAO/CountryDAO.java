@@ -8,7 +8,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "countries")
-public class CountryDAO implements Serializable, Cloneable {
+public class CountryDAO implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "countries_seq")
@@ -19,11 +19,6 @@ public class CountryDAO implements Serializable, Cloneable {
     @Column(name = "country")
     @NotBlank(message = "The country should have a name!")
     private String name;
-
-    public void setCityList(List<CityDAO> cityList) {
-        this.cityList = cityList;
-    }
-
     @OneToMany(mappedBy = "countryDAO")
     private List<CityDAO> cityList;
 
@@ -48,6 +43,10 @@ public class CountryDAO implements Serializable, Cloneable {
 
     public List<CityDAO> getCityList() {
         return cityList;
+    }
+
+    public void setCityList(List<CityDAO> cityList) {
+        this.cityList = cityList;
     }
 
     public int getId() {
@@ -77,14 +76,5 @@ public class CountryDAO implements Serializable, Cloneable {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 '}';
-    }
-
-    @Override
-    public CountryDAO clone() {
-        try {
-            return (CountryDAO) super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
     }
 }

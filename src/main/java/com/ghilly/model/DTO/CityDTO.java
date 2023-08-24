@@ -28,9 +28,9 @@ public class CityDTO {
         this.capital = capital;
     }
 
-    public CityDTO(String name, boolean capital) {
+    public CityDTO(String name, int countryId) {
         this.name = name;
-        this.capital = capital;
+        this.countryId = countryId;
     }
 
     public CityDTO() {

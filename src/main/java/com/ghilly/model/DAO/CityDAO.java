@@ -7,7 +7,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "cities")
-public class CityDAO implements Serializable, Cloneable {
+public class CityDAO implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cities_seq")
@@ -33,7 +33,6 @@ public class CityDAO implements Serializable, Cloneable {
     }
 
 
-
     public CityDAO(int id, String name, CountryDAO countryDAO, boolean capital) {
         this.id = id;
         this.name = name;
@@ -41,13 +40,13 @@ public class CityDAO implements Serializable, Cloneable {
         this.capital = capital;
     }
 
-    public CityDAO(int id, String name,  boolean capital) {
+    public CityDAO(int id, String name, boolean capital) {
         this.id = id;
         this.name = name;
         this.capital = capital;
     }
 
-    public CityDAO(String name,  boolean capital) {
+    public CityDAO(String name, boolean capital) {
         this.name = name;
         this.capital = capital;
     }
@@ -120,16 +119,5 @@ public class CityDAO implements Serializable, Cloneable {
                 ", country=" + countryDAO +
                 ", capital=" + capital +
                 '}';
-    }
-
-    @Override
-    public CityDAO clone() {
-        try {
-            CityDAO clone = (CityDAO) super.clone();
-            if (Objects.nonNull(countryDAO)) clone.setCountry(countryDAO.clone());
-            return clone;
-        } catch (CloneNotSupportedException e) {
-            throw new AssertionError();
-        }
     }
 }
