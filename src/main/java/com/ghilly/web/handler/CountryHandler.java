@@ -59,6 +59,11 @@ public class CountryHandler {
         return countryServiceRest.getAllCitiesByCountryId(countryId);
     }
 
+    public CityDAO getCapitalByCountryId(int countryId) {
+        checkIdExists(countryId);
+        return countryServiceRest.getCapitalByCountryId(countryId);
+    }
+
     private void checkIdExists(int id) {
         if (!countryServiceRest.countryIdExists(id)) {
             throw new IdNotFoundException("The country ID " + id + " is not found.");

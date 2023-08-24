@@ -29,7 +29,7 @@ public class CityController {
         logger.info("The data are received from the user. City: [{}]", city);
 
         return Optional.of(city)
-                .map(TransformerDAODTO::transformToCityDAO)
+                .map(cityDTO -> TransformerDAODTO.transformToCityDAO(city))
                 .map(cityDAO -> cityHandler.create(cityDAO, city.getCountryId()))
                 .map(TransformerDAODTO::transformToCityDTO)
                 .map(ResponseEntity::ok)
@@ -60,8 +60,8 @@ public class CityController {
         logger.info("The data are received from the user.");
         city.setId(cityId);
         return Optional.of(city)
-                .map(TransformerDAODTO::transformToCityDAO)
-                .map(cityHandler::update)
+                .map(cityDTO -> TransformerDAODTO.transformToCityDAO(city))
+                .map(cityDAO -> cityHandler.update(cityDAO, city.getCountryId()))
                 .map(TransformerDAODTO::transformToCityDTO)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());

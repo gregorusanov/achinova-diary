@@ -85,5 +85,13 @@ public class CountryController {
         return ResponseEntity.ok().body(allCitiesByCountry);
     }
 
+    @GetMapping("/{countryId}/capital")
+    public ResponseEntity<CityDTO> getCapitalByCountryId(@PathVariable int countryId) {
+        logger.info("The data are received from the user.");
+        return Optional.of(countryHandler.getCapitalByCountryId(countryId))
+                .map(TransformerDAODTO::transformToCityDTO)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
 
 }

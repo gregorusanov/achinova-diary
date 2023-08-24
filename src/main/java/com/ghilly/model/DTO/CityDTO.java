@@ -33,6 +33,11 @@ public class CityDTO {
         this.countryId = countryId;
     }
 
+    public CityDTO(String name, int countryId) {
+        this.name = name;
+        this.countryId = countryId;
+    }
+
     public CityDTO() {
     }
 
