@@ -1,7 +1,7 @@
 package com.ghilly.service;
 
-import com.ghilly.model.entity.CityDAO;
-import com.ghilly.model.entity.CountryDAO;
+import com.ghilly.model.DAO.CityDAO;
+import com.ghilly.model.DAO.CountryDAO;
 import com.ghilly.repository.CityRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

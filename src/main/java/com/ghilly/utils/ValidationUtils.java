@@ -1,8 +1,6 @@
 package com.ghilly.utils;
 
-import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.WrongNameException;
-import org.springframework.data.repository.CrudRepository;
 
 import java.util.regex.Pattern;
 
@@ -13,11 +11,6 @@ public class ValidationUtils {
 
     public static boolean isWrongName(String name) {
         return !Pattern.matches("^(?:[a-zA-Z]+[ -]?)+$", name);
-    }
-
-    public static void checkIdExists(int id, CrudRepository repository, String typeOfAreaAndId) {
-        if (repository.findById(id).isEmpty())
-            throw new IdNotFoundException(typeOfAreaAndId + id + " is not found.");
     }
 
     public static void checkNameIsWrong(String name) {

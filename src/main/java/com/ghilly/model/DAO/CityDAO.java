@@ -1,4 +1,4 @@
-package com.ghilly.model.entity;
+package com.ghilly.model.DAO;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
@@ -32,10 +32,22 @@ public class CityDAO implements Serializable {
         this.name = name;
     }
 
+
     public CityDAO(int id, String name, CountryDAO countryDAO, boolean capital) {
         this.id = id;
         this.name = name;
         this.countryDAO = countryDAO;
+        this.capital = capital;
+    }
+
+    public CityDAO(int id, String name, boolean capital) {
+        this.id = id;
+        this.name = name;
+        this.capital = capital;
+    }
+
+    public CityDAO(String name, boolean capital) {
+        this.name = name;
         this.capital = capital;
     }
 

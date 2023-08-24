@@ -1,6 +1,6 @@
 package com.ghilly.repository;
 
-import com.ghilly.model.entity.CityDAO;
+import com.ghilly.model.DAO.CityDAO;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -9,5 +9,4 @@ import java.util.Optional;
 @Repository
 public interface CityRepository extends CrudRepository<CityDAO, Integer> {
     Optional<CityDAO> findByName(String cityName);
-
 }

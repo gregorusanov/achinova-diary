@@ -1,15 +1,18 @@
 package com.ghilly.web.controller;
 
-
-import com.ghilly.model.Country;
-import com.ghilly.model.entity.CountryDAO;
+import com.ghilly.model.DTO.CityDTO;
+import com.ghilly.model.DTO.CountryDTO;
+import com.ghilly.transformer.TransformerDAODTO;
 import com.ghilly.web.handler.CountryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @RequestMapping("/countries")
 public class CountryController {
@@ -21,39 +24,66 @@ public class CountryController {
         this.countryHandler = countryHandler;
     }
 
-
     @PostMapping("/")
-    public ResponseEntity<CountryDAO> create(@RequestBody Country country) {
-        logger.info("The data are received from the user.");
-        CountryDAO countryDAO = countryHandler.create(country);
-        return ResponseEntity.ok().body(countryDAO);
+    public ResponseEntity<CountryDTO> create(@RequestBody CountryDTO country) {
+        return Optional.of(country)
+                .map(TransformerDAODTO::transformToCountryDAO)
+                .map(countryHandler::create)
+                .map(TransformerDAODTO::transformToCountryDTO)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<CountryDAO>> getAllCountries() {
+    public ResponseEntity<List<CountryDTO>> getAllCountries() {
         logger.info("Data processing.");
-        List<CountryDAO> allCountries = countryHandler.getAllCountries();
+        List<CountryDTO> allCountries = countryHandler.getAllCountries()
+                .stream()
+                .map(TransformerDAODTO::transformToCountryDTO)
+                .sorted(Comparator.comparing(CountryDTO::getName))
+                .toList();
         return ResponseEntity.ok().body(allCountries);
     }
 
     @GetMapping("/{countryId}")
-    public ResponseEntity<CountryDAO> getCountry(@PathVariable int countryId) {
+    public ResponseEntity<CountryDTO> getCountryById(@PathVariable int countryId) {
         logger.info("The data are received from the user.");
-        CountryDAO countryDAO = countryHandler.getCountryById(countryId);
-        return ResponseEntity.ok().body(countryDAO);
+        return Optional.of(countryHandler.getCountryById(countryId))
+                .map(TransformerDAODTO::transformToCountryDTO)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 
     @PutMapping("/{countryId}")
-    public ResponseEntity<CountryDAO> update(@RequestBody Country country, @PathVariable int countryId) {
+    public ResponseEntity<CountryDTO> update(@RequestBody CountryDTO country, @PathVariable int countryId) {
         logger.info("The data are received from the user.");
-        CountryDAO countryDAO = countryHandler.update(country, countryId);
-        return ResponseEntity.ok().body(countryDAO);
+        country.setId(countryId);
+        return Optional.of(country)
+                .map(TransformerDAODTO::transformToCountryDAO)
+                .map(countryHandler::update)
+                .map(TransformerDAODTO::transformToCountryDTO)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+
+
     }
 
     @DeleteMapping("/{countryId}")
-    public ResponseEntity<String> delete(@PathVariable int countryId) {
+    public ResponseEntity<String> deleteByCountryId(@PathVariable int countryId) {
         logger.info("The data are received from the user.");
         countryHandler.delete(countryId);
         return ResponseEntity.ok().body("The country with the ID " + countryId + " is deleted.");
     }
+
+    @GetMapping("/{countryId}/cities/all")
+    public ResponseEntity<List<CityDTO>> getAllCitiesByCountryId(@PathVariable int countryId) {
+        List<CityDTO> allCitiesByCountry = countryHandler.getAllCitiesByCountryId(countryId)
+                .stream()
+                .map(TransformerDAODTO::transformToCityDTO)
+                .sorted(Comparator.comparing(CityDTO::getName))
+                .toList();
+        return ResponseEntity.ok().body(allCitiesByCountry);
+    }
+
+
 }

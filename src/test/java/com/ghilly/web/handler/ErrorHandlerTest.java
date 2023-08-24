@@ -3,6 +3,7 @@ package com.ghilly.web.handler;
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.exception.WrongNameException;
+import com.ghilly.web.ErrorHandler;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,7 @@ class ErrorHandlerTest {
         HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR;
 
         assertEquals(status, actual.getStatusCode());
-        assertEquals("Runtime exception " + exception.getMessage(), actual.getBody());
+        assertEquals("Runtime exception: " + exception.getMessage(), actual.getBody());
     }
 
     @Test
