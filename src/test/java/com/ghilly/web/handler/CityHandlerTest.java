@@ -49,7 +49,7 @@ class CityHandlerTest {
         assertAll(
                 () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
                 () -> verify(countryServiceRest).getCountryById(COUNTRY_ID),
-                () -> verify(cityServiceRest).findAllCitiesWithTheSameName(MOSCOW),
+                () -> verify(cityServiceRest).theSameCityExists(COUNTRY_ID, MOSCOW),
                 () -> verify(countryServiceRest).getCapitalByCountryId(COUNTRY_ID),
                 () -> verify(cityServiceRest).create(MOS_DAO),
                 () -> verifyNoMoreInteractions(cityServiceRest, countryServiceRest)
@@ -70,8 +70,7 @@ class CityHandlerTest {
                 () -> assertEquals("The capital for the country ID " + COUNTRY_ID +
                         " is already set. Try to update this city.", exception.getMessage()),
                 () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
-                () -> verify(countryServiceRest).getCountryById(COUNTRY_ID),
-                () -> verify(cityServiceRest).findAllCitiesWithTheSameName(MOSCOW),
+                () -> verify(cityServiceRest).theSameCityExists(COUNTRY_ID, MOSCOW),
                 () -> verify(countryServiceRest).getCapitalByCountryId(COUNTRY_ID),
                 () -> verifyNoMoreInteractions(cityServiceRest, countryServiceRest)
         );
@@ -93,7 +92,7 @@ class CityHandlerTest {
     void createCityAlreadyExistsFail() {
         when(countryServiceRest.countryIdExists(COUNTRY_ID)).thenReturn(true);
         when(countryServiceRest.getCountryById(COUNTRY_ID)).thenReturn(RUS);
-        when(cityServiceRest.findAllCitiesWithTheSameName(MOSCOW)).thenReturn(List.of(MOS_DAO_FROM_REPO));
+        when(cityServiceRest.theSameCityExists(COUNTRY_ID, MOSCOW)).thenReturn(true);
         CityAlreadyExistsException exception = assertThrows(CityAlreadyExistsException.class,
                 () -> handler.create(MOS_DAO_FROM_REPO, COUNTRY_ID));
 
@@ -102,16 +101,13 @@ class CityHandlerTest {
                 () -> assertEquals("The city " + MOSCOW + " already exists.",
                         exception.getMessage()),
                 () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
-                () -> verify(countryServiceRest).getCountryById(COUNTRY_ID),
-                () -> verify(cityServiceRest).findAllCitiesWithTheSameName(MOSCOW),
+                () -> verify(cityServiceRest).theSameCityExists(COUNTRY_ID, MOSCOW),
                 () -> verifyNoMoreInteractions(countryServiceRest, cityServiceRest)
         );
     }
 
     @Test
     void createWrongNameFail() {
-        when(countryServiceRest.countryIdExists(COUNTRY_ID)).thenReturn(true);
-        when(countryServiceRest.getCountryById(COUNTRY_ID)).thenReturn(RUS);
         String wrong = "777Mo$cow!";
         CityDAO city = new CityDAO(wrong, RUS);
 
@@ -119,8 +115,6 @@ class CityHandlerTest {
                 () -> handler.create(city, COUNTRY_ID));
 
         assertAll(
-                () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
-                () -> verify(countryServiceRest).getCountryById(COUNTRY_ID),
                 () -> assertEquals(WRONG_NAME_EX_MSG + wrong,
                         exception.getMessage()),
                 () -> verifyNoMoreInteractions(countryServiceRest)
@@ -187,7 +181,7 @@ class CityHandlerTest {
                 () -> verify(cityServiceRest).cityIdExists(CITY_ID),
                 () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
                 () -> verify(countryServiceRest).getCountryById(COUNTRY_ID),
-                () -> verify(cityServiceRest).findAllCitiesWithTheSameName(newName),
+                () -> verify(cityServiceRest).theSameCityExists(COUNTRY_ID, newName),
                 () -> verify(countryServiceRest).getCapitalByCountryId(COUNTRY_ID),
                 () -> verify(cityServiceRest).update(cityDAO),
                 () -> verifyNoMoreInteractions(cityServiceRest, countryServiceRest)
@@ -210,7 +204,6 @@ class CityHandlerTest {
     @Test
     void updateWrongNewNameFail() {
         when(cityServiceRest.cityIdExists(CITY_ID)).thenReturn(true);
-        when(countryServiceRest.countryIdExists(COUNTRY_ID)).thenReturn(true);
         String newName = "Moskv@b@d";
         CityDAO toChange = new CityDAO(CITY_ID, newName, true);
 
@@ -220,7 +213,6 @@ class CityHandlerTest {
         assertAll(
                 () -> assertEquals(WRONG_NAME_EX_MSG + newName, exception.getMessage()),
                 () -> verify(cityServiceRest).cityIdExists(CITY_ID),
-                () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
                 () -> verifyNoMoreInteractions(cityServiceRest)
         );
     }
@@ -231,8 +223,7 @@ class CityHandlerTest {
         CityDAO toChange = new CityDAO(CITY_ID, newName, RUS, false);
         when(cityServiceRest.cityIdExists(CITY_ID)).thenReturn(true);
         when(countryServiceRest.countryIdExists(COUNTRY_ID)).thenReturn(true);
-        when(countryServiceRest.getCountryById(COUNTRY_ID)).thenReturn(RUS);
-        when(cityServiceRest.findAllCitiesWithTheSameName(newName)).thenReturn(List.of(toChange));
+        when(cityServiceRest.theSameCityExists(COUNTRY_ID, newName)).thenReturn(true);
 
         CityAlreadyExistsException exception = assertThrows(CityAlreadyExistsException.class,
                 () -> handler.update(toChange, COUNTRY_ID));
@@ -242,8 +233,7 @@ class CityHandlerTest {
                         exception.getMessage()),
                 () -> verify(cityServiceRest).cityIdExists(CITY_ID),
                 () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
-                () -> verify(countryServiceRest).getCountryById(COUNTRY_ID),
-                () -> verify(cityServiceRest).findAllCitiesWithTheSameName(newName),
+                () -> verify(cityServiceRest).theSameCityExists(COUNTRY_ID, newName),
                 () -> verifyNoMoreInteractions(cityServiceRest, countryServiceRest)
         );
     }

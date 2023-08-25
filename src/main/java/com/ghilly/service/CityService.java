@@ -1,6 +1,7 @@
 package com.ghilly.service;
 
 import com.ghilly.model.DAO.CityDAO;
+import com.ghilly.model.DAO.CountryDAO;
 
 import java.util.List;
 
@@ -15,5 +16,5 @@ public interface CityService {
 
     void delete(int cityId);
 
-    List<CityDAO> findAllCitiesWithTheSameName(String name);
+    boolean theSameCityExists(int countryId, String name);
 }

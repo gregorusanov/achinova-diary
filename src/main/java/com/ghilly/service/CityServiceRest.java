@@ -51,8 +51,8 @@ public class CityServiceRest implements CityService {
     }
 
     @Override
-    public List<CityDAO> findAllCitiesWithTheSameName(String name) {
-        return cityRepository.findAllByName(name).orElse(null);
+    public boolean theSameCityExists(int countryId, String name) {
+        return cityRepository.existsByCountryDAO_IdAndName(countryId, name);
     }
 
     public boolean cityIdExists(int id) {

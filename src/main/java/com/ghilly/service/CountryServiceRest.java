@@ -63,8 +63,7 @@ public class CountryServiceRest implements CountryService {
 
     @Override
     public CityDAO getCapitalByCountryId(int countryId) {
-        return cityRepository.findCityDAOByCountryDAOIdAndCapitalIsTrue(countryId)
-                .orElse(null);
+        return cityRepository.findCityDAOByCountryDAO_IdAndCapitalIsTrue(countryId).orElse(null);
     }
 
     public boolean countryIdExists(int id) {

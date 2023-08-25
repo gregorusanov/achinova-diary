@@ -10,7 +10,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,7 +39,6 @@ public class CountryController {
         List<CountryDTO> allCountries = countryHandler.getAllCountries()
                 .stream()
                 .map(TransformerFromDAOtoDTOAndBack::transformToCountryDTO)
-                .sorted(Comparator.comparing(CountryDTO::getName))
                 .toList();
         return ResponseEntity.ok().body(allCountries);
     }
@@ -78,7 +76,6 @@ public class CountryController {
         List<CityDTO> allCitiesByCountry = countryHandler.getAllCitiesByCountryId(countryId)
                 .stream()
                 .map(TransformerFromDAOtoDTOAndBack::transformToCityDTO)
-                .sorted(Comparator.comparing(CityDTO::getName))
                 .toList();
         return ResponseEntity.ok().body(allCitiesByCountry);
     }

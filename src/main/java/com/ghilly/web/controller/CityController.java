@@ -9,7 +9,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -50,7 +49,6 @@ public class CityController {
         logger.info("Data processing.");
         List<CityDTO> cityDTOS = cityHandler.getAllCities().stream()
                 .map(TransformerFromDAOtoDTOAndBack::transformToCityDTO)
-                .sorted(Comparator.comparing(CityDTO::getName))
                 .toList();
         return ResponseEntity.ok(cityDTOS);
     }
