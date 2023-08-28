@@ -40,7 +40,7 @@ public class CatchExceptionIntegrationTest {
 
     @Test
     public void catchNameAlreadyExistsExceptionStatusBadRequest() throws Exception {
-        String rus = "Russia";
+        String rus = "russia";
         CountryDAO countryDAO = new CountryDAO(rus);
         countryRepository.save(countryDAO);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -118,16 +118,16 @@ public class CatchExceptionIntegrationTest {
 
     @Test
     public void catchCityAlreadyExistsStatusBadRequest() throws Exception {
-        String rus = "Russia";
+        String rus = "russia";
         countryRepository.save(new CountryDAO(rus));
         CountryDAO countryDAO = countryRepository.findByName(rus).orElseThrow();
         int countryId = countryDAO.getId();
-        String moscow = "Moscow";
+        String moscow = "moscow";
         cityRepository.save(new CityDAO(moscow, countryDAO, true));
         CityDAO cityDAO = cityRepository.findByName(moscow).orElseThrow();
         int id = cityDAO.getId();
         ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(new CityDTO(id,moscow, countryId, true));
+        String json = objectMapper.writeValueAsString(new CityDTO(id, moscow.toUpperCase(), countryId, true));
 
         mvc.perform(MockMvcRequestBuilders
                         .put("/cities/" + id)

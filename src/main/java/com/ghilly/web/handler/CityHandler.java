@@ -54,7 +54,9 @@ public class CityHandler {
     }
 
     private void checkBeforeSaving(CityDAO city, int countryId) {
-        checkNameIsWrong(city.getName());
+        String name = city.getName();
+        checkNameIsWrong(name);
+        city.setName(name.toLowerCase());
         checkCountryIdExists(countryId);
         checkCityExists(countryId, city);
         checkCapitalExists(countryId, city);

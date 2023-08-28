@@ -17,7 +17,9 @@ import static org.mockito.Mockito.*;
 class CountryHandlerTest {
     private static final int COUNTRY_ID = 1;
     private static final String NAME = "Russia";
+    private static final String NAME_LOWER_CASE = "russia";
     private static final CountryDAO RUS = new CountryDAO(COUNTRY_ID, NAME);
+    private static final CountryDAO RUS_FOR_SERVICE = new CountryDAO(COUNTRY_ID, NAME_LOWER_CASE);
     private static final String COUNTRY_ID_NOT_FOUND_EX_MSG_BEGIN = "The country ID ";
     private static final String ID_NOT_FOUND_EX_MSG_END = " is not found.";
     private static final String WRONG_NAME_EX_MSG = """
@@ -38,22 +40,22 @@ class CountryHandlerTest {
         countryHandler.create(RUS);
 
         assertAll(
-                () -> verify(countryServiceRest).countryNameExists(NAME),
-                () -> verify(countryServiceRest).create(RUS),
+                () -> verify(countryServiceRest).countryNameExists(NAME_LOWER_CASE),
+                () -> verify(countryServiceRest).create(RUS_FOR_SERVICE),
                 () -> verifyNoMoreInteractions(countryServiceRest)
         );
     }
 
     @Test
     void createNameAlreadyExistsFail() {
-        when(countryServiceRest.countryNameExists(NAME)).thenReturn(true);
+        when(countryServiceRest.countryNameExists(NAME_LOWER_CASE)).thenReturn(true);
         NameAlreadyExistsException exception = assertThrows(NameAlreadyExistsException.class,
                 () -> countryHandler.create(RUS));
 
         assertAll(
-                () -> assertEquals("The country name " + NAME + " already exists.",
+                () -> assertEquals("The country name " + NAME_LOWER_CASE + " already exists.",
                         exception.getMessage()),
-                () -> verify(countryServiceRest).countryNameExists(NAME),
+                () -> verify(countryServiceRest).countryNameExists(NAME_LOWER_CASE),
                 () -> verifyNoMoreInteractions(countryServiceRest)
         );
     }
@@ -76,12 +78,12 @@ class CountryHandlerTest {
     @Test
     void getSuccess() {
         when(countryServiceRest.countryIdExists(COUNTRY_ID)).thenReturn(true);
-        when(countryServiceRest.getCountryById(COUNTRY_ID)).thenReturn(RUS);
+        when(countryServiceRest.getCountryById(COUNTRY_ID)).thenReturn(RUS_FOR_SERVICE);
 
         CountryDAO countryDAO = countryHandler.getCountryById(COUNTRY_ID);
 
         assertAll(
-                () -> assertEquals(countryDAO.getName(), NAME),
+                () -> assertEquals(NAME_LOWER_CASE, countryDAO.getName()),
                 () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
                 () -> verify(countryServiceRest).getCountryById(COUNTRY_ID),
                 () -> verifyNoMoreInteractions(countryServiceRest)
@@ -119,15 +121,15 @@ class CountryHandlerTest {
 
     @Test
     void updateSuccess() {
-        CountryDAO ussr = new CountryDAO(COUNTRY_ID, "USSR");
+        CountryDAO ussr = new CountryDAO(COUNTRY_ID, "ussr");
         when(countryServiceRest.countryIdExists(COUNTRY_ID)).thenReturn(true);
         when(countryServiceRest.getCountryById(COUNTRY_ID)).thenReturn(ussr);
 
         countryHandler.update(RUS);
         assertAll(
                 () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
-                () -> verify(countryServiceRest).countryNameExists(NAME),
-                () -> verify(countryServiceRest).update(RUS),
+                () -> verify(countryServiceRest).countryNameExists(NAME_LOWER_CASE),
+                () -> verify(countryServiceRest).update(RUS_FOR_SERVICE),
                 () -> verifyNoMoreInteractions(countryServiceRest)
         );
     }
@@ -164,16 +166,16 @@ class CountryHandlerTest {
     @Test
     void updateExistingNewNameFail() {
         when(countryServiceRest.countryIdExists(COUNTRY_ID)).thenReturn(true);
-        when(countryServiceRest.countryNameExists(NAME)).thenReturn(true);
+        when(countryServiceRest.countryNameExists(NAME_LOWER_CASE)).thenReturn(true);
 
         NameAlreadyExistsException exception = assertThrows(NameAlreadyExistsException.class,
                 () -> countryHandler.update(RUS));
 
         assertAll(
-                () -> assertEquals("The country name " + NAME + " already exists.",
+                () -> assertEquals("The country name " + NAME_LOWER_CASE + " already exists.",
                         exception.getMessage()),
                 () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
-                () -> verify(countryServiceRest).countryNameExists(NAME),
+                () -> verify(countryServiceRest).countryNameExists(NAME_LOWER_CASE),
                 () -> verifyNoMoreInteractions(countryServiceRest)
         );
     }

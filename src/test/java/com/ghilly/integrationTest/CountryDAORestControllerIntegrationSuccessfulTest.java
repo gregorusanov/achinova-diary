@@ -52,7 +52,7 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
                         .content(json))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").exists());
-        assertTrue(countryRepository.findByName(jp).isPresent());
+        assertTrue(countryRepository.findByName(jp.toLowerCase()).isPresent());
 
         countryRepository.deleteAll();
     }
@@ -103,9 +103,9 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
 
     @Test
     public void updateCountryStatusOk() throws Exception {
-        CountryDAO countryDAO = new CountryDAO("USSR");
+        CountryDAO countryDAO = new CountryDAO("ussr");
         countryRepository.save(countryDAO);
-        int id = Objects.requireNonNull(countryRepository.findByName("USSR").orElse(null)).getId();
+        int id = Objects.requireNonNull(countryRepository.findByName(countryDAO.getName()).orElse(null)).getId();
         String newName = "Russia";
         CountryDTO toUpdate = new CountryDTO(id, newName);
         ObjectMapper objectMapper = new ObjectMapper();
@@ -118,8 +118,8 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
                 .andDo(System.out::println)
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.name").value(newName));
-        assertTrue(countryRepository.findByName(newName).isPresent());
+                .andExpect(jsonPath("$.name").value(newName.toLowerCase()));
+        assertTrue(countryRepository.findByName(newName.toLowerCase()).isPresent());
 
         countryRepository.deleteAll();
     }
