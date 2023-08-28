@@ -2,6 +2,7 @@ package com.ghilly.service;
 
 import com.ghilly.model.DAO.CityDAO;
 import com.ghilly.model.DAO.CountryDAO;
+import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.CountryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,23 +17,25 @@ class CountryServiceRestTest {
     private static final String NAME = "Turkey";
     private static final int ID = 1;
     private static final CountryDAO COUNTRY_DAO = new CountryDAO(ID, NAME);
-    private CountryRepository repository;
+    private CountryRepository countryRepository;
+    private CityRepository cityRepository;
     private CountryServiceRest service;
 
     @BeforeEach
     void init() {
-        repository = mock(CountryRepository.class);
-        service = new CountryServiceRest(repository);
+        countryRepository = mock(CountryRepository.class);
+        cityRepository = mock(CityRepository.class);
+        service = new CountryServiceRest(countryRepository, cityRepository);
     }
 
     @Test
     void createCountry() {
-        when(repository.save(COUNTRY_DAO)).thenReturn(COUNTRY_DAO);
+        when(countryRepository.save(COUNTRY_DAO)).thenReturn(COUNTRY_DAO);
         service.create(COUNTRY_DAO);
 
         assertAll(
-                () -> verify(repository).save(COUNTRY_DAO),
-                () -> verifyNoMoreInteractions(repository)
+                () -> verify(countryRepository).save(COUNTRY_DAO),
+                () -> verifyNoMoreInteractions(countryRepository)
         );
     }
 
@@ -43,27 +46,27 @@ class CountryServiceRestTest {
         CountryDAO fr = new CountryDAO("France");
         CountryDAO cn = new CountryDAO("China");
         List<CountryDAO> expected = List.of(af, fr, cn);
-        when(repository.findAll()).thenReturn(expected);
+        when(countryRepository.findAll()).thenReturn(expected);
 
         List<CountryDAO> actual = service.getAllCountries();
 
         assertAll(
                 () -> assertEquals(expected, actual),
-                () -> verify(repository).findAll(),
-                () -> verifyNoMoreInteractions(repository)
+                () -> verify(countryRepository).findAll(),
+                () -> verifyNoMoreInteractions(countryRepository)
         );
     }
 
     @Test
     void getCountry() {
-        when(repository.findById(ID)).thenReturn(Optional.of(COUNTRY_DAO));
+        when(countryRepository.findById(ID)).thenReturn(Optional.of(COUNTRY_DAO));
 
         CountryDAO expected = service.getCountryById(ID);
 
         assertAll(
                 () -> assertEquals(expected.getName(), NAME),
-                () -> verify(repository).findById(ID),
-                () -> verifyNoMoreInteractions(repository)
+                () -> verify(countryRepository).findById(ID),
+                () -> verifyNoMoreInteractions(countryRepository)
         );
     }
 
@@ -71,25 +74,25 @@ class CountryServiceRestTest {
     void update() {
         String newName = "Russia";
         CountryDAO countryDAO = new CountryDAO(ID, newName);
-        when(repository.save(countryDAO)).thenReturn(countryDAO);
+        when(countryRepository.save(countryDAO)).thenReturn(countryDAO);
 
         service.update(countryDAO);
 
         assertAll(
-                () -> verify(repository).save(countryDAO),
-                () -> verifyNoMoreInteractions(repository)
+                () -> verify(countryRepository).save(countryDAO),
+                () -> verifyNoMoreInteractions(countryRepository)
         );
     }
 
     @Test
     void delete() {
-        when(repository.findById(ID)).thenReturn(Optional.of(COUNTRY_DAO));
+        when(countryRepository.findById(ID)).thenReturn(Optional.of(COUNTRY_DAO));
 
         service.delete(ID);
 
         assertAll(
-                () -> verify(repository).deleteById(ID),
-                () -> verifyNoMoreInteractions(repository)
+                () -> verify(countryRepository).deleteById(ID),
+                () -> verifyNoMoreInteractions(countryRepository)
         );
     }
 
@@ -101,14 +104,27 @@ class CountryServiceRestTest {
         CityDAO munich = new CityDAO("Munich", countryDAO);
         CityDAO dresden = new CityDAO("Dresden", countryDAO);
         countryDAO.setCityList(List.of(br, munich, dresden));
-        when(repository.findById(id)).thenReturn(Optional.of(countryDAO));
+        when(countryRepository.findById(id)).thenReturn(Optional.of(countryDAO));
 
         List <CityDAO> actual = service.getAllCitiesByCountryId(id);
 
         assertAll(
                 () -> assertEquals(3, actual.size()),
-                () -> verify(repository).findById(id),
-                () -> verifyNoMoreInteractions(repository)
+                () -> verify(countryRepository).findById(id),
+                () -> verifyNoMoreInteractions(countryRepository)
+        );
+    }
+
+    @Test
+    void getCapitalByCountryId() {
+        when(cityRepository.findCityDAOByCountryDAO_IdAndCapitalIsTrue(ID))
+                .thenReturn(Optional.of(new CityDAO("Istanbul", COUNTRY_DAO, true)));
+
+        service.getCapitalByCountryId(ID);
+
+        assertAll(
+                () -> verify(cityRepository).findCityDAOByCountryDAO_IdAndCapitalIsTrue(ID),
+                () -> verifyNoMoreInteractions(countryRepository)
         );
     }
 }

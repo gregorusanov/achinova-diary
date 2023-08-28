@@ -50,11 +50,12 @@ public class CityServiceRest implements CityService {
         logger.info("The city with the ID {} is deleted", cityId);
     }
 
-    public boolean cityIdExists(int id) {
-        return cityRepository.findById(id).isPresent();
+    @Override
+    public boolean theSameCityExists(int countryId, String name) {
+        return cityRepository.existsByCountryDAO_IdAndName(countryId, name);
     }
 
-    public boolean cityNameExists(String name) {
-        return cityRepository.findByName(name).isPresent();
+    public boolean cityIdExists(int id) {
+        return cityRepository.findById(id).isPresent();
     }
 }

@@ -108,7 +108,7 @@ public class CityDAO implements Serializable {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         CityDAO cityDAO = (CityDAO) obj;
-        return id == cityDAO.id && name.equals(cityDAO.name) && countryDAO == cityDAO.countryDAO;
+        return id == cityDAO.id && name.equals(cityDAO.name) && countryDAO == cityDAO.countryDAO && capital == cityDAO.capital;
     }
 
     @Override

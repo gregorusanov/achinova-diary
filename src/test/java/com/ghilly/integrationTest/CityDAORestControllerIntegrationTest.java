@@ -1,15 +1,14 @@
 package com.ghilly.integrationTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.ghilly.exception.CityAlreadyExistsException;
 import com.ghilly.exception.IdNotFoundException;
-import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.model.DAO.CityDAO;
 import com.ghilly.model.DAO.CountryDAO;
 import com.ghilly.model.DTO.CityDTO;
 import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.CountryRepository;
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -48,7 +47,7 @@ public class CityDAORestControllerIntegrationTest {
         countryRepository.save(countryDAO);
         int id = Objects.requireNonNull(countryRepository.findByName(jp).orElse(null)).getId();
         String tokyo = "Tokyo";
-        CityDTO city = new CityDTO(tokyo, id,true);
+        CityDTO city = new CityDTO(tokyo, id, true);
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(city);
 
@@ -80,10 +79,9 @@ public class CityDAORestControllerIntegrationTest {
                         .post(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
-                .andExpect(status().isConflict())
-                .andExpect(result -> Assertions.assertTrue(result.getResolvedException() instanceof
-                        NameAlreadyExistsException))
-                .andExpect(result -> assertEquals("The city name " + tokyo + " already exists.",
+                .andExpect(status().isBadRequest())
+                .andExpect(result -> assertTrue(result.getResolvedException() instanceof CityAlreadyExistsException))
+                .andExpect(result -> assertEquals("The city " + tokyo + " already exists.",
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
 
         cityRepository.deleteAll();

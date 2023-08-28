@@ -9,4 +9,8 @@ import java.util.Optional;
 @Repository
 public interface CityRepository extends CrudRepository<CityDAO, Integer> {
     Optional<CityDAO> findByName(String cityName);
+
+    Optional<CityDAO> findCityDAOByCountryDAO_IdAndCapitalIsTrue(int countryId);
+
+    boolean existsByCountryDAO_IdAndName(int countryId, String name);
 }

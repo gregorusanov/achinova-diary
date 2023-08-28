@@ -17,4 +17,6 @@ public interface CountryService {
     void delete(int countryId);
 
     List<CityDAO> getAllCitiesByCountryId(int countryId);
+
+    CityDAO getCapitalByCountryId(int countryId);
 }
