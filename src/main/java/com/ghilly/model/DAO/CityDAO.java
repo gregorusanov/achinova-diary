@@ -3,6 +3,7 @@ package com.ghilly.model.DAO;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -26,6 +27,12 @@ public class CityDAO implements Serializable {
 
     @Column(name = "capital", columnDefinition = "boolean default false")
     private boolean capital;
+
+    @ManyToMany
+    @JoinTable(name = "cities_travel_diary",
+            joinColumns = @JoinColumn(name = "city_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "travel_diary_id", referencedColumnName = "id"))
+    private List<TravelDiaryDAO> listOfTravels;
 
     public CityDAO(int id, String name) {
         this.id = id;
