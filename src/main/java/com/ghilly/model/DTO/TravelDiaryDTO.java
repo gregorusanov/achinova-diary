@@ -1,100 +1,46 @@
 package com.ghilly.model.DTO;
 
-import java.util.Date;
+import lombok.*;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+@Builder
+@Getter
+@Setter
+@ToString
+@EqualsAndHashCode
+@AllArgsConstructor
+@NoArgsConstructor
 public class TravelDiaryDTO {
     private int id;
-    private Date arrivalDate;
-    private Date departureDate;
+
+    private String arrivalDate;
+
+    private String departureDate;
+
+    @Min(value = 0, message = "Minimal value for the field planned budget is 0.")
     private double plannedBudget;
+
+    @Min(value = 0, message = "Minimal value for the field real budget is 0.")
     private double realBudget;
+
+    @Size(max = 301, message = "The description should be in the range from 0 to 300 symbols.")
     private String description;
+
+    @Min(value = 0, message = "Minimal value for the field rating is 0.")
+    @Max(value = 10, message = "Maximal value for the field rating is 10.")
     private int rating;
+
+    @NotNull
     private int cityId;
 
-    public TravelDiaryDTO(int id, Date arrivalDate, Date departureDate, double plannedBudget, double realBudget,
-                          String description, int rating, int cityId) {
-        this.id = id;
-        this.arrivalDate = arrivalDate;
-        this.departureDate = departureDate;
+    public TravelDiaryDTO(double plannedBudget, double realBudget, int rating, int cityId) {
         this.plannedBudget = plannedBudget;
         this.realBudget = realBudget;
-        this.description = description;
         this.rating = rating;
-        this.cityId = cityId;
-    }
-
-    public TravelDiaryDTO(int id, Date arrivalDate, Date departureDate) {
-        this.id = id;
-        this.arrivalDate = arrivalDate;
-        this.departureDate = departureDate;
-    }
-
-    public TravelDiaryDTO() {
-
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Date getArrivalDate() {
-        return arrivalDate;
-    }
-
-    public void setArrivalDate(Date arrivalDate) {
-        this.arrivalDate = arrivalDate;
-    }
-
-    public Date getDepartureDate() {
-        return departureDate;
-    }
-
-    public void setDepartureDate(Date departureDate) {
-        this.departureDate = departureDate;
-    }
-
-    public double getPlannedBudget() {
-        return plannedBudget;
-    }
-
-    public void setPlannedBudget(double plannedBudget) {
-        this.plannedBudget = plannedBudget;
-    }
-
-    public double getRealBudget() {
-        return realBudget;
-    }
-
-    public void setRealBudget(double realBudget) {
-        this.realBudget = realBudget;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
-
-    public int getCityId() {
-        return cityId;
-    }
-
-    public void setCityId(int cityId) {
         this.cityId = cityId;
     }
 }

@@ -3,8 +3,10 @@ package com.ghilly.model.DAO;
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "cities")
@@ -28,11 +30,20 @@ public class CityDAO implements Serializable {
     @Column(name = "capital", columnDefinition = "boolean default false")
     private boolean capital;
 
-    @ManyToMany
+    public Set<TravelDiaryDAO> getTravelSet() {
+        return travels;
+    }
+
+    public void setTravelSet(Set<TravelDiaryDAO> travelSet) {
+        this.travels = travelSet;
+    }
+
+
+    @ManyToMany()
     @JoinTable(name = "cities_travel_diary",
             joinColumns = @JoinColumn(name = "city_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "travel_diary_id", referencedColumnName = "id"))
-    private List<TravelDiaryDAO> listOfTravels;
+    private Set<TravelDiaryDAO> travels = new HashSet<>();
 
     public CityDAO(int id, String name) {
         this.id = id;

@@ -1,9 +1,6 @@
 package com.ghilly.web.handler;
 
-import com.ghilly.exception.CapitalAlreadyExistsException;
-import com.ghilly.exception.IdNotFoundException;
-import com.ghilly.exception.NameAlreadyExistsException;
-import com.ghilly.exception.WrongNameException;
+import com.ghilly.exception.*;
 import com.ghilly.web.ErrorHandler;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -66,6 +63,50 @@ class ErrorHandlerTest {
         ResponseEntity<String> actual =
                 handler.catchCapitalAlreadyExistsException(new CapitalAlreadyExistsException(message));
         HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        assertEquals(status, actual.getStatusCode());
+        assertEquals(message, actual.getBody());
+    }
+
+    @Test
+    void catchWrongDateException() {
+        String message = "The arrival date should be earlier than departure date or should be equal to it!";
+        ResponseEntity<String> actual =
+                handler.catchIllegalDateException(new IllegalDateException(message));
+        HttpStatus status = HttpStatus.NOT_ACCEPTABLE;
+
+        assertEquals(status, actual.getStatusCode());
+        assertEquals(message, actual.getBody());
+    }
+
+    @Test
+    void catchIllegalBudgetEx() {
+        String message = "The budget should not be less than 0.";
+        ResponseEntity<String> actual =
+                handler.catchIllegalBudgetException(new IllegalBudgetException(message));
+        HttpStatus status = HttpStatus.NOT_ACCEPTABLE;
+
+        assertEquals(status, actual.getStatusCode());
+        assertEquals(message, actual.getBody());
+    }
+
+    @Test
+    void catchIllegalRatingNumberEx() {
+        String message = "The rating should be in the range from 0 to 10, including these numbers.";
+        ResponseEntity<String> actual =
+                handler.catchIllegalRatingException(new IllegalRatingNumberException(message));
+        HttpStatus status = HttpStatus.NOT_ACCEPTABLE;
+
+        assertEquals(status, actual.getStatusCode());
+        assertEquals(message, actual.getBody());
+    }
+
+    @Test
+    void catchTooLongDescriptionException() {
+        String message = "The description should be no longer than 300 symbols, including spaces.";
+        ResponseEntity<String> actual =
+                handler.catchTooLongDescriptionException(new TooLongDescriptionException(message));
+        HttpStatus status = HttpStatus.NOT_ACCEPTABLE;
 
         assertEquals(status, actual.getStatusCode());
         assertEquals(message, actual.getBody());

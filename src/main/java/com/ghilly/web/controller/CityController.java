@@ -1,7 +1,7 @@
 package com.ghilly.web.controller;
 
 import com.ghilly.model.DTO.CityDTO;
-import com.ghilly.transformer.TransformerFromDAOtoDTOAndBack;
+import com.ghilly.transformer.TransformerDAOandDTO;
 import com.ghilly.web.handler.CityHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,9 +28,9 @@ public class CityController {
         logger.info("The data are received from the user. City: [{}]", city);
 
         return Optional.of(city)
-                .map(cityDTO -> TransformerFromDAOtoDTOAndBack.transformToCityDAO(city))
+                .map(cityDTO -> TransformerDAOandDTO.transformToCityDAO(city))
                 .map(cityDAO -> cityHandler.create(cityDAO, city.getCountryId()))
-                .map(TransformerFromDAOtoDTOAndBack::transformToCityDTO)
+                .map(TransformerDAOandDTO::transformToCityDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
     }
@@ -39,7 +39,7 @@ public class CityController {
     public ResponseEntity<CityDTO> getCity(@PathVariable int cityId) {
         logger.info("The data are received from the user.");
         return Optional.of(cityHandler.getCity(cityId))
-                .map(TransformerFromDAOtoDTOAndBack::transformToCityDTO)
+                .map(TransformerDAOandDTO::transformToCityDTO)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -48,7 +48,7 @@ public class CityController {
     public ResponseEntity<List<CityDTO>> getAllCities() {
         logger.info("Data processing.");
         List<CityDTO> cityDTOS = cityHandler.getAllCities().stream()
-                .map(TransformerFromDAOtoDTOAndBack::transformToCityDTO)
+                .map(TransformerDAOandDTO::transformToCityDTO)
                 .toList();
         return ResponseEntity.ok(cityDTOS);
     }
@@ -58,9 +58,9 @@ public class CityController {
         logger.info("The data are received from the user.");
         city.setId(cityId);
         return Optional.of(city)
-                .map(cityDTO -> TransformerFromDAOtoDTOAndBack.transformToCityDAO(city))
+                .map(cityDTO -> TransformerDAOandDTO.transformToCityDAO(city))
                 .map(cityDAO -> cityHandler.update(cityDAO, city.getCountryId()))
-                .map(TransformerFromDAOtoDTOAndBack::transformToCityDTO)
+                .map(TransformerDAOandDTO::transformToCityDTO)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

@@ -2,7 +2,7 @@ package com.ghilly.web.controller;
 
 import com.ghilly.model.DTO.CityDTO;
 import com.ghilly.model.DTO.CountryDTO;
-import com.ghilly.transformer.TransformerFromDAOtoDTOAndBack;
+import com.ghilly.transformer.TransformerDAOandDTO;
 import com.ghilly.web.handler.CountryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,9 +26,9 @@ public class CountryController {
     @PostMapping("/")
     public ResponseEntity<CountryDTO> create(@RequestBody CountryDTO country) {
         return Optional.of(country)
-                .map(TransformerFromDAOtoDTOAndBack::transformToCountryDAO)
+                .map(TransformerDAOandDTO::transformToCountryDAO)
                 .map(countryHandler::create)
-                .map(TransformerFromDAOtoDTOAndBack::transformToCountryDTO)
+                .map(TransformerDAOandDTO::transformToCountryDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
     }
@@ -38,7 +38,7 @@ public class CountryController {
         logger.info("Data processing.");
         List<CountryDTO> allCountries = countryHandler.getAllCountries()
                 .stream()
-                .map(TransformerFromDAOtoDTOAndBack::transformToCountryDTO)
+                .map(TransformerDAOandDTO::transformToCountryDTO)
                 .toList();
         return ResponseEntity.ok().body(allCountries);
     }
@@ -47,7 +47,7 @@ public class CountryController {
     public ResponseEntity<CountryDTO> getCountryById(@PathVariable int countryId) {
         logger.info("The data are received from the user.");
         return Optional.of(countryHandler.getCountryById(countryId))
-                .map(TransformerFromDAOtoDTOAndBack::transformToCountryDTO)
+                .map(TransformerDAOandDTO::transformToCountryDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
@@ -57,9 +57,9 @@ public class CountryController {
         logger.info("The data are received from the user.");
         country.setId(countryId);
         return Optional.of(country)
-                .map(TransformerFromDAOtoDTOAndBack::transformToCountryDAO)
+                .map(TransformerDAOandDTO::transformToCountryDAO)
                 .map(countryHandler::update)
-                .map(TransformerFromDAOtoDTOAndBack::transformToCountryDTO)
+                .map(TransformerDAOandDTO::transformToCountryDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
@@ -75,7 +75,7 @@ public class CountryController {
     public ResponseEntity<List<CityDTO>> getAllCitiesByCountryId(@PathVariable int countryId) {
         List<CityDTO> allCitiesByCountry = countryHandler.getAllCitiesByCountryId(countryId)
                 .stream()
-                .map(TransformerFromDAOtoDTOAndBack::transformToCityDTO)
+                .map(TransformerDAOandDTO::transformToCityDTO)
                 .toList();
         return ResponseEntity.ok().body(allCitiesByCountry);
     }
@@ -84,7 +84,7 @@ public class CountryController {
     public ResponseEntity<CityDTO> getCapitalByCountryId(@PathVariable int countryId) {
         logger.info("The data are received from the user.");
         return Optional.of(countryHandler.getCapitalByCountryId(countryId))
-                .map(TransformerFromDAOtoDTOAndBack::transformToCityDTO)
+                .map(TransformerDAOandDTO::transformToCityDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }

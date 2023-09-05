@@ -1,14 +1,27 @@
 package com.ghilly.model.DAO;
 
+import lombok.*;
+
 import javax.persistence.*;
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.Size;
 import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
+import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "travel_diary")
+@Setter
+@Getter
+@ToString
+@EqualsAndHashCode
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class TravelDiaryDAO implements Serializable {
+
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "travel_diary_seq")
     @SequenceGenerator(name = "travel_diary_seq", sequenceName = "travel_diary_id_seq", allocationSize = 1)
@@ -16,113 +29,29 @@ public class TravelDiaryDAO implements Serializable {
     private int id;
 
     @Column(name = "arrival_date")
-    @NotNull
-    private Date arrivalDate;
+    private LocalDate arrivalDate;
 
     @Column(name = "departure_date")
-    @NotNull
-    private Date departureDate;
+    private LocalDate departureDate;
 
     @Column(name = "planned_budget")
+    @Min(value = 0, message = "Minimal value for the field planned budget is 0.")
     private double plannedBudget;
 
     @Column(name = "real_budget")
+    @Min(value = 0, message = "Minimal value for the field real budget is 0.")
     private double realBudget;
 
     @Column(name = "description")
+    @Size(max = 301, message = "The description should be in the range from 0 to 300 symbols.")
     private String description;
 
     @Column(name = "rating")
+    @Min(value = 0, message = "Minimal value for the field rating is 0.")
+    @Max(value = 10, message = "Maximal value for the field rating is 10.")
     private int rating;
 
-    @ManyToMany()
-    @JoinTable(name = "cities_travel_diary",
-            joinColumns = @JoinColumn(name = "travel_diary_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "city_id", referencedColumnName = "id"))
-    private List<CityDAO> cityDAOList;
+    @ManyToMany(mappedBy = "travels")
+    private Set<CityDAO> cities = new HashSet<>();
 
-    public TravelDiaryDAO(int id, Date arrivalDate, Date departureDate, double plannedBudget, double realBudget,
-                          String description, int rating) {
-        this.id = id;
-        this.arrivalDate = arrivalDate;
-        this.departureDate = departureDate;
-        this.plannedBudget = plannedBudget;
-        this.realBudget = realBudget;
-        this.description = description;
-        this.rating = rating;
-    }
-
-    public TravelDiaryDAO(int id, Date arrivalDate, Date departureDate) {
-        this.id = id;
-        this.arrivalDate = arrivalDate;
-        this.departureDate = departureDate;
-    }
-
-    public TravelDiaryDAO() {
-
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public Date getArrivalDate() {
-        return arrivalDate;
-    }
-
-    public void setArrivalDate(Date arrivalDate) {
-        this.arrivalDate = arrivalDate;
-    }
-
-    public Date getDepartureDate() {
-        return departureDate;
-    }
-
-    public void setDepartureDate(Date departureDate) {
-        this.departureDate = departureDate;
-    }
-
-    public double getPlannedBudget() {
-        return plannedBudget;
-    }
-
-    public void setPlannedBudget(double plannedBudget) {
-        this.plannedBudget = plannedBudget;
-    }
-
-    public double getRealBudget() {
-        return realBudget;
-    }
-
-    public void setRealBudget(double realBudget) {
-        this.realBudget = realBudget;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public int getRating() {
-        return rating;
-    }
-
-    public void setRating(int rating) {
-        this.rating = rating;
-    }
-
-    public List<CityDAO> getCityDAOList() {
-        return cityDAOList;
-    }
-
-    public void setCityDAOList(List<CityDAO> cityDAOList) {
-        this.cityDAOList = cityDAOList;
-    }
 }
