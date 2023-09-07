@@ -1,11 +1,8 @@
 package com.ghilly.model.DTO;
 
-import org.springframework.lang.Nullable;
-
 import java.util.Objects;
 
 public class CityDTO {
-    @Nullable
     private int id;
     private String name;
     private int countryId;
@@ -15,7 +12,7 @@ public class CityDTO {
         this.name = name;
     }
 
-    public CityDTO(@Nullable int id, String name, int countryId, boolean capital) {
+    public CityDTO(int id, String name, int countryId, boolean capital) {
         this.id = id;
         this.name = name;
         this.countryId = countryId;

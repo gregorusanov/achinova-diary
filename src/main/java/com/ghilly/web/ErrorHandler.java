@@ -51,4 +51,32 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
                 .status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());
     }
+
+    @ExceptionHandler(IllegalDateException.class)
+    public ResponseEntity<String> catchIllegalDateException(IllegalDateException exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_ACCEPTABLE)
+                .body(exception.getMessage());
+    }
+
+    @ExceptionHandler(IllegalBudgetException.class)
+    public ResponseEntity<String> catchIllegalBudgetException(IllegalBudgetException exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_ACCEPTABLE)
+                .body(exception.getMessage());
+    }
+
+    @ExceptionHandler(IllegalRatingNumberException.class)
+    public ResponseEntity<String> catchIllegalRatingException(IllegalRatingNumberException exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_ACCEPTABLE)
+                .body(exception.getMessage());
+    }
+
+    @ExceptionHandler(TooLongDescriptionException.class)
+    public ResponseEntity<String> catchTooLongDescriptionException(TooLongDescriptionException exception) {
+        return ResponseEntity
+                .status(HttpStatus.NOT_ACCEPTABLE)
+                .body(exception.getMessage());
+    }
 }

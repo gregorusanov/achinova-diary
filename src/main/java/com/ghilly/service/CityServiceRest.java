@@ -19,7 +19,7 @@ public class CityServiceRest implements CityService {
     @Override
     public CityDAO create(CityDAO cityDAO) {
         CityDAO toReturn = cityRepository.save(cityDAO);
-        logger.info("The city {} is created, the country is {}", toReturn.getName(), toReturn.getCountry().getName());
+        logger.info("The city {} is created, the country is {}", toReturn.getName(), toReturn.getCountryDAO().getName());
         return toReturn;
     }
 

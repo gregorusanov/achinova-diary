@@ -63,7 +63,7 @@ public class CityHandler {
 
     private void setCountryForCity(CityDAO city, int countryId) {
         checkCapitalExists(countryId, city);
-        city.setCountry(countryServiceRest.getCountryById(countryId));
+        city.setCountryDAO(countryServiceRest.getCountryById(countryId));
     }
 
     private void checkCityIdExists(int cityId) {
