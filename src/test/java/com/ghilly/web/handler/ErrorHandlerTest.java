@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ErrorHandlerTest {
     ErrorHandler handler = new ErrorHandler();
     int id = 100;
-    String usa = "USA";
+    String usa = "usa";
 
     @Test
     void catchRuntimeExceptionTest() {
