@@ -1,5 +1,7 @@
 package com.ghilly.model.DAO;
 
+import lombok.*;
+
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
@@ -7,6 +9,13 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "countries")
+@Setter
+@Getter
+@ToString
+@EqualsAndHashCode
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class CountryDAO implements Serializable {
 
     @Id
@@ -20,13 +29,6 @@ public class CountryDAO implements Serializable {
     @OneToMany(mappedBy = "countryDAO")
     private List<CityDAO> cityList;
 
-
-    public CountryDAO(int id, String name, List<CityDAO> cityList) {
-        this.id = id;
-        this.name = name;
-        this.cityList = cityList;
-    }
-
     public CountryDAO(int id, String name) {
         this.id = id;
         this.name = name;
@@ -36,48 +38,8 @@ public class CountryDAO implements Serializable {
         this.name = name;
     }
 
-    public CountryDAO() {
-
-    }
-
-    public List<CityDAO> getCityList() {
-        return cityList;
-    }
-
-    public void setCityList(List<CityDAO> cityList) {
-        this.cityList = cityList;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setName(String name) {
+    public CountryDAO(String name, List<CityDAO> cityList) {
         this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CountryDAO countryDAO = (CountryDAO) o;
-        return id == countryDAO.id && name.equals(countryDAO.name);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, cityList);
-    }
-
-    @Override
-    public String toString() {
-        return "Country{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                '}';
+        this.cityList = cityList;
     }
 }

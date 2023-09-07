@@ -44,7 +44,7 @@ class CityHandlerTest {
         when(countryServiceRest.getCountryById(COUNTRY_ID)).thenReturn(RUS);
 
         handler.create(MOS_DAO, COUNTRY_ID);
-        MOS_DAO.setCountry(RUS);
+        MOS_DAO.setCountryDAO(RUS);
         assertAll(
                 () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
                 () -> verify(cityServiceRest).theSameCityExists(COUNTRY_ID, MOSCOW),
