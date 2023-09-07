@@ -27,7 +27,7 @@ public class TransformerDAOandDTO {
     }
 
     public static CityDTO transformToCityDTO(CityDAO cityDAO) {
-        return new CityDTO(cityDAO.getId(), cityDAO.getName(), cityDAO.getCountry().getId(), cityDAO.isCapital());
+        return new CityDTO(cityDAO.getId(), cityDAO.getName(), cityDAO.getCountryDAO().getId(), cityDAO.isCapital());
     }
 
     public static CityDAO transformToCityDAO(CityDTO cityDTO) {

@@ -1,15 +1,22 @@
 package com.ghilly.model.DAO;
 
+
+import lombok.*;
+
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 import java.io.Serializable;
 import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
 @Table(name = "cities")
+@Setter
+@Getter
+@ToString
+@EqualsAndHashCode
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class CityDAO implements Serializable {
 
     @Id
@@ -19,7 +26,6 @@ public class CityDAO implements Serializable {
     private int id;
 
     @Column(name = "city")
-    @NotBlank(message = "The city should have a name!")
     private String name;
 
     @ManyToOne
@@ -29,16 +35,6 @@ public class CityDAO implements Serializable {
 
     @Column(name = "capital", columnDefinition = "boolean default false")
     private boolean capital;
-
-    public Set<TravelDiaryDAO> getTravelSet() {
-        return travels;
-    }
-
-    public void setTravelSet(Set<TravelDiaryDAO> travelSet) {
-        this.travels = travelSet;
-    }
-
-
     @ManyToMany()
     @JoinTable(name = "cities_travel_diary",
             joinColumns = @JoinColumn(name = "city_id", referencedColumnName = "id"),
@@ -64,6 +60,7 @@ public class CityDAO implements Serializable {
         this.capital = capital;
     }
 
+
     public CityDAO(String name, boolean capital) {
         this.name = name;
         this.capital = capital;
@@ -78,64 +75,5 @@ public class CityDAO implements Serializable {
     public CityDAO(String name, CountryDAO countryDAO) {
         this.name = name;
         this.countryDAO = countryDAO;
-    }
-
-    public CityDAO() {
-
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public CountryDAO getCountry() {
-        return countryDAO;
-    }
-
-    public void setCountry(CountryDAO countryDAO) {
-        this.countryDAO = countryDAO;
-    }
-
-    public boolean isCapital() {
-        return capital;
-    }
-
-    public void setCapital(boolean capital) {
-        this.capital = capital;
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, name, countryDAO);
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        CityDAO cityDAO = (CityDAO) obj;
-        return id == cityDAO.id && name.equals(cityDAO.name) && countryDAO == cityDAO.countryDAO && capital == cityDAO.capital;
-    }
-
-    @Override
-    public String toString() {
-        return "City" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", country=" + countryDAO +
-                ", capital=" + capital +
-                '}';
     }
 }
