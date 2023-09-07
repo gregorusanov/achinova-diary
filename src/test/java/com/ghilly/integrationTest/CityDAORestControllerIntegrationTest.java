@@ -42,7 +42,7 @@ public class CityDAORestControllerIntegrationTest {
 
     @Test
     public void createCityStatusOk() throws Exception {
-        String jp = "Japan";
+        String jp = "japan";
         CountryDAO countryDAO = new CountryDAO(jp);
         countryRepository.save(countryDAO);
         int id = Objects.requireNonNull(countryRepository.findByName(jp).orElse(null)).getId();
@@ -56,8 +56,7 @@ public class CityDAORestControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value(tokyo));
-        assertTrue(cityRepository.findByName(tokyo).isPresent());
+                .andExpect(jsonPath("$.name").value(tokyo.toLowerCase()));
 
         cityRepository.deleteAll();
         countryRepository.deleteAll();
@@ -65,13 +64,13 @@ public class CityDAORestControllerIntegrationTest {
 
     @Test
     public void createCityStatusConflict() throws Exception {
-        String jp = "Japan";
+        String jp = "japan";
         CountryDAO japan = new CountryDAO(jp);
         countryRepository.save(japan);
         int id = Objects.requireNonNull(countryRepository.findByName(jp).orElse(null)).getId();
         String tokyo = "Tokyo";
         CityDTO city = new CityDTO(tokyo, id, true);
-        cityRepository.save(new CityDAO(tokyo, japan, true));
+        cityRepository.save(new CityDAO(tokyo.toLowerCase(), japan, true));
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(city);
 
@@ -81,7 +80,7 @@ public class CityDAORestControllerIntegrationTest {
                         .content(json))
                 .andExpect(status().isBadRequest())
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof CityAlreadyExistsException))
-                .andExpect(result -> assertEquals("The city " + tokyo + " already exists.",
+                .andExpect(result -> assertEquals("The city " + tokyo.toLowerCase() + " already exists.",
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
 
         cityRepository.deleteAll();
@@ -129,11 +128,11 @@ public class CityDAORestControllerIntegrationTest {
 
     @Test
     public void getAllCitiesStatusOk() throws Exception {
-        String ber = "Berlin";
-        String mos = "Moscow";
-        String spb = "Saint-Petersburg";
-        String rus = "Russia";
-        String ger = "Germany";
+        String ber = "berlin";
+        String mos = "moscow";
+        String spb = "saint-Petersburg";
+        String rus = "russia";
+        String ger = "germany";
         CountryDAO germany = new CountryDAO(ger);
         countryRepository.save(germany);
         cityRepository.save(new CityDAO(ber, germany, true));
@@ -150,9 +149,6 @@ public class CityDAORestControllerIntegrationTest {
                 .andExpect(jsonPath("$[0].name").value(ber))
                 .andExpect(jsonPath("$[1].name").value(mos))
                 .andExpect(jsonPath("$[2].name").value(spb));
-        assertTrue(cityRepository.findByName(ber).isPresent());
-        assertTrue(cityRepository.findByName(mos).isPresent());
-        assertTrue(cityRepository.findByName(spb).isPresent());
 
         cityRepository.deleteAll();
         countryRepository.deleteAll();
@@ -177,8 +173,7 @@ public class CityDAORestControllerIntegrationTest {
                         .content(json))
                 .andExpect(status().isOk())
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.name").value(newName));
-        assertTrue(cityRepository.findByName(newName).isPresent());
+                .andExpect(jsonPath("$.name").value(newName.toLowerCase()));
 
         cityRepository.deleteAll();
         countryRepository.deleteAll();

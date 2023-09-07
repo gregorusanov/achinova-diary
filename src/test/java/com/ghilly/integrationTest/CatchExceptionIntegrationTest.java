@@ -40,9 +40,10 @@ public class CatchExceptionIntegrationTest {
 
     @Test
     public void catchNameAlreadyExistsExceptionStatusBadRequest() throws Exception {
-        String rus = "Russia";
+        String rus = "russia";
         CountryDAO countryDAO = new CountryDAO(rus);
         countryRepository.save(countryDAO);
+        countryDAO.setName(rus.toUpperCase());
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(countryDAO);
 
@@ -88,7 +89,7 @@ public class CatchExceptionIntegrationTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof WrongNameException))
                 .andExpect(result -> assertEquals("Warning! \n The legal name consists of letters " +
                         "that could be separated by one space or hyphen. \n The name is not allowed here: " +
-                        wrongName, Objects.requireNonNull(result.getResolvedException()).getMessage()));
+                        wrongName.toLowerCase(), Objects.requireNonNull(result.getResolvedException()).getMessage()));
         countryRepository.deleteAll();
     }
 
@@ -118,16 +119,16 @@ public class CatchExceptionIntegrationTest {
 
     @Test
     public void catchCityAlreadyExistsStatusBadRequest() throws Exception {
-        String rus = "Russia";
+        String rus = "russia";
         countryRepository.save(new CountryDAO(rus));
         CountryDAO countryDAO = countryRepository.findByName(rus).orElseThrow();
         int countryId = countryDAO.getId();
-        String moscow = "Moscow";
+        String moscow = "moscow";
         cityRepository.save(new CityDAO(moscow, countryDAO, true));
         CityDAO cityDAO = cityRepository.findByName(moscow).orElseThrow();
         int id = cityDAO.getId();
         ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(new CityDTO(id,moscow, countryId, true));
+        String json = objectMapper.writeValueAsString(new CityDTO(id, moscow.toUpperCase(), countryId, true));
 
         mvc.perform(MockMvcRequestBuilders
                         .put("/cities/" + id)

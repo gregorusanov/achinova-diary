@@ -25,6 +25,7 @@ public class CountryController {
 
     @PostMapping("/")
     public ResponseEntity<CountryDTO> create(@RequestBody CountryDTO country) {
+        country.setName(country.getName().toLowerCase());
         return Optional.of(country)
                 .map(TransformerFromDAOtoDTOAndBack::transformToCountryDAO)
                 .map(countryHandler::create)
@@ -54,6 +55,7 @@ public class CountryController {
 
     @PutMapping("/{countryId}")
     public ResponseEntity<CountryDTO> update(@RequestBody CountryDTO country, @PathVariable int countryId) {
+        country.setName(country.getName().toLowerCase());
         logger.info("The data are received from the user.");
         country.setId(countryId);
         return Optional.of(country)

@@ -26,7 +26,7 @@ public class CityController {
     @PostMapping("/")
     public ResponseEntity<CityDTO> create(@RequestBody CityDTO city) {
         logger.info("The data are received from the user. City: [{}]", city);
-
+        city.setName(city.getName().toLowerCase());
         return Optional.of(city)
                 .map(cityDTO -> TransformerFromDAOtoDTOAndBack.transformToCityDAO(city))
                 .map(cityDAO -> cityHandler.create(cityDAO, city.getCountryId()))
@@ -56,6 +56,7 @@ public class CityController {
     @PutMapping("/{cityId}")
     public ResponseEntity<CityDTO> update(@RequestBody CityDTO city, @PathVariable int cityId) {
         logger.info("The data are received from the user.");
+        city.setName(city.getName().toLowerCase());
         city.setId(cityId);
         return Optional.of(city)
                 .map(cityDTO -> TransformerFromDAOtoDTOAndBack.transformToCityDAO(city))
