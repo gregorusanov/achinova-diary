@@ -17,8 +17,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
-import java.util.Objects;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -41,7 +39,7 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
 
     @Test
     public void createCountryStatusOk() throws Exception {
-        String jp = "Japan";
+        String jp = "japan";
         CountryDTO japan = new CountryDTO(jp);
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(japan);
@@ -59,9 +57,9 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
 
     @Test
     public void getAllCountriesStatusOk() throws Exception {
-        String rus = "Russia";
-        String fr = "France";
-        String de = "Deutschland";
+        String rus = "russia";
+        String fr = "france";
+        String de = "deutschland";
         countryRepository.save(new CountryDAO(de));
         countryRepository.save(new CountryDAO(fr));
         countryRepository.save(new CountryDAO(rus));
@@ -69,7 +67,6 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
         mvc.perform(MockMvcRequestBuilders
                         .get("/countries/all")
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(System.out::println)
                 .andExpect(status().isOk())
                 .andExpect(content()
                         .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -103,9 +100,10 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
 
     @Test
     public void updateCountryStatusOk() throws Exception {
-        CountryDAO countryDAO = new CountryDAO("ussr");
+        String ussr = "ussr";
+        CountryDAO countryDAO = new CountryDAO(ussr);
         countryRepository.save(countryDAO);
-        int id = Objects.requireNonNull(countryRepository.findByName(countryDAO.getName()).orElse(null)).getId();
+        int id = countryRepository.findByName(ussr).orElseThrow().getId();
         String newName = "Russia";
         CountryDTO toUpdate = new CountryDTO(id, newName);
         ObjectMapper objectMapper = new ObjectMapper();

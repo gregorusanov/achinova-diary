@@ -21,7 +21,7 @@ public class CountryHandler {
     }
 
     public CountryDAO create(CountryDAO country) {
-        checkNameIsValid(country);
+        checkNameIsValid(country.getName());
         logger.info("The user data are correct.");
         return countryServiceRest.create(country);
     }
@@ -39,7 +39,7 @@ public class CountryHandler {
 
     public CountryDAO update(CountryDAO country) {
         checkIdExists(country.getId());
-        checkNameIsValid(country);
+        checkNameIsValid(country.getName());
         logger.info("The user data are correct.");
         return countryServiceRest.update(country);
     }
@@ -60,11 +60,9 @@ public class CountryHandler {
         return countryServiceRest.getCapitalByCountryId(countryId);
     }
 
-    private void checkNameIsValid(CountryDAO countryDAO) {
-        checkNameIsWrong(countryDAO.getName());
-        String nameInLowerCase = countryDAO.getName().toLowerCase();
-        countryDAO.setName(nameInLowerCase);
-        checkNameExists(nameInLowerCase);
+    private void checkNameIsValid(String name) {
+        checkNameIsWrong(name);
+        checkNameExists(name);
     }
     private void checkIdExists(int id) {
         if (!countryServiceRest.countryIdExists(id)) {

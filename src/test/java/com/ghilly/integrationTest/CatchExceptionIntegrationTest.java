@@ -43,6 +43,7 @@ public class CatchExceptionIntegrationTest {
         String rus = "russia";
         CountryDAO countryDAO = new CountryDAO(rus);
         countryRepository.save(countryDAO);
+        countryDAO.setName(rus.toUpperCase());
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(countryDAO);
 
@@ -88,7 +89,7 @@ public class CatchExceptionIntegrationTest {
                 .andExpect(result -> assertTrue(result.getResolvedException() instanceof WrongNameException))
                 .andExpect(result -> assertEquals("Warning! \n The legal name consists of letters " +
                         "that could be separated by one space or hyphen. \n The name is not allowed here: " +
-                        wrongName, Objects.requireNonNull(result.getResolvedException()).getMessage()));
+                        wrongName.toLowerCase(), Objects.requireNonNull(result.getResolvedException()).getMessage()));
         countryRepository.deleteAll();
     }
 
