@@ -4,18 +4,16 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.List;
-import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "countries")
-@Setter
-@Getter
 @ToString
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Getter
+@Setter
 public class CountryDAO implements Serializable {
 
     @Id
@@ -26,8 +24,11 @@ public class CountryDAO implements Serializable {
 
     @Column(name = "country")
     private String name;
-    @OneToMany(mappedBy = "countryDAO")
-    private List<CityDAO> cityList;
+    @OneToMany(mappedBy = "countryDAO", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<CityDAO> citySet;
+
 
     public CountryDAO(int id, String name) {
         this.id = id;
@@ -36,10 +37,5 @@ public class CountryDAO implements Serializable {
 
     public CountryDAO(String name) {
         this.name = name;
-    }
-
-    public CountryDAO(String name, List<CityDAO> cityList) {
-        this.name = name;
-        this.cityList = cityList;
     }
 }

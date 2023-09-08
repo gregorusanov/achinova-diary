@@ -4,21 +4,18 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.HashSet;
+import java.util.Date;
 import java.util.Set;
 
 @Entity
 @Table(name = "travel_diary")
-@Setter
-@Getter
 @ToString
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Getter
+@Setter
 public class TravelDiaryDAO implements Serializable {
-
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "travel_diary_seq")
     @SequenceGenerator(name = "travel_diary_seq", sequenceName = "travel_diary_id_seq", allocationSize = 1)
@@ -26,10 +23,10 @@ public class TravelDiaryDAO implements Serializable {
     private int id;
 
     @Column(name = "arrival_date")
-    private LocalDate arrivalDate;
+    private Date arrivalDate;
 
     @Column(name = "departure_date")
-    private LocalDate departureDate;
+    private Date departureDate;
 
     @Column(name = "planned_budget")
     private double plannedBudget;
@@ -43,7 +40,28 @@ public class TravelDiaryDAO implements Serializable {
     @Column(name = "rating")
     private int rating;
 
-    @ManyToMany(mappedBy = "travels")
-    private Set<CityDAO> cities = new HashSet<>();
+    @ManyToMany(mappedBy = "travelDiaryDAOSet", cascade = CascadeType.PERSIST)
+    private Set<CityDAO> cityDAOSet;
 
+    @PreRemove
+    private void preRemove() {
+        cityDAOSet.forEach(city -> city.getTravelDiaryDAOSet().remove(this));
+    }
+
+    public TravelDiaryDAO(int id, Date arrivalDate, Date departureDate, double plannedBudget, double realBudget,
+                          String description, int rating) {
+        this.id = id;
+        this.arrivalDate = arrivalDate;
+        this.departureDate = departureDate;
+        this.plannedBudget = plannedBudget;
+        this.realBudget = realBudget;
+        this.description = description;
+        this.rating = rating;
+    }
+
+    public TravelDiaryDAO(int id, Date arrivalDate, Date departureDate) {
+        this.id = id;
+        this.arrivalDate = arrivalDate;
+        this.departureDate = departureDate;
+    }
 }

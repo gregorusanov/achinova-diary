@@ -8,7 +8,7 @@ import com.ghilly.service.CountryServiceRest;
 import com.ghilly.web.controller.CityController;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import java.util.Set;
 
 import static com.ghilly.utils.ValidationUtils.checkNameIsWrong;
 
@@ -26,7 +26,7 @@ public class CountryHandler {
         return countryServiceRest.create(country);
     }
 
-    public List<CountryDAO> getAllCountries() {
+    public Set<CountryDAO> getAllCountries() {
         logger.info("Data processing.");
         return countryServiceRest.getAllCountries();
     }
@@ -50,7 +50,7 @@ public class CountryHandler {
         countryServiceRest.delete(countryId);
     }
 
-    public List<CityDAO> getAllCitiesByCountryId(int countryId) {
+    public Set<CityDAO> getAllCitiesByCountryId(int countryId) {
         checkIdExists(countryId);
         return countryServiceRest.getAllCitiesByCountryId(countryId);
     }

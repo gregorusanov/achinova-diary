@@ -1,35 +1,28 @@
 package com.ghilly.model.DTO;
+
 import lombok.*;
 
+import java.time.LocalDate;
 
-@Builder
-@Getter
-@Setter
 @ToString
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
+@Getter
+@Setter
 public class TravelDiaryDTO {
     private int id;
-
-    private String arrivalDate;
-
-    private String departureDate;
-
+    private LocalDate arrivalDate;
+    private LocalDate departureDate;
     private double plannedBudget;
-
     private double realBudget;
-
     private String description;
-
     private int rating;
-
     private int cityId;
 
-    public TravelDiaryDTO(double plannedBudget, double realBudget, int rating, int cityId) {
-        this.plannedBudget = plannedBudget;
-        this.realBudget = realBudget;
-        this.rating = rating;
-        this.cityId = cityId;
+    public TravelDiaryDTO(int id, LocalDate arrivalDate, LocalDate departureDate) {
+        this.id = id;
+        this.arrivalDate = arrivalDate;
+        this.departureDate = departureDate;
     }
 }

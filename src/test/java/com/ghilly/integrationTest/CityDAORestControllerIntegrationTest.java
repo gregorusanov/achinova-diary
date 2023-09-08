@@ -58,7 +58,6 @@ public class CityDAORestControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value(tokyo.toLowerCase()));
 
-        cityRepository.deleteAll();
         countryRepository.deleteAll();
     }
 
@@ -83,7 +82,6 @@ public class CityDAORestControllerIntegrationTest {
                 .andExpect(result -> assertEquals("The city " + tokyo.toLowerCase() + " already exists.",
                         Objects.requireNonNull(result.getResolvedException()).getMessage()));
 
-        cityRepository.deleteAll();
         countryRepository.deleteAll();
     }
 
@@ -105,7 +103,6 @@ public class CityDAORestControllerIntegrationTest {
                 .andExpect(jsonPath("$.name").value(paris));
         assertTrue(cityRepository.findByName(paris).isPresent());
 
-        cityRepository.deleteAll();
         countryRepository.deleteAll();
     }
 
@@ -122,7 +119,6 @@ public class CityDAORestControllerIntegrationTest {
                 .andExpect(result -> assertEquals("The city ID " + 30 + " is not found.",
                         Objects.requireNonNull(Objects.requireNonNull(result.getResolvedException()).getMessage())));
 
-        cityRepository.deleteAll();
         countryRepository.deleteAll();
     }
 
@@ -150,7 +146,6 @@ public class CityDAORestControllerIntegrationTest {
                 .andExpect(jsonPath("$[1].name").value(mos))
                 .andExpect(jsonPath("$[2].name").value(spb));
 
-        cityRepository.deleteAll();
         countryRepository.deleteAll();
     }
 
@@ -175,7 +170,6 @@ public class CityDAORestControllerIntegrationTest {
                 .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.name").value(newName.toLowerCase()));
 
-        cityRepository.deleteAll();
         countryRepository.deleteAll();
     }
 
@@ -192,7 +186,6 @@ public class CityDAORestControllerIntegrationTest {
                 .andExpect(status().isOk());
         assertFalse(cityRepository.existsById(cityId));
 
-        cityRepository.deleteAll();
         countryRepository.deleteAll();
     }
 

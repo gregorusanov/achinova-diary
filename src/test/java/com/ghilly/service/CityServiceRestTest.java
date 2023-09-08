@@ -6,8 +6,8 @@ import com.ghilly.repository.CityRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -57,17 +57,14 @@ class CityServiceRestTest {
     void getAllCities() {
         String berlin = "Berlin";
         String paris = "Paris";
-        List<CityDAO> cities = List.of(new CityDAO(berlin, new CountryDAO("Germany"), true), MOS,
+        Set<CityDAO> cities = Set.of(new CityDAO(berlin, new CountryDAO("Germany"), true), MOS,
                 new CityDAO(paris, new CountryDAO("France"), true));
         when(cityRepository.findAll()).thenReturn(cities);
 
-        List<CityDAO> actual = service.getAllCities();
+        Set<CityDAO> actual = service.getAllCities();
 
         assertAll(
                 () -> assertEquals(3, actual.size()),
-                () -> assertEquals(actual.get(1).getName(), MOSCOW),
-                () -> assertEquals(actual.get(0).getName(), berlin),
-                () -> assertEquals(actual.get(2).getName(), paris),
                 () -> verify(cityRepository).findAll(),
                 () -> verifyNoMoreInteractions(cityRepository)
         );
@@ -75,7 +72,7 @@ class CityServiceRestTest {
 
     @Test
     void update() {
-        String name = "Moskvabad";
+        String name = "moskvabad";
         CityDAO toChange = new CityDAO(CITY_ID, name, RUS, true);
         when(cityRepository.findById(CITY_ID)).thenReturn(Optional.of(toChange));
 

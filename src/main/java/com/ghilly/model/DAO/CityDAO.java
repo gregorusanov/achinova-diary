@@ -1,22 +1,19 @@
 package com.ghilly.model.DAO;
 
-
 import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
-import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Table(name = "cities")
-@Setter
-@Getter
 @ToString
 @EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-@Builder
+@Getter
+@Setter
 public class CityDAO implements Serializable {
 
     @Id
@@ -28,30 +25,25 @@ public class CityDAO implements Serializable {
     @Column(name = "city")
     private String name;
 
-    @ManyToOne
+    @ManyToOne()
     @JoinColumn(name = "country_id", nullable = false)
     private CountryDAO countryDAO;
 
 
     @Column(name = "capital", columnDefinition = "boolean default false")
     private boolean capital;
-    @ManyToMany()
+
+    @ManyToMany(cascade = CascadeType.REMOVE)
     @JoinTable(name = "cities_travel_diary",
             joinColumns = @JoinColumn(name = "city_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "travel_diary_id", referencedColumnName = "id"))
-    private Set<TravelDiaryDAO> travels = new HashSet<>();
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<TravelDiaryDAO> travelDiaryDAOSet;
 
     public CityDAO(int id, String name) {
         this.id = id;
         this.name = name;
-    }
-
-
-    public CityDAO(int id, String name, CountryDAO countryDAO, boolean capital) {
-        this.id = id;
-        this.name = name;
-        this.countryDAO = countryDAO;
-        this.capital = capital;
     }
 
     public CityDAO(int id, String name, boolean capital) {
@@ -60,6 +52,12 @@ public class CityDAO implements Serializable {
         this.capital = capital;
     }
 
+    public CityDAO(int id, String name, CountryDAO countryDAO, boolean capital) {
+        this.id = id;
+        this.name = name;
+        this.countryDAO = countryDAO;
+        this.capital = capital;
+    }
 
     public CityDAO(String name, boolean capital) {
         this.name = name;

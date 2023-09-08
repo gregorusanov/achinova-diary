@@ -2,7 +2,7 @@ package com.ghilly.web.controller;
 
 import com.ghilly.model.DTO.CityDTO;
 import com.ghilly.model.DTO.CountryDTO;
-import com.ghilly.transformer.TransformerDAOandDTO;
+import com.ghilly.transformer.TransformerFromDAOtoDTOAndBack;
 import com.ghilly.web.handler.CountryHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,8 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RequestMapping("/countries")
 public class CountryController {
@@ -27,20 +30,21 @@ public class CountryController {
     public ResponseEntity<CountryDTO> create(@RequestBody CountryDTO country) {
         country.setName(country.getName().toLowerCase());
         return Optional.of(country)
-                .map(TransformerDAOandDTO::transformToCountryDAO)
+                .map(TransformerFromDAOtoDTOAndBack::transformToCountryDAO)
                 .map(countryHandler::create)
-                .map(TransformerDAOandDTO::transformToCountryDTO)
+                .map(TransformerFromDAOtoDTOAndBack::transformToCountryDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<CountryDTO>> getAllCountries() {
+    public ResponseEntity<Set<CountryDTO>> getAllCountries() {
         logger.info("Data processing.");
-        List<CountryDTO> allCountries = countryHandler.getAllCountries()
+        Set<CountryDTO> allCountries = countryHandler.getAllCountries()
                 .stream()
-                .map(TransformerDAOandDTO::transformToCountryDTO)
-                .toList();
+                .map(TransformerFromDAOtoDTOAndBack::transformToCountryDTO)
+                .sorted(Comparator.comparing(CountryDTO::getName))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         return ResponseEntity.ok().body(allCountries);
     }
 
@@ -48,7 +52,7 @@ public class CountryController {
     public ResponseEntity<CountryDTO> getCountryById(@PathVariable int countryId) {
         logger.info("The data are received from the user.");
         return Optional.of(countryHandler.getCountryById(countryId))
-                .map(TransformerDAOandDTO::transformToCountryDTO)
+                .map(TransformerFromDAOtoDTOAndBack::transformToCountryDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
@@ -59,9 +63,9 @@ public class CountryController {
         logger.info("The data are received from the user.");
         country.setId(countryId);
         return Optional.of(country)
-                .map(TransformerDAOandDTO::transformToCountryDAO)
+                .map(TransformerFromDAOtoDTOAndBack::transformToCountryDAO)
                 .map(countryHandler::update)
-                .map(TransformerDAOandDTO::transformToCountryDTO)
+                .map(TransformerFromDAOtoDTOAndBack::transformToCountryDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
@@ -74,11 +78,12 @@ public class CountryController {
     }
 
     @GetMapping("/{countryId}/cities/all")
-    public ResponseEntity<List<CityDTO>> getAllCitiesByCountryId(@PathVariable int countryId) {
-        List<CityDTO> allCitiesByCountry = countryHandler.getAllCitiesByCountryId(countryId)
+    public ResponseEntity<Set<CityDTO>> getAllCitiesByCountryId(@PathVariable int countryId) {
+        Set<CityDTO> allCitiesByCountry = countryHandler.getAllCitiesByCountryId(countryId)
                 .stream()
-                .map(TransformerDAOandDTO::transformToCityDTO)
-                .toList();
+                .map(TransformerFromDAOtoDTOAndBack::transformToCityDTO)
+                .sorted(Comparator.comparing(CityDTO::getName))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         return ResponseEntity.ok().body(allCitiesByCountry);
     }
 
@@ -86,7 +91,7 @@ public class CountryController {
     public ResponseEntity<CityDTO> getCapitalByCountryId(@PathVariable int countryId) {
         logger.info("The data are received from the user.");
         return Optional.of(countryHandler.getCapitalByCountryId(countryId))
-                .map(TransformerDAOandDTO::transformToCityDTO)
+                .map(TransformerFromDAOtoDTOAndBack::transformToCityDTO)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }

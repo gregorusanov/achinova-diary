@@ -7,8 +7,7 @@ import com.ghilly.web.handler.CountryHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.*;
@@ -16,10 +15,10 @@ import static org.mockito.Mockito.*;
 class CountryControllerTest {
 
     private static final int ID = 100;
-    private static final String NAME = "USSR";
-    private static final CountryDTO USSR_DTO = new CountryDTO(NAME);
-    private static final CountryDAO USSR_DAO = new CountryDAO(NAME.toLowerCase(), new ArrayList<>());
-    private static final CountryDAO USSR_DAO_FROM_REPO = new CountryDAO(ID, NAME.toLowerCase(), new ArrayList<>());
+    private static final String NAME = "ussr";
+    private static final CountryDTO USSR_DTO = new CountryDTO(NAME.toUpperCase());
+    private static final CountryDAO USSR_DAO = new CountryDAO(NAME);
+    private static final CountryDAO USSR_DAO_FROM_REPO = new CountryDAO(ID, NAME);
     private CountryHandler countryHandler;
     private CountryController controller;
 
@@ -31,6 +30,7 @@ class CountryControllerTest {
 
     @Test
     void createCountry() {
+        when(countryHandler.create(USSR_DAO)).thenReturn(USSR_DAO_FROM_REPO);
         controller.create(USSR_DTO);
 
         assertAll(
@@ -42,7 +42,7 @@ class CountryControllerTest {
     @Test
     void getCountries() {
         CountryDAO usa = new CountryDAO(2, "usa");
-        List<CountryDAO> expected = List.of(USSR_DAO_FROM_REPO, usa);
+        Set<CountryDAO> expected = Set.of(USSR_DAO_FROM_REPO, usa);
         when(countryHandler.getAllCountries()).thenReturn(expected);
 
         controller.getAllCountries();
@@ -69,7 +69,8 @@ class CountryControllerTest {
     void updateCountry() {
         String newName = "Russia";
         CountryDTO toChange = new CountryDTO(newName);
-        CountryDAO updated = new CountryDAO(ID, newName.toLowerCase(), new ArrayList<>());
+        CountryDAO updated = new CountryDAO(ID, newName.toLowerCase());
+        when(countryHandler.update(updated)).thenReturn(updated);
 
         controller.update(toChange, ID);
 
@@ -95,7 +96,7 @@ class CountryControllerTest {
         String tokyo = "tokyo";
         CountryDAO japan = new CountryDAO("japan");
         int id = 400;
-        List<CityDAO> cities = List.of(new CityDAO(kyoto, japan, false), new CityDAO(tokyo, japan, true));
+        Set<CityDAO> cities = Set.of(new CityDAO(kyoto, japan, false), new CityDAO(tokyo, japan, true));
         when(countryHandler.getAllCitiesByCountryId(id)).thenReturn(cities);
 
         controller.getAllCitiesByCountryId(id);

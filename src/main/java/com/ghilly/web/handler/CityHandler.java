@@ -9,7 +9,7 @@ import com.ghilly.service.CountryServiceRest;
 import com.ghilly.web.controller.CityController;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import java.util.Set;
 
 import static com.ghilly.utils.ValidationUtils.checkNameIsWrong;
 
@@ -36,7 +36,7 @@ public class CityHandler {
         return cityServiceRest.getCity(cityId);
     }
 
-    public List<CityDAO> getAllCities() {
+    public Set<CityDAO> getAllCities() {
         logger.info("Data processing.");
         return cityServiceRest.getAllCities();
     }
@@ -58,7 +58,7 @@ public class CityHandler {
     private void checkCityNameAndCountryId(String name, int countryId) {
         checkNameIsWrong(name);
         checkCountryIdExists(countryId);
-        checkCityNameExists(name, countryId);
+        checkCityNameExists(countryId, name);
     }
 
     private void setCountryForCity(CityDAO city, int countryId) {
@@ -76,7 +76,7 @@ public class CityHandler {
             throw new IdNotFoundException("The country ID " + countryId + " is not found.");
     }
 
-    private void checkCityNameExists(String name, int countryId) {
+    private void checkCityNameExists(int countryId, String name) {
         if (cityServiceRest.theSameCityExists(countryId, name))
             throw new CityAlreadyExistsException("The city " + name + " already exists.");
     }
