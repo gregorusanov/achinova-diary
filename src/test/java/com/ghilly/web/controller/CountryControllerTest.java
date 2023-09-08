@@ -7,7 +7,7 @@ import com.ghilly.web.handler.CountryHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.*;
@@ -42,7 +42,7 @@ class CountryControllerTest {
     @Test
     void getCountries() {
         CountryDAO usa = new CountryDAO(2, "usa");
-        List<CountryDAO> expected = List.of(USSR_DAO_FROM_REPO, usa);
+        Set<CountryDAO> expected = Set.of(USSR_DAO_FROM_REPO, usa);
         when(countryHandler.getAllCountries()).thenReturn(expected);
 
         controller.getAllCountries();
@@ -96,7 +96,7 @@ class CountryControllerTest {
         String tokyo = "tokyo";
         CountryDAO japan = new CountryDAO("japan");
         int id = 400;
-        List<CityDAO> cities = List.of(new CityDAO(kyoto, japan, false), new CityDAO(tokyo, japan, true));
+        Set<CityDAO> cities = Set.of(new CityDAO(kyoto, japan, false), new CityDAO(tokyo, japan, true));
         when(countryHandler.getAllCitiesByCountryId(id)).thenReturn(cities);
 
         controller.getAllCitiesByCountryId(id);

@@ -9,7 +9,7 @@ import com.ghilly.service.CountryServiceRest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -105,10 +105,10 @@ class CountryHandlerTest {
         CountryDAO af = new CountryDAO("Afghanistan");
         CountryDAO fr = new CountryDAO("France");
         CountryDAO cn = new CountryDAO("China");
-        List<CountryDAO> expected = List.of(af, fr, cn);
+        Set<CountryDAO> expected = Set.of(af, fr, cn);
         when(countryServiceRest.getAllCountries()).thenReturn(expected);
 
-        List<CountryDAO> actual = countryServiceRest.getAllCountries();
+        Set<CountryDAO> actual = countryServiceRest.getAllCountries();
 
         assertAll(
                 () -> assertEquals(expected, actual),
@@ -210,16 +210,15 @@ class CountryHandlerTest {
         String tokyo = "Tokyo";
         CountryDAO countryDAO = new CountryDAO("Japan");
         int id = countryDAO.getId();
-        List<CityDAO> cities = List.of(new CityDAO(kyoto, countryDAO, false), new CityDAO(tokyo, countryDAO, true));
+        Set<CityDAO> cities = Set.of(new CityDAO(kyoto, countryDAO, false), new CityDAO(tokyo, countryDAO, true));
         when(countryServiceRest.countryIdExists(id)).thenReturn(true);
         when(countryServiceRest.getAllCitiesByCountryId(id)).thenReturn(cities);
 
-        List<CityDAO> actual = countryHandler.getAllCitiesByCountryId(id);
+        Set<CityDAO> actual = countryHandler.getAllCitiesByCountryId(id);
 
         assertAll(
                 () -> assertEquals(2, actual.size()),
-                () -> assertEquals(actual.get(0).getName(), kyoto),
-                () -> assertEquals(actual.get(1).getName(), tokyo),
+                () -> assertEquals(cities, actual),
                 () -> verify(countryServiceRest).getAllCitiesByCountryId(id),
                 () -> verify(countryServiceRest).countryIdExists(id),
                 () -> verifyNoMoreInteractions(countryServiceRest)

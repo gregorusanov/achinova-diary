@@ -5,14 +5,14 @@ import com.ghilly.model.DAO.CountryDAO;
 import com.ghilly.model.DTO.CityDTO;
 import com.ghilly.model.DTO.CountryDTO;
 
-import java.util.ArrayList;
+import java.util.HashSet;
 
 public class TransformerFromDAOtoDTOAndBack {
     private TransformerFromDAOtoDTOAndBack() {
     }
 
     public static CountryDAO transformToCountryDAO(CountryDTO countryDTO) {
-        return new CountryDAO(countryDTO.getId(), countryDTO.getName(), new ArrayList<>());
+        return new CountryDAO(countryDTO.getId(), countryDTO.getName(), new HashSet<>());
     }
 
     public static CountryDTO transformToCountryDTO(CountryDAO countryDAO) {
@@ -22,7 +22,7 @@ public class TransformerFromDAOtoDTOAndBack {
     }
 
     public static CityDTO transformToCityDTO(CityDAO cityDAO) {
-        return new CityDTO(cityDAO.getId(), cityDAO.getName(), cityDAO.getCountry().getId(), cityDAO.isCapital());
+        return new CityDTO(cityDAO.getId(), cityDAO.getName(), cityDAO.getCountryDAO().getId(), cityDAO.isCapital());
     }
 
     public static CityDAO transformToCityDAO(CityDTO cityDTO) {

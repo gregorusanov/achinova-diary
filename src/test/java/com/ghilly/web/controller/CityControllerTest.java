@@ -7,7 +7,7 @@ import com.ghilly.web.handler.CityHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -68,7 +68,7 @@ class CityControllerTest {
         String sochi = "Sochi";
         String spb = "Saint-Petersburg";
         boolean notCapital = false;
-        List<CityDAO> cities = List.of(CITY_DAO_FROM_REPO, new CityDAO(spb, RUS, notCapital), new CityDAO(sochi, RUS, notCapital));
+        Set<CityDAO> cities = Set.of(CITY_DAO_FROM_REPO, new CityDAO(spb, RUS, notCapital), new CityDAO(sochi, RUS, notCapital));
         when(handler.getAllCities()).thenReturn(cities);
 
         controller.getAllCities();

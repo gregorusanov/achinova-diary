@@ -184,4 +184,15 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
         cityRepository.deleteAll();
         countryRepository.deleteAll();
     }
+
+    @Test
+    public void getAllCountriesEmptySet() throws Exception {
+        mvc.perform(MockMvcRequestBuilders
+                        .get("/countries/all")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content()
+                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].name").doesNotExist());
+    }
 }

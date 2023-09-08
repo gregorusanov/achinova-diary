@@ -3,12 +3,12 @@ package com.ghilly.service;
 import com.ghilly.model.DAO.CityDAO;
 import com.ghilly.model.DAO.CountryDAO;
 
-import java.util.List;
+import java.util.Set;
 
 public interface CountryService {
     CountryDAO create(CountryDAO countryDAO);
 
-    List<CountryDAO> getAllCountries();
+    Set<CountryDAO> getAllCountries();
 
     CountryDAO getCountryById(int countryId);
 
@@ -16,7 +16,7 @@ public interface CountryService {
 
     void delete(int countryId);
 
-    List<CityDAO> getAllCitiesByCountryId(int countryId);
+    Set<CityDAO> getAllCitiesByCountryId(int countryId);
 
     CityDAO getCapitalByCountryId(int countryId);
 }
