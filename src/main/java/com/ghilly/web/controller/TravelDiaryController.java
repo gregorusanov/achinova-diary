@@ -20,8 +20,9 @@ public class TravelDiaryController {
     public TravelDiaryController(TravelDiaryHandler handler) {
         this.handler = handler;
     }
+
     @PostMapping("/")
-    public ResponseEntity<TravelDiaryDTO> create (@RequestBody TravelDiaryDTO travelDiary) {
+    public ResponseEntity<TravelDiaryDTO> create(@RequestBody TravelDiaryDTO travelDiary) {
         logger.info("Transfer data {} to handler.", travelDiary);
         return Optional.of(travelDiary)
                 .map(TransformerDAOandDTO::transformToTravelDiaryDAO)

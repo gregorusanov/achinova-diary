@@ -1,7 +1,10 @@
 package com.ghilly.model.DTO;
 
+import lombok.Builder;
+
 import java.util.Objects;
 
+@Builder
 public class CountryDTO {
     private int id;
     private String name;

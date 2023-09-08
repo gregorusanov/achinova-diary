@@ -1,11 +1,7 @@
 package com.ghilly.web.controller;
 
-import com.ghilly.model.DAO.TravelDiaryDAO;
-import com.ghilly.model.DTO.TravelDiaryDTO;
-import com.ghilly.transformer.TransformerDAOandDTO;
 import com.ghilly.web.handler.TravelDiaryHandler;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.*;

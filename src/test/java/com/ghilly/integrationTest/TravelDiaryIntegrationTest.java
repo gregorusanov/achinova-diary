@@ -57,8 +57,6 @@ public class TravelDiaryIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").exists());
 
-        travelDiaryRepository.deleteAll();
-        cityRepository.deleteAll();
         countryRepository.deleteAll();
     }
 }

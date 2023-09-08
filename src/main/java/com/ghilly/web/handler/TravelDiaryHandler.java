@@ -33,7 +33,7 @@ public class TravelDiaryHandler {
         checkBudget(travelDiaryDAO.getRealBudget());
         checkDescriptionLength(travelDiaryDAO.getDescription());
         checkCityIdExists(cityId);
-        travelDiaryDAO.setCities(Set.of(cityService.getCity(cityId)));
+        travelDiaryDAO.setCityDAOSet(Set.of(cityService.getCity(cityId)));
     }
 
     private void checkDate(LocalDate arrivalDate, LocalDate departureDate) {

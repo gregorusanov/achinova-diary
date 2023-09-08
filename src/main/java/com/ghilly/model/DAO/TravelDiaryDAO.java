@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.Set;
 
@@ -15,6 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class TravelDiaryDAO implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "travel_diary_seq")
@@ -23,10 +25,10 @@ public class TravelDiaryDAO implements Serializable {
     private int id;
 
     @Column(name = "arrival_date")
-    private Date arrivalDate;
+    private LocalDate arrivalDate;
 
     @Column(name = "departure_date")
-    private Date departureDate;
+    private LocalDate departureDate;
 
     @Column(name = "planned_budget")
     private double plannedBudget;
@@ -48,7 +50,7 @@ public class TravelDiaryDAO implements Serializable {
         cityDAOSet.forEach(city -> city.getTravelDiaryDAOSet().remove(this));
     }
 
-    public TravelDiaryDAO(int id, Date arrivalDate, Date departureDate, double plannedBudget, double realBudget,
+    public TravelDiaryDAO(int id, LocalDate arrivalDate, LocalDate departureDate, double plannedBudget, double realBudget,
                           String description, int rating) {
         this.id = id;
         this.arrivalDate = arrivalDate;
@@ -59,7 +61,7 @@ public class TravelDiaryDAO implements Serializable {
         this.rating = rating;
     }
 
-    public TravelDiaryDAO(int id, Date arrivalDate, Date departureDate) {
+    public TravelDiaryDAO(int id, LocalDate arrivalDate, LocalDate departureDate) {
         this.id = id;
         this.arrivalDate = arrivalDate;
         this.departureDate = departureDate;

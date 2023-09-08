@@ -9,7 +9,6 @@ import com.ghilly.model.DTO.TravelDiaryDTO;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashSet;
 
 public class TransformerDAOandDTO {
@@ -17,7 +16,7 @@ public class TransformerDAOandDTO {
     }
 
     public static CountryDAO transformToCountryDAO(CountryDTO countryDTO) {
-        return new CountryDAO(countryDTO.getId(), countryDTO.getName(), new ArrayList<>());
+        return new CountryDAO(countryDTO.getId(), countryDTO.getName(), new HashSet<>());
     }
 
     public static CountryDTO transformToCountryDTO(CountryDAO countryDAO) {
@@ -46,7 +45,7 @@ public class TransformerDAOandDTO {
                 .realBudget(travelDiaryDTO.getRealBudget())
                 .description(travelDiaryDTO.getDescription())
                 .rating(travelDiaryDTO.getRating())
-                .cities(new HashSet<>())
+                .cityDAOSet(new HashSet<>())
                 .build();
     }
 
@@ -60,5 +59,6 @@ public class TransformerDAOandDTO {
                 .description(travelDiaryDAO.getDescription())
                 .rating(travelDiaryDAO.getRating())
                 .build();
+
     }
 }
