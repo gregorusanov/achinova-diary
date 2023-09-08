@@ -24,7 +24,7 @@ public class CityDAO implements Serializable {
     @Column(name = "city")
     private String name;
 
-    @ManyToOne(cascade = CascadeType.PERSIST)
+    @ManyToOne()
     @JoinColumn(name = "country_id", nullable = false)
     private CountryDAO countryDAO;
 
