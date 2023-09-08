@@ -58,7 +58,7 @@ public class CityHandler {
     private void checkCityNameAndCountryId(String name, int countryId) {
         checkNameIsWrong(name);
         checkCountryIdExists(countryId);
-        checkCityNameExists(name, countryId);
+        checkCityNameExists(countryId, name);
     }
 
     private void setCountryForCity(CityDAO city, int countryId) {
@@ -76,7 +76,7 @@ public class CityHandler {
             throw new IdNotFoundException("The country ID " + countryId + " is not found.");
     }
 
-    private void checkCityNameExists(String name, int countryId) {
+    private void checkCityNameExists(int countryId, String name) {
         if (cityServiceRest.theSameCityExists(countryId, name))
             throw new CityAlreadyExistsException("The city " + name + " already exists.");
     }

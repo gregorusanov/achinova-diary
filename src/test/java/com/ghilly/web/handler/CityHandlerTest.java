@@ -173,14 +173,15 @@ class CityHandlerTest {
         CityDAO cityDAO = new CityDAO(CITY_ID, newName, true);
 
         handler.update(cityDAO, COUNTRY_ID);
+        cityDAO.setCountryDAO(RUS);
 
         assertAll(
                 () -> verify(cityServiceRest).cityIdExists(CITY_ID),
                 () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
-                () -> verify(countryServiceRest).getCountryById(COUNTRY_ID),
                 () -> verify(cityServiceRest).theSameCityExists(COUNTRY_ID, newName),
                 () -> verify(countryServiceRest).getCapitalByCountryId(COUNTRY_ID),
-                () -> verify(cityServiceRest).update(new CityDAO(CITY_ID, newName.toLowerCase(), RUS, true)),
+                () -> verify(countryServiceRest).getCountryById(COUNTRY_ID),
+                () -> verify(cityServiceRest).update(cityDAO),
                 () -> verifyNoMoreInteractions(cityServiceRest, countryServiceRest)
         );
     }

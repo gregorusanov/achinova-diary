@@ -17,7 +17,7 @@ class CityControllerTest {
     private static final int COUNTRY_ID = 1;
     private static final int CITY_ID = 9;
     private static final String CITY_NAME = "moscow";
-    private static final CountryDAO RUS = new CountryDAO(COUNTRY_ID, "Russia");
+    private static final CountryDAO RUS = new CountryDAO(COUNTRY_ID, "russia");
     private static final CityDAO CITY_DAO_FROM_REPO = new CityDAO(CITY_ID, CITY_NAME, RUS, true);
     private static final CityDTO CITY_DTO = new CityDTO(CITY_NAME.toUpperCase(), COUNTRY_ID, true);
     private static final CityDAO CITY_DAO = new CityDAO(CITY_NAME, null, true);

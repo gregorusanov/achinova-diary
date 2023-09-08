@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.Set;
 
 @Entity
 @Table(name = "cities")
@@ -32,6 +33,14 @@ public class CityDAO implements Serializable {
     @Column(name = "capital", columnDefinition = "boolean default false")
     private boolean capital;
 
+    @ManyToMany(cascade = CascadeType.REMOVE)
+    @JoinTable(name = "cities_travel_diary",
+            joinColumns = @JoinColumn(name = "city_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "travel_diary_id", referencedColumnName = "id"))
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
+    private Set<TravelDiaryDAO> travelDiaryDAOSet;
+
     public CityDAO(int id, String name) {
         this.id = id;
         this.name = name;
@@ -40,6 +49,13 @@ public class CityDAO implements Serializable {
     public CityDAO(int id, String name, boolean capital) {
         this.id = id;
         this.name = name;
+        this.capital = capital;
+    }
+
+    public CityDAO(int id, String name, CountryDAO countryDAO, boolean capital) {
+        this.id = id;
+        this.name = name;
+        this.countryDAO = countryDAO;
         this.capital = capital;
     }
 
