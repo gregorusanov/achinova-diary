@@ -7,7 +7,7 @@ import com.ghilly.web.handler.CountryHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.*;
@@ -15,8 +15,8 @@ import static org.mockito.Mockito.*;
 class CountryControllerTest {
 
     private static final int ID = 100;
-    private static final String NAME = "USSR";
-    private static final CountryDTO USSR_DTO = new CountryDTO(NAME);
+    private static final String NAME = "ussr";
+    private static final CountryDTO USSR_DTO = new CountryDTO(NAME.toUpperCase());
     private static final CountryDAO USSR_DAO = new CountryDAO(NAME);
     private static final CountryDAO USSR_DAO_FROM_REPO = new CountryDAO(ID, NAME);
     private CountryHandler countryHandler;
@@ -41,8 +41,8 @@ class CountryControllerTest {
 
     @Test
     void getCountries() {
-        CountryDAO usa = new CountryDAO(2, "USA");
-        List<CountryDAO> expected = List.of(USSR_DAO_FROM_REPO, usa);
+        CountryDAO usa = new CountryDAO(2, "usa");
+        Set<CountryDAO> expected = Set.of(USSR_DAO_FROM_REPO, usa);
         when(countryHandler.getAllCountries()).thenReturn(expected);
 
         controller.getAllCountries();
@@ -69,7 +69,7 @@ class CountryControllerTest {
     void updateCountry() {
         String newName = "Russia";
         CountryDTO toChange = new CountryDTO(newName);
-        CountryDAO updated = new CountryDAO(ID, newName);
+        CountryDAO updated = new CountryDAO(ID, newName.toLowerCase());
         when(countryHandler.update(updated)).thenReturn(updated);
 
         controller.update(toChange, ID);
@@ -92,11 +92,11 @@ class CountryControllerTest {
 
     @Test
     void getAllCitiesByCountryID() {
-        String kyoto = "Kyoto";
-        String tokyo = "Tokyo";
-        CountryDAO japan = new CountryDAO("Japan");
-        int id = japan.getId();
-        List<CityDAO> cities = List.of(new CityDAO(kyoto, japan, false), new CityDAO(tokyo, japan, true));
+        String kyoto = "kyoto";
+        String tokyo = "tokyo";
+        CountryDAO japan = new CountryDAO("japan");
+        int id = 400;
+        Set<CityDAO> cities = Set.of(new CityDAO(kyoto, japan, false), new CityDAO(tokyo, japan, true));
         when(countryHandler.getAllCitiesByCountryId(id)).thenReturn(cities);
 
         controller.getAllCitiesByCountryId(id);
@@ -109,7 +109,7 @@ class CountryControllerTest {
 
     @Test
     void getCapitalByCountryId() {
-        when(countryHandler.getCapitalByCountryId(ID)).thenReturn(new CityDAO("Moscow", USSR_DAO_FROM_REPO, true));
+        when(countryHandler.getCapitalByCountryId(ID)).thenReturn(new CityDAO("moscow", USSR_DAO_FROM_REPO, true));
 
         controller.getCapitalByCountryId(ID);
 

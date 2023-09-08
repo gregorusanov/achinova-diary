@@ -10,8 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @RequestMapping("/countries")
 public class CountryController {
@@ -25,6 +28,7 @@ public class CountryController {
 
     @PostMapping("/")
     public ResponseEntity<CountryDTO> create(@RequestBody CountryDTO country) {
+        country.setName(country.getName().toLowerCase());
         return Optional.of(country)
                 .map(TransformerFromDAOtoDTOAndBack::transformToCountryDAO)
                 .map(countryHandler::create)
@@ -34,12 +38,13 @@ public class CountryController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<CountryDTO>> getAllCountries() {
+    public ResponseEntity<Set<CountryDTO>> getAllCountries() {
         logger.info("Data processing.");
-        List<CountryDTO> allCountries = countryHandler.getAllCountries()
+        Set<CountryDTO> allCountries = countryHandler.getAllCountries()
                 .stream()
                 .map(TransformerFromDAOtoDTOAndBack::transformToCountryDTO)
-                .toList();
+                .sorted(Comparator.comparing(CountryDTO::getName))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         return ResponseEntity.ok().body(allCountries);
     }
 
@@ -54,6 +59,7 @@ public class CountryController {
 
     @PutMapping("/{countryId}")
     public ResponseEntity<CountryDTO> update(@RequestBody CountryDTO country, @PathVariable int countryId) {
+        country.setName(country.getName().toLowerCase());
         logger.info("The data are received from the user.");
         country.setId(countryId);
         return Optional.of(country)
@@ -72,11 +78,12 @@ public class CountryController {
     }
 
     @GetMapping("/{countryId}/cities/all")
-    public ResponseEntity<List<CityDTO>> getAllCitiesByCountryId(@PathVariable int countryId) {
-        List<CityDTO> allCitiesByCountry = countryHandler.getAllCitiesByCountryId(countryId)
+    public ResponseEntity<Set<CityDTO>> getAllCitiesByCountryId(@PathVariable int countryId) {
+        Set<CityDTO> allCitiesByCountry = countryHandler.getAllCitiesByCountryId(countryId)
                 .stream()
                 .map(TransformerFromDAOtoDTOAndBack::transformToCityDTO)
-                .toList();
+                .sorted(Comparator.comparing(CityDTO::getName))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         return ResponseEntity.ok().body(allCitiesByCountry);
     }
 

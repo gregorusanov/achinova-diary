@@ -7,10 +7,11 @@ import com.ghilly.repository.CountryRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
 class CountryServiceRestTest {
@@ -45,10 +46,10 @@ class CountryServiceRestTest {
         CountryDAO af = new CountryDAO("Afghanistan");
         CountryDAO fr = new CountryDAO("France");
         CountryDAO cn = new CountryDAO("China");
-        List<CountryDAO> expected = List.of(af, fr, cn);
+        Set<CountryDAO> expected = Set.of(af, fr, cn);
         when(countryRepository.findAll()).thenReturn(expected);
 
-        List<CountryDAO> actual = service.getAllCountries();
+        Set<CountryDAO> actual = service.getAllCountries();
 
         assertAll(
                 () -> assertEquals(expected, actual),
@@ -103,10 +104,10 @@ class CountryServiceRestTest {
         CityDAO br = new CityDAO("Berlin", countryDAO, true);
         CityDAO munich = new CityDAO("Munich", countryDAO);
         CityDAO dresden = new CityDAO("Dresden", countryDAO);
-        countryDAO.setCityList(List.of(br, munich, dresden));
+        countryDAO.setCitySet(Set.of(br, munich, dresden));
         when(countryRepository.findById(id)).thenReturn(Optional.of(countryDAO));
 
-        List <CityDAO> actual = service.getAllCitiesByCountryId(id);
+        Set<CityDAO> actual = service.getAllCitiesByCountryId(id);
 
         assertAll(
                 () -> assertEquals(3, actual.size()),

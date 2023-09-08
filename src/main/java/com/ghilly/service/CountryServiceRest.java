@@ -7,7 +7,10 @@ import com.ghilly.repository.CountryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CountryServiceRest implements CountryService {
 
@@ -28,8 +31,8 @@ public class CountryServiceRest implements CountryService {
     }
 
     @Override
-    public List<CountryDAO> getAllCountries() {
-        List<CountryDAO> countries = (List<CountryDAO>) countryRepository.findAll();
+    public Set<CountryDAO> getAllCountries() {
+        Set<CountryDAO> countries = countryRepository.findAll();
         logger.info("The list of countries is: {}", countries);
         return countries;
     }
@@ -54,11 +57,11 @@ public class CountryServiceRest implements CountryService {
     }
 
     @Override
-    public List<CityDAO> getAllCitiesByCountryId(int countryId) {
+    public Set<CityDAO> getAllCitiesByCountryId(int countryId) {
         CountryDAO countryDAO = countryRepository.findById(countryId).orElseThrow();
-        List<CityDAO> cityList = countryDAO.getCityList();
-        logger.info("cityList = {}", cityList);
-        return cityList;
+        Set<CityDAO> citySet = countryDAO.getCitySet();
+        logger.info("cityList = {}", citySet);
+        return citySet;
     }
 
     @Override

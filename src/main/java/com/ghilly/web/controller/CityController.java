@@ -1,6 +1,7 @@
 package com.ghilly.web.controller;
 
 import com.ghilly.model.DTO.CityDTO;
+import com.ghilly.model.DTO.CountryDTO;
 import com.ghilly.transformer.TransformerFromDAOtoDTOAndBack;
 import com.ghilly.web.handler.CityHandler;
 import org.slf4j.Logger;
@@ -9,8 +10,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Comparator;
+import java.util.LinkedHashSet;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @RequestMapping("/cities")
@@ -26,7 +30,7 @@ public class CityController {
     @PostMapping("/")
     public ResponseEntity<CityDTO> create(@RequestBody CityDTO city) {
         logger.info("The data are received from the user. City: [{}]", city);
-
+        city.setName(city.getName().toLowerCase());
         return Optional.of(city)
                 .map(cityDTO -> TransformerFromDAOtoDTOAndBack.transformToCityDAO(city))
                 .map(cityDAO -> cityHandler.create(cityDAO, city.getCountryId()))
@@ -45,17 +49,19 @@ public class CityController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<List<CityDTO>> getAllCities() {
+    public ResponseEntity<Set<CityDTO>> getAllCities() {
         logger.info("Data processing.");
-        List<CityDTO> cityDTOS = cityHandler.getAllCities().stream()
+        Set<CityDTO> cityDTOS = cityHandler.getAllCities().stream()
                 .map(TransformerFromDAOtoDTOAndBack::transformToCityDTO)
-                .toList();
+                .sorted(Comparator.comparing(CityDTO::getName))
+                .collect(Collectors.toCollection(LinkedHashSet::new));
         return ResponseEntity.ok(cityDTOS);
     }
 
     @PutMapping("/{cityId}")
     public ResponseEntity<CityDTO> update(@RequestBody CityDTO city, @PathVariable int cityId) {
         logger.info("The data are received from the user.");
+        city.setName(city.getName().toLowerCase());
         city.setId(cityId);
         return Optional.of(city)
                 .map(cityDTO -> TransformerFromDAOtoDTOAndBack.transformToCityDAO(city))
