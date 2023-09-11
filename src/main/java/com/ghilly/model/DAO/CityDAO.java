@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -40,7 +41,7 @@ public class CityDAO implements Serializable {
             inverseJoinColumns = @JoinColumn(name = "travel_diary_id", referencedColumnName = "id"))
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<TravelDiaryDAO> travelDiaryDAOSet;
+    private Set<TravelDiaryDAO> travelDiaryDAOSet = new HashSet<>();
 
     public CityDAO(int id, String name) {
         this.id = id;

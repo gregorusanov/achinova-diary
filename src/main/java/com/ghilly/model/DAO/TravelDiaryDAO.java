@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -42,8 +43,8 @@ public class TravelDiaryDAO implements Serializable {
     @Column(name = "rating")
     private int rating;
 
-    @ManyToMany(mappedBy = "travelDiaryDAOSet", cascade = CascadeType.PERSIST)
-    private Set<CityDAO> cityDAOSet;
+    @ManyToMany(mappedBy = "travelDiaryDAOSet", cascade = {CascadeType.PERSIST, CascadeType.REFRESH} )
+    private Set<CityDAO> cityDAOSet = new HashSet<>();
 
     @PreRemove
     private void preRemove() {

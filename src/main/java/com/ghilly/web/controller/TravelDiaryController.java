@@ -14,6 +14,7 @@ import java.util.Optional;
 
 @RequestMapping("/travelDiary")
 public class TravelDiaryController {
+    //CityController.class???
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CityController.class);
     private final TravelDiaryHandler handler;
 
