@@ -2,10 +2,9 @@ package com.ghilly.web.handler;
 
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
-import com.ghilly.model.DAO.CityDAO;
-import com.ghilly.model.DAO.CountryDAO;
+import com.ghilly.model.dao.CityDAO;
+import com.ghilly.model.dao.CountryDAO;
 import com.ghilly.service.CountryServiceRest;
-import com.ghilly.web.controller.CityController;
 import org.slf4j.LoggerFactory;
 
 import java.util.Set;
@@ -13,7 +12,7 @@ import java.util.Set;
 import static com.ghilly.utils.ValidationUtils.checkNameIsWrong;
 
 public class CountryHandler {
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CityController.class);
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CountryHandler.class);
     private final CountryServiceRest countryServiceRest;
 
     public CountryHandler(CountryServiceRest countryServiceRest) {
@@ -64,6 +63,7 @@ public class CountryHandler {
         checkNameIsWrong(name);
         checkNameExists(name);
     }
+
     private void checkIdExists(int id) {
         if (!countryServiceRest.countryIdExists(id)) {
             throw new IdNotFoundException("The country ID " + id + " is not found.");

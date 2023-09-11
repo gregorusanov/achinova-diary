@@ -3,10 +3,9 @@ package com.ghilly.web.handler;
 import com.ghilly.exception.CapitalAlreadyExistsException;
 import com.ghilly.exception.CityAlreadyExistsException;
 import com.ghilly.exception.IdNotFoundException;
-import com.ghilly.model.DAO.CityDAO;
+import com.ghilly.model.dao.CityDAO;
 import com.ghilly.service.CityServiceRest;
 import com.ghilly.service.CountryServiceRest;
-import com.ghilly.web.controller.CityController;
 import org.slf4j.LoggerFactory;
 
 import java.util.Set;
@@ -14,7 +13,7 @@ import java.util.Set;
 import static com.ghilly.utils.ValidationUtils.checkNameIsWrong;
 
 public class CityHandler {
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CityController.class);
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CityHandler.class);
     private final CityServiceRest cityServiceRest;
     private final CountryServiceRest countryServiceRest;
 

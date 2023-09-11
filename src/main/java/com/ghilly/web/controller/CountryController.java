@@ -1,7 +1,7 @@
 package com.ghilly.web.controller;
 
-import com.ghilly.model.DTO.CityDTO;
-import com.ghilly.model.DTO.CountryDTO;
+import com.ghilly.model.dto.CityDTO;
+import com.ghilly.model.dto.CountryDTO;
 import com.ghilly.transformer.TransformerDAOandDTO;
 import com.ghilly.web.handler.CountryHandler;
 import org.slf4j.Logger;

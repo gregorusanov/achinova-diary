@@ -1,8 +1,8 @@
 package com.ghilly.web.controller;
 
-import com.ghilly.model.DAO.CityDAO;
-import com.ghilly.model.DAO.CountryDAO;
-import com.ghilly.model.DTO.CityDTO;
+import com.ghilly.model.dao.CityDAO;
+import com.ghilly.model.dao.CountryDAO;
+import com.ghilly.model.dto.CityDTO;
 import com.ghilly.web.handler.CityHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

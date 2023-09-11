@@ -1,6 +1,6 @@
 package com.ghilly.web.controller;
 
-import com.ghilly.model.DTO.TravelDiaryDTO;
+import com.ghilly.model.dto.TravelDiaryDTO;
 import com.ghilly.transformer.TransformerDAOandDTO;
 import com.ghilly.web.handler.TravelDiaryHandler;
 import org.slf4j.LoggerFactory;
@@ -14,8 +14,7 @@ import java.util.Optional;
 
 @RequestMapping("/travelDiary")
 public class TravelDiaryController {
-    //CityController.class???
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CityController.class);
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(TravelDiaryController.class);
     private final TravelDiaryHandler handler;
 
     public TravelDiaryController(TravelDiaryHandler handler) {

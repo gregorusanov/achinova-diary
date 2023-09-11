@@ -1,6 +1,6 @@
 package com.ghilly.web.controller;
 
-import com.ghilly.model.DTO.CityDTO;
+import com.ghilly.model.dto.CityDTO;
 import com.ghilly.transformer.TransformerDAOandDTO;
 import com.ghilly.web.handler.CityHandler;
 import org.slf4j.Logger;

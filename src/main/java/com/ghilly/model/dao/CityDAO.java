@@ -1,4 +1,4 @@
-package com.ghilly.model.DAO;
+package com.ghilly.model.dao;
 
 import lombok.*;
 
@@ -35,13 +35,10 @@ public class CityDAO implements Serializable {
     @Column(name = "capital", columnDefinition = "boolean default false")
     private boolean capital;
 
-    @ManyToMany(cascade = CascadeType.REMOVE)
-    @JoinTable(name = "cities_travel_diary",
-            joinColumns = @JoinColumn(name = "city_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "travel_diary_id", referencedColumnName = "id"))
+    @OneToMany(mappedBy = "cityDAO", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<TravelDiaryDAO> travelDiaryDAOSet = new HashSet<>();
+    private Set<CityTravelDiaryDAO> travelDiaryDAOSet = new HashSet<>();
 
     public CityDAO(int id, String name) {
         this.id = id;

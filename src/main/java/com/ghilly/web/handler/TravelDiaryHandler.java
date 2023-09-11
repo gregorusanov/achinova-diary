@@ -1,17 +1,16 @@
 package com.ghilly.web.handler;
 
 import com.ghilly.exception.*;
-import com.ghilly.model.DAO.TravelDiaryDAO;
+import com.ghilly.model.dao.CityTravelDiaryDAO;
+import com.ghilly.model.dao.TravelDiaryDAO;
 import com.ghilly.service.CityServiceRest;
 import com.ghilly.service.TravelDiaryServiceRest;
-import com.ghilly.web.controller.CityController;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
-import java.util.Set;
 
 public class TravelDiaryHandler {
-    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(CityController.class);
+    private static final org.slf4j.Logger logger = LoggerFactory.getLogger(TravelDiaryHandler.class);
     private final TravelDiaryServiceRest travelDiaryService;
     private final CityServiceRest cityService;
 
@@ -33,7 +32,12 @@ public class TravelDiaryHandler {
         checkBudget(travelDiaryDAO.getRealBudget());
         checkDescriptionLength(travelDiaryDAO.getDescription());
         checkCityIdExists(cityId);
-        travelDiaryDAO.setCityDAOSet(Set.of(cityService.getCity(cityId)));
+
+        CityTravelDiaryDAO cityTravelDiaryDAO = new CityTravelDiaryDAO();
+        cityTravelDiaryDAO.setCityDAO(cityService.getCity(cityId));
+        cityTravelDiaryDAO.setTravelDiaryDAO(travelDiaryDAO);
+
+        travelDiaryDAO.getCityDAOSet().add(cityTravelDiaryDAO);
     }
 
     private void checkDate(LocalDate arrivalDate, LocalDate departureDate) {

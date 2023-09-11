@@ -1,4 +1,4 @@
-package com.ghilly.model.DTO;
+package com.ghilly.model.dto;
 
 import lombok.Builder;
 

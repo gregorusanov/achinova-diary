@@ -1,6 +1,6 @@
 package com.ghilly.service;
 
-import com.ghilly.model.DAO.CityDAO;
+import com.ghilly.model.dao.CityDAO;
 
 import java.util.Set;
 

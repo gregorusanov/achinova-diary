@@ -1,6 +1,6 @@
 package com.ghilly.repository;
 
-import com.ghilly.model.DAO.CityDAO;
+import com.ghilly.model.dao.CityDAO;
 import lombok.NonNull;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;

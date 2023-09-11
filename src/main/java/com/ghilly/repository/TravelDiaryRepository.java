@@ -1,6 +1,6 @@
 package com.ghilly.repository;
 
-import com.ghilly.model.DAO.TravelDiaryDAO;
+import com.ghilly.model.dao.TravelDiaryDAO;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

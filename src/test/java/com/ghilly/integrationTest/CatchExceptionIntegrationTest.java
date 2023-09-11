@@ -2,9 +2,9 @@ package com.ghilly.integrationTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ghilly.exception.*;
-import com.ghilly.model.DAO.CityDAO;
-import com.ghilly.model.DAO.CountryDAO;
-import com.ghilly.model.DTO.CityDTO;
+import com.ghilly.model.dao.CityDAO;
+import com.ghilly.model.dao.CountryDAO;
+import com.ghilly.model.dto.CityDTO;
 import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.CountryRepository;
 import org.junit.Test;

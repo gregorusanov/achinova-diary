@@ -1,16 +1,13 @@
 package com.ghilly.service;
 
-import com.ghilly.model.DAO.CityDAO;
-import com.ghilly.model.DAO.CountryDAO;
+import com.ghilly.model.dao.CityDAO;
+import com.ghilly.model.dao.CountryDAO;
 import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.CountryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public class CountryServiceRest implements CountryService {
 

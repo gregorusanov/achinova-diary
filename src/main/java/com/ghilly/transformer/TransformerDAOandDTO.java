@@ -1,11 +1,11 @@
 package com.ghilly.transformer;
 
-import com.ghilly.model.DAO.CityDAO;
-import com.ghilly.model.DAO.CountryDAO;
-import com.ghilly.model.DAO.TravelDiaryDAO;
-import com.ghilly.model.DTO.CityDTO;
-import com.ghilly.model.DTO.CountryDTO;
-import com.ghilly.model.DTO.TravelDiaryDTO;
+import com.ghilly.model.dao.CityDAO;
+import com.ghilly.model.dao.CountryDAO;
+import com.ghilly.model.dao.TravelDiaryDAO;
+import com.ghilly.model.dto.CityDTO;
+import com.ghilly.model.dto.CountryDTO;
+import com.ghilly.model.dto.TravelDiaryDTO;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -58,6 +58,7 @@ public class TransformerDAOandDTO {
                 .realBudget(travelDiaryDAO.getRealBudget())
                 .description(travelDiaryDAO.getDescription())
                 .rating(travelDiaryDAO.getRating())
+                .cityId(travelDiaryDAO.getCityDAOSet().stream().findFirst().get().getCityDAO().getId())
                 .build();
 
     }

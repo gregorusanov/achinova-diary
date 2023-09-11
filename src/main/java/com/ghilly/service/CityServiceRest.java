@@ -1,6 +1,6 @@
 package com.ghilly.service;
 
-import com.ghilly.model.DAO.CityDAO;
+import com.ghilly.model.dao.CityDAO;
 import com.ghilly.repository.CityRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,7 +31,7 @@ public class CityServiceRest implements CityService {
 
     @Override
     public Set<CityDAO> getAllCities() {
-        Set<CityDAO> cities = (Set<CityDAO>) cityRepository.findAll();
+        Set<CityDAO> cities = cityRepository.findAll();
         logger.info("The list of cities is: {}", cities);
         return cities;
     }

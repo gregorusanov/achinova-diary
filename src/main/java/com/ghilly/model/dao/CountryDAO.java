@@ -1,4 +1,4 @@
-package com.ghilly.model.DAO;
+package com.ghilly.model.dao;
 
 import lombok.*;
 
