@@ -1,6 +1,7 @@
 package com.ghilly.web.handler;
 
 import com.ghilly.exception.*;
+import com.ghilly.model.dao.CityTravelDiaryCompositeKey;
 import com.ghilly.model.dao.CityTravelDiaryEntity;
 import com.ghilly.model.dao.TravelDiaryEntity;
 import com.ghilly.service.CityServiceRest;
@@ -20,23 +21,27 @@ public class TravelDiaryHandler {
     }
 
     public TravelDiaryEntity create(TravelDiaryEntity travelDiaryEntity, int cityId) {
-        checkBeforeCreating(travelDiaryEntity, cityId);
+        checkData(travelDiaryEntity, cityId);
+        enrichEntity(travelDiaryEntity, cityId);
         logger.info("Transferring data {} to the service", travelDiaryEntity);
         return travelDiaryService.create(travelDiaryEntity);
     }
 
-    private void checkBeforeCreating(TravelDiaryEntity travelDiaryEntity, int cityId) {
+    private void checkData(TravelDiaryEntity travelDiaryEntity, int cityId) {
         checkDate(travelDiaryEntity.getArrivalDate(), travelDiaryEntity.getDepartureDate());
         checkRating(travelDiaryEntity.getRating());
         checkBudget(travelDiaryEntity.getPlannedBudget());
         checkBudget(travelDiaryEntity.getRealBudget());
         checkDescriptionLength(travelDiaryEntity.getDescription());
         checkCityIdExists(cityId);
+    }
 
-        CityTravelDiaryEntity cityTravelDiaryEntity = new CityTravelDiaryEntity();
-        cityTravelDiaryEntity.setCityEntity(cityService.getCity(cityId));
-        cityTravelDiaryEntity.setTravelDiaryEntity(travelDiaryEntity);
-
+    private void enrichEntity(TravelDiaryEntity travelDiaryEntity, int cityId) {
+        CityTravelDiaryEntity cityTravelDiaryEntity = CityTravelDiaryEntity.builder()
+                .id(new CityTravelDiaryCompositeKey())
+                .cityEntity(cityService.getCity(cityId))
+                .travelDiaryEntity(travelDiaryEntity)
+                .build();
         travelDiaryEntity.getCityTravelSet().add(cityTravelDiaryEntity);
     }
 

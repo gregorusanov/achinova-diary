@@ -5,10 +5,12 @@ import com.ghilly.transformer.EntityTransformer;
 import com.ghilly.web.handler.CityHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.persistence.EntityManager;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import java.util.Optional;

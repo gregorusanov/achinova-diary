@@ -28,11 +28,10 @@ public class CityEntity implements Serializable {
     @JoinColumn(name = "country_id", nullable = false)
     private CountryEntity countryEntity;
 
-
     @Column(name = "capital", columnDefinition = "boolean default false")
     private boolean capital;
 
-    @OneToMany(mappedBy = "cityEntity", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cityEntity", cascade = CascadeType.ALL)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<CityTravelDiaryEntity> travelDiaryCitySet = new HashSet<>();

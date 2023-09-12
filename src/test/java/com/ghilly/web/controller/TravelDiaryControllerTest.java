@@ -1,7 +1,11 @@
 package com.ghilly.web.controller;
 
+import com.ghilly.model.dao.TravelDiaryEntity;
+import com.ghilly.model.dto.TravelDiary;
+import com.ghilly.transformer.EntityTransformer;
 import com.ghilly.web.handler.TravelDiaryHandler;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.*;
@@ -16,17 +20,17 @@ class TravelDiaryControllerTest {
         handler = mock(TravelDiaryHandler.class);
         controller = new TravelDiaryController(handler);
     }
-// This test shows that the argument in the assertion is different from the argument in the called method on the 29 line
-//    @Test
-//    void create() {
-//        TravelDiary travelDiaryDTO = new TravelDiary(1, "09.03.2022", "10.03.2022",
-//                800, 1000, "Home.", 8, cityId);
-//        TravelDiaryEntity travelDiaryDAO = EntityTransformer.transformToTravelDiaryEntity(travelDiaryDTO);
-//        controller.create(travelDiaryDTO);
-//
-//        assertAll(
-//                () -> verify(handler).create(travelDiaryDAO, cityId),
-//                () -> verifyNoMoreInteractions(handler)
-//        );
-//    }
+
+    @Test
+    void create() {
+        TravelDiary travelDiaryDTO = new TravelDiary(1, "09.03.2022", "10.03.2022",
+                800, 1000, "Home.", 8, cityId);
+        TravelDiaryEntity travelDiaryEntity = EntityTransformer.transformToTravelDiaryEntity(travelDiaryDTO);
+        controller.create(travelDiaryDTO);
+
+        assertAll(
+                () -> verify(handler).create(travelDiaryEntity, cityId),
+                () -> verifyNoMoreInteractions(handler)
+        );
+    }
 }

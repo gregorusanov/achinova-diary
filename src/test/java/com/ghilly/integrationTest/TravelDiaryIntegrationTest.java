@@ -2,7 +2,9 @@ package com.ghilly.integrationTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ghilly.model.dao.CityEntity;
+import com.ghilly.model.dao.CityTravelDiaryEntity;
 import com.ghilly.model.dao.CountryEntity;
+import com.ghilly.model.dao.TravelDiaryEntity;
 import com.ghilly.model.dto.TravelDiary;
 import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.CountryRepository;
@@ -17,7 +19,12 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -38,6 +45,7 @@ public class TravelDiaryIntegrationTest {
     private CountryRepository countryRepository;
 
     @Test
+    @Transactional
     public void createAndGetStatusOk() throws Exception {
         CountryEntity ger = new CountryEntity("Germany");
         countryRepository.save(ger);
@@ -57,6 +65,14 @@ public class TravelDiaryIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").exists());
 
+        Set<CityTravelDiaryEntity> travelDiaryEntity = travelDiaryRepository
+                .findById(1)
+                .map(TravelDiaryEntity::getCityTravelSet)
+                .orElseThrow();
+
+        assertEquals(travelDiaryEntity.size(), 1);
+
+        travelDiaryRepository.deleteAll();
         countryRepository.deleteAll();
     }
 }

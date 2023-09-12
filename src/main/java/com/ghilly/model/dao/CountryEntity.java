@@ -4,6 +4,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -22,10 +23,10 @@ public class CountryEntity implements Serializable {
 
     @Column(name = "country")
     private String name;
-    @OneToMany(mappedBy = "countryEntity", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "countryEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<CityEntity> citySet;
+    private Set<CityEntity> citySet = new HashSet<>();
 
 
     public CountryEntity(int id, String name) {
