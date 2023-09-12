@@ -8,14 +8,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "countries")
-@ToString
-@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @Builder
-public class CountryDAO implements Serializable {
+public class CountryEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "countries_seq")
@@ -25,18 +22,18 @@ public class CountryDAO implements Serializable {
 
     @Column(name = "country")
     private String name;
-    @OneToMany(mappedBy = "countryDAO", cascade = CascadeType.REMOVE, orphanRemoval = true)
+    @OneToMany(mappedBy = "countryEntity", cascade = CascadeType.REMOVE, orphanRemoval = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<CityDAO> citySet;
+    private Set<CityEntity> citySet;
 
 
-    public CountryDAO(int id, String name) {
+    public CountryEntity(int id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public CountryDAO(String name) {
+    public CountryEntity(String name) {
         this.name = name;
     }
 }

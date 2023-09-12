@@ -1,7 +1,7 @@
 package com.ghilly.web.handler;
 
-import com.ghilly.model.dao.CityDAO;
-import com.ghilly.model.dao.CountryDAO;
+import com.ghilly.model.dao.CityEntity;
+import com.ghilly.model.dao.CountryEntity;
 import com.ghilly.service.CityServiceRest;
 import com.ghilly.service.TravelDiaryServiceRest;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,10 +13,10 @@ import java.util.HashSet;
 import static org.mockito.Mockito.*;
 
 class TravelDiaryHandlerTest {
-    private final HashSet<CityDAO> cities = new HashSet<>();
+    private final HashSet<CityEntity> cities = new HashSet<>();
     private final String name = "Copenhagen";
     private int cityId = 1;
-    private final CityDAO city = new CityDAO(cityId, name, new CountryDAO("Denmark"), true);
+    private final CityEntity city = new CityEntity(cityId, name, new CountryEntity("Denmark"), true);
     private TravelDiaryHandler handler;
     private TravelDiaryServiceRest travelDiaryServiceRest;
     private CityServiceRest cityServiceRest;
@@ -40,7 +40,7 @@ class TravelDiaryHandlerTest {
 //        cities.add(city);
 //        LocalDate arrivalDate = parsingDate("10.03.2023");
 //        LocalDate departureDate = parsingDate("12.03.2023");
-//        TravelDiaryDAO record = new TravelDiaryDAO(1, arrivalDate, departureDate, 800, 1000,
+//        TravelDiaryEntity record = new TravelDiaryEntity(1, arrivalDate, departureDate, 800, 1000,
 //                "Cold place.", 8, cities);
 //
 //        handler.create(record, cityId);
@@ -58,7 +58,7 @@ class TravelDiaryHandlerTest {
 //        cityId++;
 //        LocalDate arrivalDate = parsingDate("10.03.2023");
 //        LocalDate departureDate = parsingDate("09.03.2023");
-//        TravelDiaryDAO record = new TravelDiaryDAO(1, arrivalDate, departureDate, 800, 1000,
+//        TravelDiaryEntity record = new TravelDiaryEntity(1, arrivalDate, departureDate, 800, 1000,
 //                "Cold place.", 8, cities);
 //
 //        IllegalDateException e = assertThrows(IllegalDateException.class, () -> handler.create(record, cityId));
@@ -76,7 +76,7 @@ class TravelDiaryHandlerTest {
 //        cityId = cityId * 3;
 //        LocalDate arrivalDate = parsingDate("10.03.2023");
 //        LocalDate departureDate = parsingDate("12.03.2023");
-//        TravelDiaryDAO record = new TravelDiaryDAO(1, arrivalDate, departureDate, 800, -1,
+//        TravelDiaryEntity record = new TravelDiaryEntity(1, arrivalDate, departureDate, 800, -1,
 //                "Cold place.", 8, cities);
 //
 //        IllegalBudgetException e = assertThrows(IllegalBudgetException.class, () -> handler.create(record, cityId));
@@ -91,7 +91,7 @@ class TravelDiaryHandlerTest {
 //    void createWithIllegalRating() {
 //        LocalDate arrivalDate = parsingDate("10.03.2023");
 //        LocalDate departureDate = parsingDate("12.03.2023");
-//        TravelDiaryDAO record = new TravelDiaryDAO(1, arrivalDate, departureDate, 800, 1000,
+//        TravelDiaryEntity record = new TravelDiaryEntity(1, arrivalDate, departureDate, 800, 1000,
 //                "Cold place.", 11, cities);
 //
 //        IllegalRatingNumberException e = assertThrows(IllegalRatingNumberException.class,
@@ -108,7 +108,7 @@ class TravelDiaryHandlerTest {
 //    void createWithLongDescription() {
 //        LocalDate arrivalDate = parsingDate("10.03.2023");
 //        LocalDate departureDate = parsingDate("12.03.2023");
-//        TravelDiaryDAO record = new TravelDiaryDAO(1, arrivalDate, departureDate, 800, 1000,
+//        TravelDiaryEntity record = new TravelDiaryEntity(1, arrivalDate, departureDate, 800, 1000,
 //                "a".repeat(301), 10, cities);
 //
 //        TooLongDescriptionException e = assertThrows(TooLongDescriptionException.class,
@@ -126,7 +126,7 @@ class TravelDiaryHandlerTest {
 //        cities.add(city);
 //        LocalDate arrivalDate = parsingDate("10.03.2023");
 //        LocalDate departureDate = parsingDate("12.03.2023");
-//        TravelDiaryDAO record = new TravelDiaryDAO(1, arrivalDate, departureDate, 800, 1000,
+//        TravelDiaryEntity record = new TravelDiaryEntity(1, arrivalDate, departureDate, 800, 1000,
 //                "Cold place.", 8, cities);
 //
 //        assertThrows(IdNotFoundException.class, () -> handler.create(record, cityId));

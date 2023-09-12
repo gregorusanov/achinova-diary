@@ -1,7 +1,7 @@
 package com.ghilly.web.controller;
 
-import com.ghilly.model.dao.CityDAO;
-import com.ghilly.model.dao.CountryDAO;
+import com.ghilly.model.dao.CityEntity;
+import com.ghilly.model.dao.CountryEntity;
 import com.ghilly.model.dto.CityDTO;
 import com.ghilly.web.handler.CityHandler;
 import org.junit.jupiter.api.BeforeEach;
@@ -17,10 +17,10 @@ class CityControllerTest {
     private static final int COUNTRY_ID = 1;
     private static final int CITY_ID = 9;
     private static final String CITY_NAME = "moscow";
-    private static final CountryDAO RUS = new CountryDAO(COUNTRY_ID, "russia");
-    private static final CityDAO CITY_DAO_FROM_REPO = new CityDAO(CITY_ID, CITY_NAME, RUS, true);
+    private static final CountryEntity RUS = new CountryEntity(COUNTRY_ID, "russia");
+    private static final CityEntity CITY_DAO_FROM_REPO = new CityEntity(CITY_ID, CITY_NAME, RUS, true);
     private static final CityDTO CITY_DTO = new CityDTO(CITY_NAME.toUpperCase(), COUNTRY_ID, true);
-    private static final CityDAO CITY_DAO = new CityDAO(CITY_NAME, null, true);
+    private static final CityEntity CITY_DAO = new CityEntity(CITY_NAME, null, true);
     private CityHandler handler;
     private CityController controller;
 
@@ -68,7 +68,7 @@ class CityControllerTest {
         String sochi = "Sochi";
         String spb = "Saint-Petersburg";
         boolean notCapital = false;
-        Set<CityDAO> cities = Set.of(CITY_DAO_FROM_REPO, new CityDAO(spb, RUS, notCapital), new CityDAO(sochi, RUS, notCapital));
+        Set<CityEntity> cities = Set.of(CITY_DAO_FROM_REPO, new CityEntity(spb, RUS, notCapital), new CityEntity(sochi, RUS, notCapital));
         when(handler.getAllCities()).thenReturn(cities);
 
         controller.getAllCities();
@@ -83,7 +83,7 @@ class CityControllerTest {
     void update() {
         String newName = "Moskvabad";
         CityDTO city = new CityDTO(newName, COUNTRY_ID);
-        CityDAO transformedCity = new CityDAO(CITY_ID, newName.toLowerCase());
+        CityEntity transformedCity = new CityEntity(CITY_ID, newName.toLowerCase());
 
         controller.update(city, CITY_ID);
 

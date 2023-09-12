@@ -1,17 +1,17 @@
 package com.ghilly.service;
 
-import com.ghilly.model.dao.CityDAO;
+import com.ghilly.model.dao.CityEntity;
 
 import java.util.Set;
 
 public interface CityService {
-    CityDAO create(CityDAO cityDAO);
+    CityEntity create(CityEntity cityEntity);
 
-    CityDAO getCity(int cityId);
+    CityEntity getCity(int cityId);
 
-    Set<CityDAO> getAllCities();
+    Set<CityEntity> getAllCities();
 
-    CityDAO update(CityDAO cityDAO);
+    CityEntity update(CityEntity cityEntity);
 
     void delete(int cityId);
 

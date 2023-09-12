@@ -2,8 +2,8 @@ package com.ghilly.integrationTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ghilly.exception.*;
-import com.ghilly.model.dao.CityDAO;
-import com.ghilly.model.dao.CountryDAO;
+import com.ghilly.model.dao.CityEntity;
+import com.ghilly.model.dao.CountryEntity;
 import com.ghilly.model.dto.CityDTO;
 import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.CountryRepository;
@@ -41,11 +41,11 @@ public class CatchExceptionIntegrationTest {
     @Test
     public void catchNameAlreadyExistsExceptionStatusBadRequest() throws Exception {
         String rus = "russia";
-        CountryDAO countryDAO = new CountryDAO(rus);
-        countryRepository.save(countryDAO);
-        countryDAO.setName(rus.toUpperCase());
+        CountryEntity countryEntity = new CountryEntity(rus);
+        countryRepository.save(countryEntity);
+        countryEntity.setName(rus.toUpperCase());
         ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(countryDAO);
+        String json = objectMapper.writeValueAsString(countryEntity);
 
         mvc.perform(MockMvcRequestBuilders
                         .post("/countries/")
@@ -77,9 +77,9 @@ public class CatchExceptionIntegrationTest {
     @Test
     public void catchWrongArgumentNameExceptionStatusNotAcceptable() throws Exception {
         String wrongName = "Rus777";
-        CountryDAO countryDAO = new CountryDAO(wrongName);
+        CountryEntity countryEntity = new CountryEntity(wrongName);
         ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(countryDAO);
+        String json = objectMapper.writeValueAsString(countryEntity);
 
         mvc.perform(MockMvcRequestBuilders
                         .post("/countries/")
@@ -96,11 +96,11 @@ public class CatchExceptionIntegrationTest {
     @Test
     public void catchCapitalAlreadyExistsStatusBadRequest() throws Exception {
         String rus = "Russia";
-        countryRepository.save(new CountryDAO(rus));
-        CountryDAO countryDAO = countryRepository.findByName(rus).orElseThrow();
-        int countryId = countryDAO.getId();
+        countryRepository.save(new CountryEntity(rus));
+        CountryEntity countryEntity = countryRepository.findByName(rus).orElseThrow();
+        int countryId = countryEntity.getId();
         String moscow = "Moscow";
-        cityRepository.save(new CityDAO(moscow, countryDAO, true));
+        cityRepository.save(new CityEntity(moscow, countryEntity, true));
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(new CityDTO("Saint-Petersburg", countryId, true));
 
@@ -120,13 +120,13 @@ public class CatchExceptionIntegrationTest {
     @Test
     public void catchCityAlreadyExistsStatusBadRequest() throws Exception {
         String rus = "russia";
-        countryRepository.save(new CountryDAO(rus));
-        CountryDAO countryDAO = countryRepository.findByName(rus).orElseThrow();
-        int countryId = countryDAO.getId();
+        countryRepository.save(new CountryEntity(rus));
+        CountryEntity countryEntity = countryRepository.findByName(rus).orElseThrow();
+        int countryId = countryEntity.getId();
         String moscow = "moscow";
-        cityRepository.save(new CityDAO(moscow, countryDAO, true));
-        CityDAO cityDAO = cityRepository.findByName(moscow).orElseThrow();
-        int id = cityDAO.getId();
+        cityRepository.save(new CityEntity(moscow, countryEntity, true));
+        CityEntity cityEntity = cityRepository.findByName(moscow).orElseThrow();
+        int id = cityEntity.getId();
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(new CityDTO(id, moscow.toUpperCase(), countryId, true));
 

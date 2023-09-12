@@ -1,8 +1,8 @@
 package com.ghilly.web.handler;
 
 import com.ghilly.exception.*;
-import com.ghilly.model.dao.CityTravelDiaryDAO;
-import com.ghilly.model.dao.TravelDiaryDAO;
+import com.ghilly.model.dao.CityTravelDiaryEntity;
+import com.ghilly.model.dao.TravelDiaryEntity;
 import com.ghilly.service.CityServiceRest;
 import com.ghilly.service.TravelDiaryServiceRest;
 import org.slf4j.LoggerFactory;
@@ -19,25 +19,25 @@ public class TravelDiaryHandler {
         this.travelDiaryService = travelDiaryService;
     }
 
-    public TravelDiaryDAO create(TravelDiaryDAO travelDiaryDAO, int cityId) {
-        checkBeforeCreating(travelDiaryDAO, cityId);
-        logger.info("Transferring data {} to the service", travelDiaryDAO);
-        return travelDiaryService.create(travelDiaryDAO);
+    public TravelDiaryEntity create(TravelDiaryEntity travelDiaryEntity, int cityId) {
+        checkBeforeCreating(travelDiaryEntity, cityId);
+        logger.info("Transferring data {} to the service", travelDiaryEntity);
+        return travelDiaryService.create(travelDiaryEntity);
     }
 
-    private void checkBeforeCreating(TravelDiaryDAO travelDiaryDAO, int cityId) {
-        checkDate(travelDiaryDAO.getArrivalDate(), travelDiaryDAO.getDepartureDate());
-        checkRating(travelDiaryDAO.getRating());
-        checkBudget(travelDiaryDAO.getPlannedBudget());
-        checkBudget(travelDiaryDAO.getRealBudget());
-        checkDescriptionLength(travelDiaryDAO.getDescription());
+    private void checkBeforeCreating(TravelDiaryEntity travelDiaryEntity, int cityId) {
+        checkDate(travelDiaryEntity.getArrivalDate(), travelDiaryEntity.getDepartureDate());
+        checkRating(travelDiaryEntity.getRating());
+        checkBudget(travelDiaryEntity.getPlannedBudget());
+        checkBudget(travelDiaryEntity.getRealBudget());
+        checkDescriptionLength(travelDiaryEntity.getDescription());
         checkCityIdExists(cityId);
 
-        CityTravelDiaryDAO cityTravelDiaryDAO = new CityTravelDiaryDAO();
-        cityTravelDiaryDAO.setCityDAO(cityService.getCity(cityId));
-        cityTravelDiaryDAO.setTravelDiaryDAO(travelDiaryDAO);
+        CityTravelDiaryEntity cityTravelDiaryEntity = new CityTravelDiaryEntity();
+        cityTravelDiaryEntity.setCityEntity(cityService.getCity(cityId));
+        cityTravelDiaryEntity.setTravelDiaryEntity(travelDiaryEntity);
 
-        travelDiaryDAO.getCityDAOSet().add(cityTravelDiaryDAO);
+        travelDiaryEntity.getCityTravelSet().add(cityTravelDiaryEntity);
     }
 
     private void checkDate(LocalDate arrivalDate, LocalDate departureDate) {

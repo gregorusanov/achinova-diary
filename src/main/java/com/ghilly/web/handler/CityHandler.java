@@ -3,7 +3,7 @@ package com.ghilly.web.handler;
 import com.ghilly.exception.CapitalAlreadyExistsException;
 import com.ghilly.exception.CityAlreadyExistsException;
 import com.ghilly.exception.IdNotFoundException;
-import com.ghilly.model.dao.CityDAO;
+import com.ghilly.model.dao.CityEntity;
 import com.ghilly.service.CityServiceRest;
 import com.ghilly.service.CountryServiceRest;
 import org.slf4j.LoggerFactory;
@@ -22,25 +22,25 @@ public class CityHandler {
         this.countryServiceRest = countryServiceRest;
     }
 
-    public CityDAO create(CityDAO city, int countryId) {
+    public CityEntity create(CityEntity city, int countryId) {
         checkCityNameAndCountryId(city.getName(), countryId);
         setCountryForCity(city, countryId);
         logger.info("The user data are correct.");
         return cityServiceRest.create(city);
     }
 
-    public CityDAO getCity(int cityId) {
+    public CityEntity getCity(int cityId) {
         checkCityIdExists(cityId);
         logger.info("The user data are correct.");
         return cityServiceRest.getCity(cityId);
     }
 
-    public Set<CityDAO> getAllCities() {
+    public Set<CityEntity> getAllCities() {
         logger.info("Data processing.");
         return cityServiceRest.getAllCities();
     }
 
-    public CityDAO update(CityDAO city, int countryId) {
+    public CityEntity update(CityEntity city, int countryId) {
         checkCityIdExists(city.getId());
         checkCityNameAndCountryId(city.getName(), countryId);
         setCountryForCity(city, countryId);
@@ -60,9 +60,9 @@ public class CityHandler {
         checkCityNameExists(countryId, name);
     }
 
-    private void setCountryForCity(CityDAO city, int countryId) {
+    private void setCountryForCity(CityEntity city, int countryId) {
         checkCapitalExists(countryId, city);
-        city.setCountryDAO(countryServiceRest.getCountryById(countryId));
+        city.setCountryEntity(countryServiceRest.getCountryById(countryId));
     }
 
     private void checkCityIdExists(int cityId) {
@@ -80,8 +80,8 @@ public class CityHandler {
             throw new CityAlreadyExistsException("The city " + name + " already exists.");
     }
 
-    private void checkCapitalExists(int countryId, CityDAO cityDAO) {
-        if (cityDAO.isCapital() && countryServiceRest.getCapitalByCountryId(countryId) != null)
+    private void checkCapitalExists(int countryId, CityEntity cityEntity) {
+        if (cityEntity.isCapital() && countryServiceRest.getCapitalByCountryId(countryId) != null)
             throw new CapitalAlreadyExistsException("The capital for the country ID " + countryId +
                     " is already set. Try to update this city.");
     }

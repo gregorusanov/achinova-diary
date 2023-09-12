@@ -1,7 +1,7 @@
 package com.ghilly.service;
 
-import com.ghilly.model.dao.TravelDiaryDAO;
+import com.ghilly.model.dao.TravelDiaryEntity;
 
 public interface TravelDiaryService {
-    TravelDiaryDAO create(TravelDiaryDAO travelDiaryDAO);
+    TravelDiaryEntity create(TravelDiaryEntity travelDiaryEntity);
 }

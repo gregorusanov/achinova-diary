@@ -2,8 +2,8 @@ package com.ghilly.web.handler;
 
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
-import com.ghilly.model.dao.CityDAO;
-import com.ghilly.model.dao.CountryDAO;
+import com.ghilly.model.dao.CityEntity;
+import com.ghilly.model.dao.CountryEntity;
 import com.ghilly.service.CountryServiceRest;
 import org.slf4j.LoggerFactory;
 
@@ -19,24 +19,24 @@ public class CountryHandler {
         this.countryServiceRest = countryServiceRest;
     }
 
-    public CountryDAO create(CountryDAO country) {
+    public CountryEntity create(CountryEntity country) {
         checkNameIsValid(country.getName());
         logger.info("The user data are correct.");
         return countryServiceRest.create(country);
     }
 
-    public Set<CountryDAO> getAllCountries() {
+    public Set<CountryEntity> getAllCountries() {
         logger.info("Data processing.");
         return countryServiceRest.getAllCountries();
     }
 
-    public CountryDAO getCountryById(int countryId) {
+    public CountryEntity getCountryById(int countryId) {
         checkIdExists(countryId);
         logger.info("The user data are correct.");
         return countryServiceRest.getCountryById(countryId);
     }
 
-    public CountryDAO update(CountryDAO country) {
+    public CountryEntity update(CountryEntity country) {
         checkIdExists(country.getId());
         checkNameIsValid(country.getName());
         logger.info("The user data are correct.");
@@ -49,12 +49,12 @@ public class CountryHandler {
         countryServiceRest.delete(countryId);
     }
 
-    public Set<CityDAO> getAllCitiesByCountryId(int countryId) {
+    public Set<CityEntity> getAllCitiesByCountryId(int countryId) {
         checkIdExists(countryId);
         return countryServiceRest.getAllCitiesByCountryId(countryId);
     }
 
-    public CityDAO getCapitalByCountryId(int countryId) {
+    public CityEntity getCapitalByCountryId(int countryId) {
         checkIdExists(countryId);
         return countryServiceRest.getCapitalByCountryId(countryId);
     }

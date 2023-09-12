@@ -1,6 +1,6 @@
 package com.ghilly.service;
 
-import com.ghilly.model.dao.TravelDiaryDAO;
+import com.ghilly.model.dao.TravelDiaryEntity;
 import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.TravelDiaryRepository;
 import org.slf4j.Logger;
@@ -18,9 +18,9 @@ public class TravelDiaryServiceRest implements TravelDiaryService {
     }
 
     @Override
-    public TravelDiaryDAO create(TravelDiaryDAO travelDiaryDAO) {
-        logger.info("Transferring data {} to the repository", travelDiaryDAO);
-        return travelDiaryRepository.save(travelDiaryDAO);
+    public TravelDiaryEntity create(TravelDiaryEntity travelDiaryEntity) {
+        logger.info("Transferring data {} to the repository", travelDiaryEntity);
+        return travelDiaryRepository.save(travelDiaryEntity);
     }
 
 }

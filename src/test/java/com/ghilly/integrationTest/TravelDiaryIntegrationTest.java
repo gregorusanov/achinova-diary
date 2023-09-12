@@ -1,8 +1,8 @@
 package com.ghilly.integrationTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ghilly.model.dao.CityDAO;
-import com.ghilly.model.dao.CountryDAO;
+import com.ghilly.model.dao.CityEntity;
+import com.ghilly.model.dao.CountryEntity;
 import com.ghilly.model.dto.TravelDiaryDTO;
 import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.CountryRepository;
@@ -39,11 +39,11 @@ public class TravelDiaryIntegrationTest {
 
     @Test
     public void createAndGetStatusOk() throws Exception {
-        CountryDAO ger = new CountryDAO("Germany");
+        CountryEntity ger = new CountryEntity("Germany");
         countryRepository.save(ger);
         String berlin = "Berlin";
-        CityDAO cityDAO = new CityDAO(berlin, ger, true);
-        cityRepository.save(cityDAO);
+        CityEntity cityEntity = new CityEntity(berlin, ger, true);
+        cityRepository.save(cityEntity);
         int cityId = cityRepository.findByName(berlin).orElseThrow().getId();
         TravelDiaryDTO travelDiaryDTO = new TravelDiaryDTO(1, "09.03.2022", "10.03.2022",
                 800, 1000, "Home.", 8, cityId);

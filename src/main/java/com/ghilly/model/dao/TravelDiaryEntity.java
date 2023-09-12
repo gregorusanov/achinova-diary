@@ -6,7 +6,6 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 
 @Entity
@@ -15,7 +14,7 @@ import java.util.Set;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class TravelDiaryDAO implements Serializable {
+public class TravelDiaryEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "travel_diary_seq")
     @SequenceGenerator(name = "travel_diary_seq", sequenceName = "travel_diary_id_seq", allocationSize = 1)
@@ -42,11 +41,11 @@ public class TravelDiaryDAO implements Serializable {
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    @OneToMany(mappedBy = "travelDiaryDAO", cascade = CascadeType.ALL)
-    private Set<CityTravelDiaryDAO> cityDAOSet = new HashSet<>();
+    @OneToMany(mappedBy = "travelDiaryEntity", cascade = CascadeType.ALL)
+    private Set<CityTravelDiaryEntity> cityTravelSet = new HashSet<>();
 
-    //    @PreRemove
-//    private void preRemove() {
-//        cityDAOSet.forEach();
-//    }
+    @PreRemove
+    private void preRemove() {
+        cityTravelSet.forEach(cityTravelDiaryEntity -> cityTravelDiaryEntity.setTravelDiaryEntity(null));
+    }
 }

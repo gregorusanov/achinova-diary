@@ -1,8 +1,8 @@
 package com.ghilly.transformer;
 
-import com.ghilly.model.dao.CityDAO;
-import com.ghilly.model.dao.CountryDAO;
-import com.ghilly.model.dao.TravelDiaryDAO;
+import com.ghilly.model.dao.CityEntity;
+import com.ghilly.model.dao.CountryEntity;
+import com.ghilly.model.dao.TravelDiaryEntity;
 import com.ghilly.model.dto.CityDTO;
 import com.ghilly.model.dto.CountryDTO;
 import com.ghilly.model.dto.TravelDiaryDTO;
@@ -15,29 +15,29 @@ public class TransformerDAOandDTO {
     private TransformerDAOandDTO() {
     }
 
-    public static CountryDAO transformToCountryDAO(CountryDTO countryDTO) {
-        return new CountryDAO(countryDTO.getId(), countryDTO.getName(), new HashSet<>());
+    public static CountryEntity transformToCountryDAO(CountryDTO countryDTO) {
+        return new CountryEntity(countryDTO.getId(), countryDTO.getName(), new HashSet<>());
     }
 
-    public static CountryDTO transformToCountryDTO(CountryDAO countryDAO) {
-        int id = countryDAO.getId();
-        String name = countryDAO.getName();
+    public static CountryDTO transformToCountryDTO(CountryEntity countryEntity) {
+        int id = countryEntity.getId();
+        String name = countryEntity.getName();
         return new CountryDTO(id, name);
     }
 
-    public static CityDTO transformToCityDTO(CityDAO cityDAO) {
-        return new CityDTO(cityDAO.getId(), cityDAO.getName(), cityDAO.getCountryDAO().getId(), cityDAO.isCapital());
+    public static CityDTO transformToCityDTO(CityEntity cityEntity) {
+        return new CityDTO(cityEntity.getId(), cityEntity.getName(), cityEntity.getCountryEntity().getId(), cityEntity.isCapital());
     }
 
-    public static CityDAO transformToCityDAO(CityDTO cityDTO) {
-        return new CityDAO(cityDTO.getId(), cityDTO.getName(), null, cityDTO.isCapital());
+    public static CityEntity transformToCityDAO(CityDTO cityDTO) {
+        return new CityEntity(cityDTO.getId(), cityDTO.getName(), null, cityDTO.isCapital());
     }
 
-    public static TravelDiaryDAO transformToTravelDiaryDAO(TravelDiaryDTO travelDiaryDTO) {
+    public static TravelDiaryEntity transformToTravelDiaryDAO(TravelDiaryDTO travelDiaryDTO) {
         String s = "dd.MM.yyyy";
         LocalDate arrivalDate = LocalDate.parse(travelDiaryDTO.getArrivalDate(), DateTimeFormatter.ofPattern(s));
         LocalDate departureDate = LocalDate.parse(travelDiaryDTO.getDepartureDate(), DateTimeFormatter.ofPattern(s));
-        return TravelDiaryDAO.builder()
+        return TravelDiaryEntity.builder()
                 .id(travelDiaryDTO.getId())
                 .arrivalDate(arrivalDate)
                 .departureDate(departureDate)
@@ -45,20 +45,20 @@ public class TransformerDAOandDTO {
                 .realBudget(travelDiaryDTO.getRealBudget())
                 .description(travelDiaryDTO.getDescription())
                 .rating(travelDiaryDTO.getRating())
-                .cityDAOSet(new HashSet<>())
+                .cityTravelSet(new HashSet<>())
                 .build();
     }
 
-    public static TravelDiaryDTO transformToTravelDiaryDTO(TravelDiaryDAO travelDiaryDAO) {
+    public static TravelDiaryDTO transformToTravelDiaryDTO(TravelDiaryEntity travelDiaryEntity) {
         return TravelDiaryDTO.builder()
-                .id(travelDiaryDAO.getId())
-                .arrivalDate(travelDiaryDAO.getArrivalDate().toString())
-                .departureDate(travelDiaryDAO.getDepartureDate().toString())
-                .plannedBudget(travelDiaryDAO.getPlannedBudget())
-                .realBudget(travelDiaryDAO.getRealBudget())
-                .description(travelDiaryDAO.getDescription())
-                .rating(travelDiaryDAO.getRating())
-                .cityId(travelDiaryDAO.getCityDAOSet().stream().findFirst().get().getCityDAO().getId())
+                .id(travelDiaryEntity.getId())
+                .arrivalDate(travelDiaryEntity.getArrivalDate().toString())
+                .departureDate(travelDiaryEntity.getDepartureDate().toString())
+                .plannedBudget(travelDiaryEntity.getPlannedBudget())
+                .realBudget(travelDiaryEntity.getRealBudget())
+                .description(travelDiaryEntity.getDescription())
+                .rating(travelDiaryEntity.getRating())
+                .cityId(travelDiaryEntity.getCityTravelSet().stream().findFirst().get().getCityEntity().getId())
                 .build();
 
     }

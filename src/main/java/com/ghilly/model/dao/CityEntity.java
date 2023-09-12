@@ -9,14 +9,11 @@ import java.util.Set;
 
 @Entity
 @Table(name = "cities")
-@ToString
-@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @Builder
-public class CityDAO implements Serializable {
+public class CityEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "cities_seq")
@@ -29,48 +26,48 @@ public class CityDAO implements Serializable {
 
     @ManyToOne()
     @JoinColumn(name = "country_id", nullable = false)
-    private CountryDAO countryDAO;
+    private CountryEntity countryEntity;
 
 
     @Column(name = "capital", columnDefinition = "boolean default false")
     private boolean capital;
 
-    @OneToMany(mappedBy = "cityDAO", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "cityEntity", cascade = CascadeType.ALL, orphanRemoval = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
-    private Set<CityTravelDiaryDAO> travelDiaryDAOSet = new HashSet<>();
+    private Set<CityTravelDiaryEntity> travelDiaryCitySet = new HashSet<>();
 
-    public CityDAO(int id, String name) {
+    public CityEntity(int id, String name) {
         this.id = id;
         this.name = name;
     }
 
-    public CityDAO(int id, String name, boolean capital) {
+    public CityEntity(int id, String name, boolean capital) {
         this.id = id;
         this.name = name;
         this.capital = capital;
     }
 
-    public CityDAO(int id, String name, CountryDAO countryDAO, boolean capital) {
+    public CityEntity(int id, String name, CountryEntity countryEntity, boolean capital) {
         this.id = id;
         this.name = name;
-        this.countryDAO = countryDAO;
+        this.countryEntity = countryEntity;
         this.capital = capital;
     }
 
-    public CityDAO(String name, boolean capital) {
+    public CityEntity(String name, boolean capital) {
         this.name = name;
         this.capital = capital;
     }
 
-    public CityDAO(String name, CountryDAO countryDAO, boolean capital) {
+    public CityEntity(String name, CountryEntity countryEntity, boolean capital) {
         this.name = name;
-        this.countryDAO = countryDAO;
+        this.countryEntity = countryEntity;
         this.capital = capital;
     }
 
-    public CityDAO(String name, CountryDAO countryDAO) {
+    public CityEntity(String name, CountryEntity countryEntity) {
         this.name = name;
-        this.countryDAO = countryDAO;
+        this.countryEntity = countryEntity;
     }
 }

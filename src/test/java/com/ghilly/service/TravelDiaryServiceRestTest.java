@@ -1,6 +1,6 @@
 package com.ghilly.service;
 
-import com.ghilly.model.dao.CityDAO;
+import com.ghilly.model.dao.CityEntity;
 import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.TravelDiaryRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -16,8 +16,8 @@ class TravelDiaryServiceRestTest {
     private CityRepository cityRepository;
     private TravelDiaryRepository travelDiaryRepository;
     private TravelDiaryServiceRest service;
-    private HashSet<CityDAO> cities = new HashSet<>();
-    private CityDAO city = new CityDAO(2, "Netherlands");
+    private HashSet<CityEntity> cities = new HashSet<>();
+    private CityEntity city = new CityEntity(2, "Netherlands");
 
     @BeforeEach
     void init() {
@@ -36,7 +36,7 @@ class TravelDiaryServiceRestTest {
 //        cities.add(city);
 //        LocalDate arrivalDate = parsingDate("10.03.2023");
 //        LocalDate departureDate = parsingDate("12.03.2023");
-//        TravelDiaryDAO record = new TravelDiaryDAO(1, arrivalDate, departureDate, 800.0D, 1000.0D,
+//        TravelDiaryEntity record = new TravelDiaryEntity(1, arrivalDate, departureDate, 800.0D, 1000.0D,
 //                "Cold place.", 8, cities);
 //
 //        service.create(record);

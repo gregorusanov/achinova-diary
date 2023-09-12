@@ -1,5 +1,6 @@
 package com.ghilly.model.dao;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,9 +9,10 @@ import java.io.Serializable;
 
 @Entity
 @NoArgsConstructor
+@AllArgsConstructor
 @Data
 @Table(name = "cities_travel_diary")
-public class CityTravelDiaryDAO implements Serializable {
+public class CityTravelDiaryEntity implements Serializable {
 
     @EmbeddedId
     private CityTravelDiaryCompositeKey id = new CityTravelDiaryCompositeKey();
@@ -18,10 +20,10 @@ public class CityTravelDiaryDAO implements Serializable {
     @ManyToOne
     @MapsId("cityId")
     @JoinColumn(name = "city_id")
-    private CityDAO cityDAO;
+    private CityEntity cityEntity;
 
     @ManyToOne
     @MapsId("travelDiaryId")
     @JoinColumn(name = "travel_diary_id")
-    private TravelDiaryDAO travelDiaryDAO;
+    private TravelDiaryEntity travelDiaryEntity;
 }
