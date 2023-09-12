@@ -21,7 +21,7 @@ class TravelDiaryControllerTest {
 //    void create() {
 //        TravelDiary travelDiaryDTO = new TravelDiary(1, "09.03.2022", "10.03.2022",
 //                800, 1000, "Home.", 8, cityId);
-//        TravelDiaryEntity travelDiaryDAO = TransformerDAOandDTO.transformToTravelDiaryDAO(travelDiaryDTO);
+//        TravelDiaryEntity travelDiaryDAO = EntityTransformer.transformToTravelDiaryEntity(travelDiaryDTO);
 //        controller.create(travelDiaryDTO);
 //
 //        assertAll(

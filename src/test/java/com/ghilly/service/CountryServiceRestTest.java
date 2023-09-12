@@ -118,13 +118,13 @@ class CountryServiceRestTest {
 
     @Test
     void getCapitalByCountryId() {
-        when(cityRepository.findCityDAOByCountryEntity_IdAndCapitalIsTrue(ID))
+        when(cityRepository.findCityEntityByCountryEntity_IdAndCapitalIsTrue(ID))
                 .thenReturn(Optional.of(new CityEntity("Istanbul", COUNTRY_DAO, true)));
 
         service.getCapitalByCountryId(ID);
 
         assertAll(
-                () -> verify(cityRepository).findCityDAOByCountryEntity_IdAndCapitalIsTrue(ID),
+                () -> verify(cityRepository).findCityEntityByCountryEntity_IdAndCapitalIsTrue(ID),
                 () -> verifyNoMoreInteractions(countryRepository)
         );
     }

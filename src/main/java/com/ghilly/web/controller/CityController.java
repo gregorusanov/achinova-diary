@@ -1,7 +1,7 @@
 package com.ghilly.web.controller;
 
 import com.ghilly.model.dto.City;
-import com.ghilly.transformer.TransformerDAOandDTO;
+import com.ghilly.transformer.EntityTransformer;
 import com.ghilly.web.handler.CityHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,9 +31,9 @@ public class CityController {
         logger.info("The data are received from the user. City: [{}]", city);
         city.setName(city.getName().toLowerCase());
         return Optional.of(city)
-                .map(cityDTO -> TransformerDAOandDTO.transformToCityDAO(city))
-                .map(cityDAO -> cityHandler.create(cityDAO, city.getCountryId()))
-                .map(TransformerDAOandDTO::transformToCityDTO)
+                .map(cityToTransform -> EntityTransformer.transformToCityEntity(city))
+                .map(cityEntity -> cityHandler.create(cityEntity, city.getCountryId()))
+                .map(EntityTransformer::transformToCity)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
     }
@@ -42,7 +42,7 @@ public class CityController {
     public ResponseEntity<City> getCity(@PathVariable int cityId) {
         logger.info("The data are received from the user.");
         return Optional.of(cityHandler.getCity(cityId))
-                .map(TransformerDAOandDTO::transformToCityDTO)
+                .map(EntityTransformer::transformToCity)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
@@ -51,7 +51,7 @@ public class CityController {
     public ResponseEntity<Set<City>> getAllCities() {
         logger.info("Data processing.");
         Set<City> cities = cityHandler.getAllCities().stream()
-                .map(TransformerDAOandDTO::transformToCityDTO)
+                .map(EntityTransformer::transformToCity)
                 .sorted(Comparator.comparing(City::getName))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         return ResponseEntity.ok(cities);
@@ -63,9 +63,9 @@ public class CityController {
         city.setName(city.getName().toLowerCase());
         city.setId(cityId);
         return Optional.of(city)
-                .map(cityDTO -> TransformerDAOandDTO.transformToCityDAO(city))
-                .map(cityDAO -> cityHandler.update(cityDAO, city.getCountryId()))
-                .map(TransformerDAOandDTO::transformToCityDTO)
+                .map(cityToTransform -> EntityTransformer.transformToCityEntity(city))
+                .map(cityEntity -> cityHandler.update(cityEntity, city.getCountryId()))
+                .map(EntityTransformer::transformToCity)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }

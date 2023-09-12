@@ -15,8 +15,7 @@ public interface CityRepository extends CrudRepository<CityEntity, Integer> {
     @NonNull
     Set<CityEntity> findAll();
     Optional<CityEntity> findByName(String cityName);
-
-    Optional<CityEntity> findCityDAOByCountryEntity_IdAndCapitalIsTrue(int countryId);
+    Optional<CityEntity> findCityEntityByCountryEntity_IdAndCapitalIsTrue(int countryId);
 
     boolean existsByCountryEntity_IdAndName(int countryId, String name);
 }

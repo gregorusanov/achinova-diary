@@ -1,7 +1,7 @@
 package com.ghilly.web.controller;
 
 import com.ghilly.model.dto.TravelDiary;
-import com.ghilly.transformer.TransformerDAOandDTO;
+import com.ghilly.transformer.EntityTransformer;
 import com.ghilly.web.handler.TravelDiaryHandler;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -25,9 +25,9 @@ public class TravelDiaryController {
     public ResponseEntity<TravelDiary> create(@RequestBody TravelDiary travelDiary) {
         logger.info("Transfer data {} to handler.", travelDiary);
         return Optional.of(travelDiary)
-                .map(TransformerDAOandDTO::transformToTravelDiaryDAO)
-                .map(travelDiaryDAO -> handler.create(travelDiaryDAO, travelDiary.getCityId()))
-                .map(TransformerDAOandDTO::transformToTravelDiaryDTO)
+                .map(EntityTransformer::transformToTravelDiaryEntity)
+                .map(travelDiaryEntity -> handler.create(travelDiaryEntity, travelDiary.getCityId()))
+                .map(EntityTransformer::transformToTravelDiary)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.BAD_REQUEST).build());
     }
