@@ -3,7 +3,7 @@ package com.ghilly.integrationTest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ghilly.model.dao.CityEntity;
 import com.ghilly.model.dao.CountryEntity;
-import com.ghilly.model.dto.TravelDiaryDTO;
+import com.ghilly.model.dto.TravelDiary;
 import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.CountryRepository;
 import com.ghilly.repository.TravelDiaryRepository;
@@ -45,10 +45,10 @@ public class TravelDiaryIntegrationTest {
         CityEntity cityEntity = new CityEntity(berlin, ger, true);
         cityRepository.save(cityEntity);
         int cityId = cityRepository.findByName(berlin).orElseThrow().getId();
-        TravelDiaryDTO travelDiaryDTO = new TravelDiaryDTO(1, "09.03.2022", "10.03.2022",
+        TravelDiary travelDiary = new TravelDiary(1, "09.03.2022", "10.03.2022",
                 800, 1000, "Home.", 8, cityId);
         ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(travelDiaryDTO);
+        String json = objectMapper.writeValueAsString(travelDiary);
 
         mvc.perform(MockMvcRequestBuilders
                         .post(url)

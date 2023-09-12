@@ -1,6 +1,6 @@
 package com.ghilly.web.controller;
 
-import com.ghilly.model.dto.CityDTO;
+import com.ghilly.model.dto.City;
 import com.ghilly.transformer.TransformerDAOandDTO;
 import com.ghilly.web.handler.CityHandler;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class CityController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<CityDTO> create(@RequestBody CityDTO city) {
+    public ResponseEntity<City> create(@RequestBody City city) {
         logger.info("The data are received from the user. City: [{}]", city);
         city.setName(city.getName().toLowerCase());
         return Optional.of(city)
@@ -39,7 +39,7 @@ public class CityController {
     }
 
     @GetMapping("/{cityId}")
-    public ResponseEntity<CityDTO> getCity(@PathVariable int cityId) {
+    public ResponseEntity<City> getCity(@PathVariable int cityId) {
         logger.info("The data are received from the user.");
         return Optional.of(cityHandler.getCity(cityId))
                 .map(TransformerDAOandDTO::transformToCityDTO)
@@ -48,17 +48,17 @@ public class CityController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Set<CityDTO>> getAllCities() {
+    public ResponseEntity<Set<City>> getAllCities() {
         logger.info("Data processing.");
-        Set<CityDTO> cityDTOS = cityHandler.getAllCities().stream()
+        Set<City> cities = cityHandler.getAllCities().stream()
                 .map(TransformerDAOandDTO::transformToCityDTO)
-                .sorted(Comparator.comparing(CityDTO::getName))
+                .sorted(Comparator.comparing(City::getName))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
-        return ResponseEntity.ok(cityDTOS);
+        return ResponseEntity.ok(cities);
     }
 
     @PutMapping("/{cityId}")
-    public ResponseEntity<CityDTO> update(@RequestBody CityDTO city, @PathVariable int cityId) {
+    public ResponseEntity<City> update(@RequestBody City city, @PathVariable int cityId) {
         logger.info("The data are received from the user.");
         city.setName(city.getName().toLowerCase());
         city.setId(cityId);

@@ -2,7 +2,7 @@ package com.ghilly.web.controller;
 
 import com.ghilly.model.dao.CityEntity;
 import com.ghilly.model.dao.CountryEntity;
-import com.ghilly.model.dto.CountryDTO;
+import com.ghilly.model.dto.Country;
 import com.ghilly.web.handler.CountryHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +16,7 @@ class CountryControllerTest {
 
     private static final int ID = 100;
     private static final String NAME = "ussr";
-    private static final CountryDTO USSR_DTO = new CountryDTO(NAME.toUpperCase());
+    private static final Country USSR_DTO = new Country(NAME.toUpperCase());
     private static final CountryEntity USSR_DAO = new CountryEntity(NAME);
     private static final CountryEntity USSR_DAO_FROM_REPO = new CountryEntity(ID, NAME);
     private CountryHandler countryHandler;
@@ -68,7 +68,7 @@ class CountryControllerTest {
     @Test
     void updateCountry() {
         String newName = "Russia";
-        CountryDTO toChange = new CountryDTO(newName);
+        Country toChange = new Country(newName);
         CountryEntity updated = new CountryEntity(ID, newName.toLowerCase());
         when(countryHandler.update(updated)).thenReturn(updated);
 

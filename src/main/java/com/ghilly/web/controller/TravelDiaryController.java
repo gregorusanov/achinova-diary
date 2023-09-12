@@ -1,6 +1,6 @@
 package com.ghilly.web.controller;
 
-import com.ghilly.model.dto.TravelDiaryDTO;
+import com.ghilly.model.dto.TravelDiary;
 import com.ghilly.transformer.TransformerDAOandDTO;
 import com.ghilly.web.handler.TravelDiaryHandler;
 import org.slf4j.LoggerFactory;
@@ -22,7 +22,7 @@ public class TravelDiaryController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<TravelDiaryDTO> create(@RequestBody TravelDiaryDTO travelDiary) {
+    public ResponseEntity<TravelDiary> create(@RequestBody TravelDiary travelDiary) {
         logger.info("Transfer data {} to handler.", travelDiary);
         return Optional.of(travelDiary)
                 .map(TransformerDAOandDTO::transformToTravelDiaryDAO)

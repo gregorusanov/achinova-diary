@@ -19,7 +19,7 @@ class TravelDiaryControllerTest {
 // This test shows that the argument in the assertion is different from the argument in the called method on the 29 line
 //    @Test
 //    void create() {
-//        TravelDiaryDTO travelDiaryDTO = new TravelDiaryDTO(1, "09.03.2022", "10.03.2022",
+//        TravelDiary travelDiaryDTO = new TravelDiary(1, "09.03.2022", "10.03.2022",
 //                800, 1000, "Home.", 8, cityId);
 //        TravelDiaryEntity travelDiaryDAO = TransformerDAOandDTO.transformToTravelDiaryDAO(travelDiaryDTO);
 //        controller.create(travelDiaryDTO);

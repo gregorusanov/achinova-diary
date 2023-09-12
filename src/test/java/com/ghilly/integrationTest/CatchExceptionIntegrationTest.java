@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ghilly.exception.*;
 import com.ghilly.model.dao.CityEntity;
 import com.ghilly.model.dao.CountryEntity;
-import com.ghilly.model.dto.CityDTO;
+import com.ghilly.model.dto.City;
 import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.CountryRepository;
 import org.junit.Test;
@@ -102,7 +102,7 @@ public class CatchExceptionIntegrationTest {
         String moscow = "Moscow";
         cityRepository.save(new CityEntity(moscow, countryEntity, true));
         ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(new CityDTO("Saint-Petersburg", countryId, true));
+        String json = objectMapper.writeValueAsString(new City("Saint-Petersburg", countryId, true));
 
         mvc.perform(MockMvcRequestBuilders
                         .post("/cities/")
@@ -128,7 +128,7 @@ public class CatchExceptionIntegrationTest {
         CityEntity cityEntity = cityRepository.findByName(moscow).orElseThrow();
         int id = cityEntity.getId();
         ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(new CityDTO(id, moscow.toUpperCase(), countryId, true));
+        String json = objectMapper.writeValueAsString(new City(id, moscow.toUpperCase(), countryId, true));
 
         mvc.perform(MockMvcRequestBuilders
                         .put("/cities/" + id)

@@ -2,7 +2,7 @@ package com.ghilly.web.controller;
 
 import com.ghilly.model.dao.CityEntity;
 import com.ghilly.model.dao.CountryEntity;
-import com.ghilly.model.dto.CityDTO;
+import com.ghilly.model.dto.City;
 import com.ghilly.web.handler.CityHandler;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,7 +19,7 @@ class CityControllerTest {
     private static final String CITY_NAME = "moscow";
     private static final CountryEntity RUS = new CountryEntity(COUNTRY_ID, "russia");
     private static final CityEntity CITY_DAO_FROM_REPO = new CityEntity(CITY_ID, CITY_NAME, RUS, true);
-    private static final CityDTO CITY_DTO = new CityDTO(CITY_NAME.toUpperCase(), COUNTRY_ID, true);
+    private static final City CITY_DTO = new City(CITY_NAME.toUpperCase(), COUNTRY_ID, true);
     private static final CityEntity CITY_DAO = new CityEntity(CITY_NAME, null, true);
     private CityHandler handler;
     private CityController controller;
@@ -34,7 +34,7 @@ class CityControllerTest {
     void createCity() {
         when(handler.create(CITY_DAO, COUNTRY_ID)).thenReturn(CITY_DAO_FROM_REPO);
 
-        CityDTO actual = controller.create(CITY_DTO).getBody();
+        City actual = controller.create(CITY_DTO).getBody();
 
         assertAll(
                 () -> {
@@ -50,7 +50,7 @@ class CityControllerTest {
     void getCity() {
         when(handler.getCity(CITY_ID)).thenReturn(CITY_DAO_FROM_REPO);
 
-        CityDTO actual = controller.getCity(CITY_ID).getBody();
+        City actual = controller.getCity(CITY_ID).getBody();
 
         assertAll(
                 () -> {
@@ -82,7 +82,7 @@ class CityControllerTest {
     @Test
     void update() {
         String newName = "Moskvabad";
-        CityDTO city = new CityDTO(newName, COUNTRY_ID);
+        City city = new City(newName, COUNTRY_ID);
         CityEntity transformedCity = new CityEntity(CITY_ID, newName.toLowerCase());
 
         controller.update(city, CITY_ID);

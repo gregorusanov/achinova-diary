@@ -5,7 +5,7 @@ import com.ghilly.exception.CityAlreadyExistsException;
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.model.dao.CityEntity;
 import com.ghilly.model.dao.CountryEntity;
-import com.ghilly.model.dto.CityDTO;
+import com.ghilly.model.dto.City;
 import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.CountryRepository;
 import org.junit.Test;
@@ -47,7 +47,7 @@ public class CityEntityRestControllerIntegrationTest {
         countryRepository.save(countryEntity);
         int id = Objects.requireNonNull(countryRepository.findByName(jp).orElse(null)).getId();
         String tokyo = "Tokyo";
-        CityDTO city = new CityDTO(tokyo, id, true);
+        City city = new City(tokyo, id, true);
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(city);
 
@@ -68,7 +68,7 @@ public class CityEntityRestControllerIntegrationTest {
         countryRepository.save(japan);
         int id = Objects.requireNonNull(countryRepository.findByName(jp).orElse(null)).getId();
         String tokyo = "Tokyo";
-        CityDTO city = new CityDTO(tokyo, id, true);
+        City city = new City(tokyo, id, true);
         cityRepository.save(new CityEntity(tokyo.toLowerCase(), japan, true));
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(city);
@@ -158,7 +158,7 @@ public class CityEntityRestControllerIntegrationTest {
         int countryId = countryRepository.findByName(rus.getName()).orElseThrow().getId();
         cityRepository.save(new CityEntity(oldName, rus));
         int cityId = cityRepository.findByName(oldName).orElseThrow().getId();
-        CityDTO volgograd = new CityDTO(newName, countryId);
+        City volgograd = new City(newName, countryId);
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(volgograd);
 

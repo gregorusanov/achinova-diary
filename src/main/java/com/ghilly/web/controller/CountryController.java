@@ -1,7 +1,7 @@
 package com.ghilly.web.controller;
 
-import com.ghilly.model.dto.CityDTO;
-import com.ghilly.model.dto.CountryDTO;
+import com.ghilly.model.dto.City;
+import com.ghilly.model.dto.Country;
 import com.ghilly.transformer.TransformerDAOandDTO;
 import com.ghilly.web.handler.CountryHandler;
 import org.slf4j.Logger;
@@ -27,7 +27,7 @@ public class CountryController {
     }
 
     @PostMapping("/")
-    public ResponseEntity<CountryDTO> create(@RequestBody CountryDTO country) {
+    public ResponseEntity<Country> create(@RequestBody Country country) {
         country.setName(country.getName().toLowerCase());
         return Optional.of(country)
                 .map(TransformerDAOandDTO::transformToCountryDAO)
@@ -38,18 +38,18 @@ public class CountryController {
     }
 
     @GetMapping("/all")
-    public ResponseEntity<Set<CountryDTO>> getAllCountries() {
+    public ResponseEntity<Set<Country>> getAllCountries() {
         logger.info("Data processing.");
-        Set<CountryDTO> allCountries = countryHandler.getAllCountries()
+        Set<Country> allCountries = countryHandler.getAllCountries()
                 .stream()
                 .map(TransformerDAOandDTO::transformToCountryDTO)
-                .sorted(Comparator.comparing(CountryDTO::getName))
+                .sorted(Comparator.comparing(Country::getName))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         return ResponseEntity.ok().body(allCountries);
     }
 
     @GetMapping("/{countryId}")
-    public ResponseEntity<CountryDTO> getCountryById(@PathVariable int countryId) {
+    public ResponseEntity<Country> getCountryById(@PathVariable int countryId) {
         logger.info("The data are received from the user.");
         return Optional.of(countryHandler.getCountryById(countryId))
                 .map(TransformerDAOandDTO::transformToCountryDTO)
@@ -58,7 +58,7 @@ public class CountryController {
     }
 
     @PutMapping("/{countryId}")
-    public ResponseEntity<CountryDTO> update(@RequestBody CountryDTO country, @PathVariable int countryId) {
+    public ResponseEntity<Country> update(@RequestBody Country country, @PathVariable int countryId) {
         country.setName(country.getName().toLowerCase());
         logger.info("The data are received from the user.");
         country.setId(countryId);
@@ -78,17 +78,17 @@ public class CountryController {
     }
 
     @GetMapping("/{countryId}/cities/all")
-    public ResponseEntity<Set<CityDTO>> getAllCitiesByCountryId(@PathVariable int countryId) {
-        Set<CityDTO> allCitiesByCountry = countryHandler.getAllCitiesByCountryId(countryId)
+    public ResponseEntity<Set<City>> getAllCitiesByCountryId(@PathVariable int countryId) {
+        Set<City> allCitiesByCountry = countryHandler.getAllCitiesByCountryId(countryId)
                 .stream()
                 .map(TransformerDAOandDTO::transformToCityDTO)
-                .sorted(Comparator.comparing(CityDTO::getName))
+                .sorted(Comparator.comparing(City::getName))
                 .collect(Collectors.toCollection(LinkedHashSet::new));
         return ResponseEntity.ok().body(allCitiesByCountry);
     }
 
     @GetMapping("/{countryId}/capital")
-    public ResponseEntity<CityDTO> getCapitalByCountryId(@PathVariable int countryId) {
+    public ResponseEntity<City> getCapitalByCountryId(@PathVariable int countryId) {
         logger.info("The data are received from the user.");
         return Optional.of(countryHandler.getCapitalByCountryId(countryId))
                 .map(TransformerDAOandDTO::transformToCityDTO)

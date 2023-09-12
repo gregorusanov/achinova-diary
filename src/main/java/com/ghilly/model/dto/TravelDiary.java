@@ -1,15 +1,15 @@
 package com.ghilly.model.dto;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@ToString
-@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+@Data
 @Builder
-public class TravelDiaryDTO {
+public class TravelDiary {
     private int id;
     private String arrivalDate;
     private String departureDate;
@@ -19,7 +19,7 @@ public class TravelDiaryDTO {
     private int rating;
     private int cityId;
 
-    public TravelDiaryDTO(int id, String arrivalDate, String departureDate) {
+    public TravelDiary(int id, String arrivalDate, String departureDate) {
         this.id = id;
         this.arrivalDate = arrivalDate;
         this.departureDate = departureDate;
