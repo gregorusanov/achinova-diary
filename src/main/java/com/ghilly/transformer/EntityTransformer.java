@@ -1,6 +1,7 @@
 package com.ghilly.transformer;
 
 import com.ghilly.model.dao.CityEntity;
+import com.ghilly.model.dao.CityTravelDiaryEntity;
 import com.ghilly.model.dao.CountryEntity;
 import com.ghilly.model.dao.TravelDiaryEntity;
 import com.ghilly.model.dto.City;
@@ -10,6 +11,8 @@ import com.ghilly.model.dto.TravelDiary;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class EntityTransformer {
     private EntityTransformer() {
@@ -65,6 +68,10 @@ public class EntityTransformer {
     }
 
     public static TravelDiary transformToTravelDiary(TravelDiaryEntity travelDiaryEntity) {
+        Set<Integer> cities = travelDiaryEntity.getCityTravelSet().stream()
+                .map((CityTravelDiaryEntity::getCityEntity))
+                .map(CityEntity::getId)
+                .collect(Collectors.toSet());
         return TravelDiary.builder()
                 .id(travelDiaryEntity.getId())
                 .arrivalDate(travelDiaryEntity.getArrivalDate().toString())
@@ -73,7 +80,7 @@ public class EntityTransformer {
                 .realBudget(travelDiaryEntity.getRealBudget())
                 .description(travelDiaryEntity.getDescription())
                 .rating(travelDiaryEntity.getRating())
-                .cityId(travelDiaryEntity.getCityTravelSet().stream().findFirst().orElseThrow().getCityEntity().getId())
+                .cityIdSet(cities)
                 .build();
 
     }

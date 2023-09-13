@@ -9,6 +9,8 @@ import com.ghilly.service.TravelDiaryServiceRest;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
+import java.util.Optional;
+import java.util.Set;
 
 public class TravelDiaryHandler {
     private static final org.slf4j.Logger logger = LoggerFactory.getLogger(TravelDiaryHandler.class);
@@ -20,23 +22,29 @@ public class TravelDiaryHandler {
         this.travelDiaryService = travelDiaryService;
     }
 
-    public TravelDiaryEntity create(TravelDiaryEntity travelDiaryEntity, int cityId) {
-        checkData(travelDiaryEntity, cityId);
-        enrichEntity(travelDiaryEntity, cityId);
+    public TravelDiaryEntity create(TravelDiaryEntity travelDiaryEntity, Set<Integer> citiesId) {
+        checkData(travelDiaryEntity);
+        citiesId.forEach((cityId) -> enrichEntity(travelDiaryEntity, cityId));
         logger.info("Transferring data {} to the service", travelDiaryEntity);
         return travelDiaryService.create(travelDiaryEntity);
     }
 
-    private void checkData(TravelDiaryEntity travelDiaryEntity, int cityId) {
+    public Optional<TravelDiaryEntity> getTravelDiaryEntityById(int id) {
+        logger.info("Checking city {} exists", id);
+        checkTravelIdExists(id);
+        return travelDiaryService.getTravelDiaryEntityById(id);
+    }
+
+    private void checkData(TravelDiaryEntity travelDiaryEntity) {
         checkDate(travelDiaryEntity.getArrivalDate(), travelDiaryEntity.getDepartureDate());
         checkRating(travelDiaryEntity.getRating());
         checkBudget(travelDiaryEntity.getPlannedBudget());
         checkBudget(travelDiaryEntity.getRealBudget());
         checkDescriptionLength(travelDiaryEntity.getDescription());
-        checkCityIdExists(cityId);
     }
 
     private void enrichEntity(TravelDiaryEntity travelDiaryEntity, int cityId) {
+        checkCityIdExists(cityId);
         CityTravelDiaryEntity cityTravelDiaryEntity = CityTravelDiaryEntity.builder()
                 .id(new CityTravelDiaryCompositeKey())
                 .cityEntity(cityService.getCity(cityId))
@@ -69,5 +77,10 @@ public class TravelDiaryHandler {
     private void checkCityIdExists(int cityId) {
         if (!cityService.cityIdExists(cityId))
             throw new IdNotFoundException("The city ID " + cityId + " is not found.");
+    }
+
+    private void checkTravelIdExists(int id) {
+        if (!travelDiaryService.travelIdExists(id))
+            throw new IdNotFoundException("The travel ID " + id + " is not found.");
     }
 }

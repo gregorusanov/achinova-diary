@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -17,7 +20,7 @@ public class TravelDiary {
     private double realBudget;
     private String description;
     private int rating;
-    private int cityId;
+    private Set<Integer> cityIdSet = new HashSet<>();
 
     public TravelDiary(int id, String arrivalDate, String departureDate) {
         this.id = id;
