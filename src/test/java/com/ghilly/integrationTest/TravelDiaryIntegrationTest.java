@@ -1,10 +1,7 @@
 package com.ghilly.integrationTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ghilly.model.dao.CityEntity;
-import com.ghilly.model.dao.CityTravelDiaryEntity;
-import com.ghilly.model.dao.CountryEntity;
-import com.ghilly.model.dao.TravelDiaryEntity;
+import com.ghilly.model.dao.*;
 import com.ghilly.model.dto.TravelDiary;
 import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.CountryRepository;
@@ -21,10 +18,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.HashSet;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -46,33 +45,59 @@ public class TravelDiaryIntegrationTest {
 
     @Test
     @Transactional
-    public void createAndGetStatusOk() throws Exception {
+    public void getTravelDiaryWithMultipleCities() throws Exception {
         CountryEntity ger = new CountryEntity("Germany");
         countryRepository.save(ger);
         String berlin = "Berlin";
-        CityEntity cityEntity = new CityEntity(berlin, ger, true);
-        cityRepository.save(cityEntity);
-        int cityId = cityRepository.findByName(berlin).orElseThrow().getId();
-        TravelDiary travelDiary = new TravelDiary(1, "09.03.2022", "10.03.2022",
-                800, 1000, "Home.", 8, cityId);
-        ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(travelDiary);
+        CityEntity firstCity = new CityEntity(berlin, ger, true);
+        cityRepository.save(firstCity);
+        int berlinId = cityRepository.findByName(berlin).orElseThrow().getId();
+        CityEntity secondCity = new CityEntity("Munich", ger);
+        cityRepository.save(secondCity);
+        int munichId = cityRepository.findByName("Munich").orElseThrow().getId();
+        TravelDiaryEntity travelDiary = TravelDiaryEntity.builder()
+                .id(1)
+                .arrivalDate(dateTransformer("09.03.2022"))
+                .departureDate(dateTransformer("19.03.2022"))
+                .plannedBudget(500)
+                .realBudget(600)
+                .description("Travel")
+                .rating(5)
+                .build();
+        CityTravelDiaryEntity firstEntity = CityTravelDiaryEntity.builder()
+                .id(new CityTravelDiaryCompositeKey())
+                .travelDiaryEntity(travelDiary)
+                .cityEntity(firstCity)
+                .build();
+        CityTravelDiaryEntity secondEntity = CityTravelDiaryEntity.builder()
+                .id(new CityTravelDiaryCompositeKey())
+                .travelDiaryEntity(travelDiary)
+                .cityEntity(secondCity)
+                .build();
+        Set<CityTravelDiaryEntity> cityTravelDiarySet = new HashSet<>(Set.of(firstEntity, secondEntity));
+
+        travelDiary.setCityTravelSet(cityTravelDiarySet);
+        travelDiaryRepository.save(travelDiary);
 
         mvc.perform(MockMvcRequestBuilders
-                        .post(url)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
+                        .get(url + "/1")
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").exists());
+                .andExpect(jsonPath("$.rating").value(5));
 
-        Set<CityTravelDiaryEntity> travelDiaryEntity = travelDiaryRepository
-                .findById(1)
-                .map(TravelDiaryEntity::getCityTravelSet)
-                .orElseThrow();
+        Set<Integer> cities = new HashSet<>();
+        travelDiaryRepository.findById(1).orElseThrow()
+                .getCityTravelSet()
+                .forEach(cityTravelDiaryEntity -> cities.add(cityTravelDiaryEntity.getCityEntity().getId()));
 
-        assertEquals(travelDiaryEntity.size(), 1);
+        assertEquals(cities, Set.of(berlinId, munichId));
 
         travelDiaryRepository.deleteAll();
         countryRepository.deleteAll();
+    }
+
+    private LocalDate dateTransformer(String date) {
+        String pattern = "dd.MM.yyyy";
+        return LocalDate.parse(date, DateTimeFormatter.ofPattern(pattern));
     }
 }

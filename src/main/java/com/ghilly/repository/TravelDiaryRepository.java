@@ -9,5 +9,4 @@ import java.util.Optional;
 
 @Repository
 public interface TravelDiaryRepository extends CrudRepository<TravelDiaryEntity, Integer> {
-    Optional<TravelDiaryEntity> findById(int id);
 }

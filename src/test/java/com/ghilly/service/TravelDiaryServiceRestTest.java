@@ -11,6 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
@@ -50,6 +51,24 @@ class TravelDiaryServiceRestTest {
 
         assertAll(
                 () -> verify(travelDiaryRepository).save(record),
+                () -> verifyNoMoreInteractions(travelDiaryRepository)
+        );
+    }
+
+    @Test
+    void getTravelDiarySuccess() {
+        LocalDate arrivalDate = parsingDate("10.07.2023");
+        LocalDate departureDate = parsingDate("12.12.2023");
+        TravelDiaryEntity record = new TravelDiaryEntity(1, arrivalDate, departureDate, 2000, 5000,
+                "Dislike", 1, cityTravelDiarySet);
+        cityTravelDiary.setTravelDiaryEntity(record);
+
+        when(travelDiaryRepository.findById(1)).thenReturn(Optional.of(record));
+
+        service.getTravelDiaryEntityById(1);
+
+        assertAll(
+                () -> verify(travelDiaryRepository).findById(1),
                 () -> verifyNoMoreInteractions(travelDiaryRepository)
         );
     }

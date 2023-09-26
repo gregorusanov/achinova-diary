@@ -1,10 +1,7 @@
 package com.ghilly.web.handler;
 
 import com.ghilly.exception.*;
-import com.ghilly.model.dao.CityEntity;
-import com.ghilly.model.dao.CityTravelDiaryEntity;
-import com.ghilly.model.dao.CountryEntity;
-import com.ghilly.model.dao.TravelDiaryEntity;
+import com.ghilly.model.dao.*;
 import com.ghilly.service.CityServiceRest;
 import com.ghilly.service.TravelDiaryServiceRest;
 import org.junit.jupiter.api.BeforeEach;
@@ -13,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,8 +19,12 @@ import static org.mockito.Mockito.*;
 class TravelDiaryHandlerTest {
     private final String name = "Copenhagen";
     private int cityId = 1;
+    private Set<Integer> cityIdSet = Set.of(cityId);
     private final CityEntity city = new CityEntity(cityId, name, new CountryEntity("Denmark"), true);
-    private CityTravelDiaryEntity cityTravelDiary = new CityTravelDiaryEntity();
+    private CityTravelDiaryEntity cityTravelDiary = CityTravelDiaryEntity.builder()
+            .id(new CityTravelDiaryCompositeKey())
+            .cityEntity(city)
+            .build();
     private Set<CityTravelDiaryEntity> cityTravelDiarySet = new HashSet<>(Set.of(cityTravelDiary));
     private TravelDiaryHandler handler;
     private TravelDiaryServiceRest travelDiaryServiceRest;
@@ -50,7 +52,7 @@ class TravelDiaryHandlerTest {
         cityTravelDiary.setCityEntity(city);
         cityTravelDiary.setTravelDiaryEntity(record);
 
-        handler.create(record, cityId);
+        handler.create(record, cityIdSet);
 
         assertAll(
                 () -> verify(cityServiceRest).cityIdExists(cityId),
@@ -68,7 +70,7 @@ class TravelDiaryHandlerTest {
         TravelDiaryEntity record = new TravelDiaryEntity(1, arrivalDate, departureDate, 800, 1000,
                 "Cold place.", 8, cityTravelDiarySet);
 
-        IllegalDateException e = assertThrows(IllegalDateException.class, () -> handler.create(record, cityId));
+        IllegalDateException e = assertThrows(IllegalDateException.class, () -> handler.create(record, cityIdSet));
 
         assertAll(
                 () -> assertEquals("The arrival date should be " +
@@ -86,7 +88,7 @@ class TravelDiaryHandlerTest {
         TravelDiaryEntity record = new TravelDiaryEntity(1, arrivalDate, departureDate, 800, -1,
                 "Cold place.", 8, cityTravelDiarySet);
 
-        IllegalBudgetException e = assertThrows(IllegalBudgetException.class, () -> handler.create(record, cityId));
+        IllegalBudgetException e = assertThrows(IllegalBudgetException.class, () -> handler.create(record, cityIdSet));
 
         assertAll(
                 () -> assertEquals("The budget should not be less than 0. Wrong budget: " + -1.0, e.getMessage()),
@@ -102,7 +104,7 @@ class TravelDiaryHandlerTest {
                 "Cold place.", 11, cityTravelDiarySet);
 
         IllegalRatingNumberException e = assertThrows(IllegalRatingNumberException.class,
-                () -> handler.create(record, cityId));
+                () -> handler.create(record, cityIdSet));
 
         assertAll(
                 () -> assertEquals("The rating should be in the range from 0 to 10, " +
@@ -119,7 +121,7 @@ class TravelDiaryHandlerTest {
                 "a".repeat(301), 10, cityTravelDiarySet);
 
         TooLongDescriptionException e = assertThrows(TooLongDescriptionException.class,
-                () -> handler.create(record, cityId));
+                () -> handler.create(record, cityIdSet));
 
         assertAll(
                 () -> assertEquals("The description should be no longer than 300 symbols, including spaces.",
@@ -135,12 +137,49 @@ class TravelDiaryHandlerTest {
         TravelDiaryEntity record = new TravelDiaryEntity(1, arrivalDate, departureDate, 800, 1000,
                 "Cold place.", 8, cityTravelDiarySet);
 
-        assertThrows(IdNotFoundException.class, () -> handler.create(record, cityId));
+        assertThrows(IdNotFoundException.class, () -> handler.create(record, cityIdSet));
 
         assertAll(
                 () -> verify(cityServiceRest).cityIdExists(cityId),
                 () -> verifyNoMoreInteractions(cityServiceRest),
                 () -> verifyNoInteractions(travelDiaryServiceRest)
+        );
+    }
+
+    @Test
+    void getTravelDiarySuccess() {
+        LocalDate arrivalDate = parsingDate("10.03.2023");
+        LocalDate departureDate = parsingDate("12.03.2023");
+        TravelDiaryEntity record = new TravelDiaryEntity(1, arrivalDate, departureDate, 800, 1000,
+                "Cold place.", 8, cityTravelDiarySet);
+        cityTravelDiary.setTravelDiaryEntity(record);
+
+        when(travelDiaryServiceRest.travelIdExists(1)).thenReturn(true);
+        when(travelDiaryServiceRest.getTravelDiaryEntityById(1)).thenReturn(Optional.of(record));
+
+        handler.getTravelDiaryEntityById(1);
+
+        assertAll(
+                () -> verify(travelDiaryServiceRest).travelIdExists(1),
+                () -> verify(travelDiaryServiceRest).getTravelDiaryEntityById(1),
+                () -> verifyNoMoreInteractions(travelDiaryServiceRest)
+        );
+    }
+
+    @Test
+    void getTravelDiaryIdNotFound() {
+        LocalDate arrivalDate = parsingDate("10.03.2023");
+        LocalDate departureDate = parsingDate("12.03.2023");
+        TravelDiaryEntity record = new TravelDiaryEntity(1, arrivalDate, departureDate, 800, 1000,
+                "Cold place.", 8, cityTravelDiarySet);
+        cityTravelDiary.setTravelDiaryEntity(record);
+
+        IdNotFoundException e = assertThrows(IdNotFoundException.class, () -> handler.getTravelDiaryEntityById(1));
+
+        assertAll(
+                () -> assertEquals("The travel ID " + 1 + " is not found.", e.getMessage()),
+                () -> verify(travelDiaryServiceRest).travelIdExists(1),
+                () -> verifyNoMoreInteractions(travelDiaryServiceRest)
         );
     }
 }
