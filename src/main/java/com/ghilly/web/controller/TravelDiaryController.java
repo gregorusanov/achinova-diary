@@ -8,9 +8,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @RequestMapping("/travelDiary")
 public class TravelDiaryController {
@@ -39,5 +39,21 @@ public class TravelDiaryController {
                 .map(EntityTransformer::transformToTravelDiary)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<Set<TravelDiary>> getAll() {
+        logger.info("Getting the data from the handler.");
+        Set<TravelDiary> set = handler.getAll().stream()
+                .map(EntityTransformer::transformToTravelDiary)
+                .collect(Collectors.toSet());
+        return ResponseEntity.ok(set);
+    }
+
+    @DeleteMapping("/{travelId}")
+    public ResponseEntity<String> delete(@PathVariable int travelId) {
+        logger.info("The data are received from the user.");
+        handler.delete(travelId);
+        return ResponseEntity.ok().body("The record with the ID " + travelId + " is deleted.");
     }
 }

@@ -35,6 +35,17 @@ public class TravelDiaryHandler {
         return travelDiaryService.getTravelDiaryEntityById(id);
     }
 
+    public Set<TravelDiaryEntity> getAll() {
+        logger.info("Getting data from the service.");
+        return travelDiaryService.getAll();
+    }
+
+    public void delete(int id) {
+        logger.info("Checking record {} exists", id);
+        checkTravelIdExists(id);
+        travelDiaryService.delete(id);
+    }
+
     private void checkData(TravelDiaryEntity travelDiaryEntity) {
         checkDate(travelDiaryEntity.getArrivalDate(), travelDiaryEntity.getDepartureDate());
         checkRating(travelDiaryEntity.getRating());

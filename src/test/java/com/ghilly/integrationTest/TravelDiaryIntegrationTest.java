@@ -96,6 +96,11 @@ public class TravelDiaryIntegrationTest {
         countryRepository.deleteAll();
     }
 
+    @Test
+    public void getAllStatusOk() {
+
+    }
+
     private LocalDate dateTransformer(String date) {
         String pattern = "dd.MM.yyyy";
         return LocalDate.parse(date, DateTimeFormatter.ofPattern(pattern));

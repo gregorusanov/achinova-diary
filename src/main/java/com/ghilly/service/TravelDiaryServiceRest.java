@@ -1,5 +1,6 @@
 package com.ghilly.service;
 
+import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.model.dao.TravelDiaryEntity;
 import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.TravelDiaryRepository;
@@ -7,6 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Optional;
+import java.util.Set;
 
 
 public class TravelDiaryServiceRest implements TravelDiaryService {
@@ -30,6 +32,18 @@ public class TravelDiaryServiceRest implements TravelDiaryService {
         Optional<TravelDiaryEntity> travelDiaryEntity = travelDiaryRepository.findById(id);
         logger.info("Got record from diary by id [{}], result is [{}]", id, travelDiaryEntity);
         return travelDiaryEntity;
+    }
+
+    @Override
+    public Set<TravelDiaryEntity> getAll() {
+        logger.info("Getting data from the repository.");
+        return (Set<TravelDiaryEntity>) travelDiaryRepository.findAll();
+    }
+
+    @Override
+    public void delete(int id) {
+        travelDiaryRepository.deleteById(id);
+        logger.info("Getting data from the repository.");
     }
 
     public boolean travelIdExists(int id) {
