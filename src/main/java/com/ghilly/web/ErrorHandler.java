@@ -24,31 +24,19 @@ public class ErrorHandler extends ResponseEntityExceptionHandler {
                 .body(exception.getMessage());
     }
 
-    @ExceptionHandler(NameAlreadyExistsException.class)
-    public ResponseEntity<String> catchNameAlreadyExistsException(NameAlreadyExistsException exception) {
+    @ExceptionHandler({NameAlreadyExistsException.class, CapitalAlreadyExistsException.class,
+            CityAlreadyExistsException.class})
+    public ResponseEntity<String> catchThisAlreadyExistsException(RuntimeException exception) {
         return ResponseEntity
                 .status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());
     }
 
-    @ExceptionHandler(WrongNameException.class)
-    public ResponseEntity<String> catchWrongArgumentNameException(WrongNameException exception) {
+    @ExceptionHandler({IllegalRatingNumberException.class, TooLongDescriptionException.class,
+            IllegalDateException.class, IllegalBudgetException.class, WrongNameException.class})
+    public ResponseEntity<String> catchNotAcceptableException(RuntimeException exception) {
         return ResponseEntity
                 .status(HttpStatus.NOT_ACCEPTABLE)
-                .body(exception.getMessage());
-    }
-
-    @ExceptionHandler(CapitalAlreadyExistsException.class)
-    public ResponseEntity<String> catchCapitalAlreadyExistsException(CapitalAlreadyExistsException exception) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
-                .body(exception.getMessage());
-    }
-
-    @ExceptionHandler(CityAlreadyExistsException.class)
-    public ResponseEntity<String> catchCityAlreadyExistsException(CityAlreadyExistsException exception) {
-        return ResponseEntity
-                .status(HttpStatus.BAD_REQUEST)
                 .body(exception.getMessage());
     }
 }

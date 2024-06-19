@@ -1,13 +1,13 @@
 package com.ghilly.service;
 
-import com.ghilly.model.DAO.CityDAO;
-import com.ghilly.model.DAO.CountryDAO;
+import com.ghilly.model.dao.CityEntity;
+import com.ghilly.model.dao.CountryEntity;
 import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.CountryRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.List;
+import java.util.Set;
 
 public class CountryServiceRest implements CountryService {
 
@@ -21,28 +21,28 @@ public class CountryServiceRest implements CountryService {
     }
 
     @Override
-    public CountryDAO create(CountryDAO countryDAO) {
-        CountryDAO toReturn = countryRepository.save(countryDAO);
+    public CountryEntity create(CountryEntity countryEntity) {
+        CountryEntity toReturn = countryRepository.save(countryEntity);
         logger.info("The country {} is added by service. Info: {}", toReturn.getName(), toReturn);
         return toReturn;
     }
 
     @Override
-    public List<CountryDAO> getAllCountries() {
-        List<CountryDAO> countries = (List<CountryDAO>) countryRepository.findAll();
+    public Set<CountryEntity> getAllCountries() {
+        Set<CountryEntity> countries = countryRepository.findAll();
         logger.info("The list of countries is: {}", countries);
         return countries;
     }
 
     @Override
-    public CountryDAO getCountryById(int countryId) {
+    public CountryEntity getCountryById(int countryId) {
         logger.info("The country with the ID {} is found.", countryId);
         return countryRepository.findById(countryId).orElseThrow();
     }
 
     @Override
-    public CountryDAO update(CountryDAO countryDAO) {
-        CountryDAO toReturn = countryRepository.save(countryDAO);
+    public CountryEntity update(CountryEntity countryEntity) {
+        CountryEntity toReturn = countryRepository.save(countryEntity);
         logger.info("The country with the ID {} is updated, new name is {}.", toReturn.getId(), toReturn.getName());
         return toReturn;
     }
@@ -54,16 +54,16 @@ public class CountryServiceRest implements CountryService {
     }
 
     @Override
-    public List<CityDAO> getAllCitiesByCountryId(int countryId) {
-        CountryDAO countryDAO = countryRepository.findById(countryId).orElseThrow();
-        List<CityDAO> cityList = countryDAO.getCityList();
-        logger.info("cityList = {}", cityList);
-        return cityList;
+    public Set<CityEntity> getAllCitiesByCountryId(int countryId) {
+        CountryEntity countryEntity = countryRepository.findById(countryId).orElseThrow();
+        Set<CityEntity> citySet = countryEntity.getCitySet();
+        logger.info("cityList = {}", citySet);
+        return citySet;
     }
 
     @Override
-    public CityDAO getCapitalByCountryId(int countryId) {
-        return cityRepository.findCityDAOByCountryDAO_IdAndCapitalIsTrue(countryId).orElse(null);
+    public CityEntity getCapitalByCountryId(int countryId) {
+        return cityRepository.findCityEntityByCountryEntity_IdAndCapitalIsTrue(countryId).orElse(null);
     }
 
     public boolean countryIdExists(int id) {

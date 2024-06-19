@@ -1,13 +1,13 @@
 package com.ghilly.service;
 
-import com.ghilly.model.DAO.CityDAO;
-import com.ghilly.model.DAO.CountryDAO;
+import com.ghilly.model.dao.CityEntity;
+import com.ghilly.model.dao.CountryEntity;
 import com.ghilly.repository.CityRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -17,8 +17,9 @@ class CityServiceRestTest {
     private static final String MOSCOW = "Moscow";
     private static final int COUNTRY_ID = 1;
     private static final int CITY_ID = 7;
-    private static final CountryDAO RUS = new CountryDAO(COUNTRY_ID, "Russia");
-    private static final CityDAO MOS = new CityDAO(CITY_ID, MOSCOW, RUS, true);
+    private static final CountryEntity RUS = new CountryEntity(COUNTRY_ID, "Russia");
+    private static final CityEntity MOS = CityEntity.builder().id(CITY_ID).name(MOSCOW).countryEntity(RUS)
+            .capital(true).build();
     private CityServiceRest service;
     private CityRepository cityRepository;
 
@@ -26,6 +27,7 @@ class CityServiceRestTest {
     void init() {
         cityRepository = mock(CityRepository.class);
         service = new CityServiceRest(cityRepository);
+        MOS.setName(MOSCOW);
     }
 
     @Test
@@ -44,10 +46,10 @@ class CityServiceRestTest {
     void getCity() {
         when(cityRepository.findById(CITY_ID)).thenReturn(Optional.of(MOS));
 
-        CityDAO cityDAO = service.getCity(CITY_ID);
+        CityEntity cityEntity = service.getCity(CITY_ID);
 
         assertAll(
-                () -> assertEquals(cityDAO.getName(), MOSCOW),
+                () -> assertEquals(cityEntity.getName(), MOSCOW),
                 () -> verify(cityRepository).findById(CITY_ID),
                 () -> verifyNoMoreInteractions(cityRepository)
         );
@@ -57,17 +59,16 @@ class CityServiceRestTest {
     void getAllCities() {
         String berlin = "Berlin";
         String paris = "Paris";
-        List<CityDAO> cities = List.of(new CityDAO(berlin, new CountryDAO("Germany"), true), MOS,
-                new CityDAO(paris, new CountryDAO("France"), true));
+        Set<CityEntity> cities = Set.of(
+                CityEntity.builder().name(berlin).countryEntity(new CountryEntity("Germany")).capital(true).build(),
+                MOS,
+                CityEntity.builder().name(paris).countryEntity(new CountryEntity("France")).capital(true).build());
         when(cityRepository.findAll()).thenReturn(cities);
 
-        List<CityDAO> actual = service.getAllCities();
+        Set<CityEntity> actual = service.getAllCities();
 
         assertAll(
                 () -> assertEquals(3, actual.size()),
-                () -> assertEquals(actual.get(1).getName(), MOSCOW),
-                () -> assertEquals(actual.get(0).getName(), berlin),
-                () -> assertEquals(actual.get(2).getName(), paris),
                 () -> verify(cityRepository).findAll(),
                 () -> verifyNoMoreInteractions(cityRepository)
         );
@@ -75,14 +76,14 @@ class CityServiceRestTest {
 
     @Test
     void update() {
-        String name = "Moskvabad";
-        CityDAO toChange = new CityDAO(CITY_ID, name, RUS, true);
-        when(cityRepository.findById(CITY_ID)).thenReturn(Optional.of(toChange));
+        String name = "moskvabad";
+        MOS.setName(name);
+        when(cityRepository.findById(CITY_ID)).thenReturn(Optional.of(MOS));
 
-        service.update(toChange);
+        service.update(MOS);
 
         assertAll(
-                () -> verify(cityRepository).save(toChange),
+                () -> verify(cityRepository).save(MOS),
                 () -> verify(cityRepository).findById(CITY_ID),
                 () -> verifyNoMoreInteractions(cityRepository)
         );

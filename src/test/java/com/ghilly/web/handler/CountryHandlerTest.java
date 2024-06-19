@@ -3,13 +3,13 @@ package com.ghilly.web.handler;
 import com.ghilly.exception.IdNotFoundException;
 import com.ghilly.exception.NameAlreadyExistsException;
 import com.ghilly.exception.WrongNameException;
-import com.ghilly.model.DAO.CityDAO;
-import com.ghilly.model.DAO.CountryDAO;
+import com.ghilly.model.dao.CityEntity;
+import com.ghilly.model.dao.CountryEntity;
 import com.ghilly.service.CountryServiceRest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 class CountryHandlerTest {
     private static final int COUNTRY_ID = 1;
     private static final String RUSSIA = "russia";
-    private static final CountryDAO RUS_DAO = new CountryDAO(COUNTRY_ID, RUSSIA);
+    private static final CountryEntity RUS_DAO = new CountryEntity(COUNTRY_ID, RUSSIA);
     private static final String COUNTRY_ID_NOT_FOUND_EX_MSG_BEGIN = "The country ID ";
     private static final String ID_NOT_FOUND_EX_MSG_END = " is not found.";
     private static final String WRONG_NAME_EX_MSG = """
@@ -61,7 +61,7 @@ class CountryHandlerTest {
     @Test
     void createWrongNameFail() {
         String wrong = "777Mo$cow!";
-        CountryDAO country = new CountryDAO(wrong);
+        CountryEntity country = new CountryEntity(wrong);
 
         WrongNameException exception = assertThrows(WrongNameException.class,
                 () -> countryHandler.create(country));
@@ -78,10 +78,10 @@ class CountryHandlerTest {
         when(countryServiceRest.countryIdExists(COUNTRY_ID)).thenReturn(true);
         when(countryServiceRest.getCountryById(COUNTRY_ID)).thenReturn(RUS_DAO);
 
-        CountryDAO countryDAO = countryHandler.getCountryById(COUNTRY_ID);
+        CountryEntity countryEntity = countryHandler.getCountryById(COUNTRY_ID);
 
         assertAll(
-                () -> assertEquals(RUSSIA, countryDAO.getName()),
+                () -> assertEquals(RUSSIA, countryEntity.getName()),
                 () -> verify(countryServiceRest).countryIdExists(COUNTRY_ID),
                 () -> verify(countryServiceRest).getCountryById(COUNTRY_ID),
                 () -> verifyNoMoreInteractions(countryServiceRest)
@@ -102,13 +102,13 @@ class CountryHandlerTest {
 
     @Test
     void getAllCountries() {
-        CountryDAO af = new CountryDAO("Afghanistan");
-        CountryDAO fr = new CountryDAO("France");
-        CountryDAO cn = new CountryDAO("China");
-        List<CountryDAO> expected = List.of(af, fr, cn);
+        CountryEntity af = new CountryEntity("Afghanistan");
+        CountryEntity fr = new CountryEntity("France");
+        CountryEntity cn = new CountryEntity("China");
+        Set<CountryEntity> expected = Set.of(af, fr, cn);
         when(countryServiceRest.getAllCountries()).thenReturn(expected);
 
-        List<CountryDAO> actual = countryServiceRest.getAllCountries();
+        Set<CountryEntity> actual = countryServiceRest.getAllCountries();
 
         assertAll(
                 () -> assertEquals(expected, actual),
@@ -119,7 +119,7 @@ class CountryHandlerTest {
 
     @Test
     void updateSuccess() {
-        CountryDAO ussr = new CountryDAO(COUNTRY_ID, "ussr");
+        CountryEntity ussr = new CountryEntity(COUNTRY_ID, "ussr");
         when(countryServiceRest.countryIdExists(COUNTRY_ID)).thenReturn(true);
         when(countryServiceRest.getCountryById(COUNTRY_ID)).thenReturn(ussr);
 
@@ -151,7 +151,7 @@ class CountryHandlerTest {
         String newName = "Ru$$i@";
 
         WrongNameException exception = assertThrows(WrongNameException.class,
-                () -> countryHandler.update(new CountryDAO(COUNTRY_ID, newName)));
+                () -> countryHandler.update(new CountryEntity(COUNTRY_ID, newName)));
 
         assertAll(
                 () -> assertEquals(WRONG_NAME_EX_MSG + newName, exception.getMessage()),
@@ -208,18 +208,19 @@ class CountryHandlerTest {
     void getAllCitiesForOneCountry() {
         String kyoto = "Kyoto";
         String tokyo = "Tokyo";
-        CountryDAO countryDAO = new CountryDAO("Japan");
-        int id = countryDAO.getId();
-        List<CityDAO> cities = List.of(new CityDAO(kyoto, countryDAO, false), new CityDAO(tokyo, countryDAO, true));
+        CountryEntity countryEntity = new CountryEntity("Japan");
+        int id = countryEntity.getId();
+        Set<CityEntity> cities = Set.of(
+                CityEntity.builder().name(kyoto).countryEntity(countryEntity).build(),
+                CityEntity.builder().name(tokyo).countryEntity(countryEntity).capital(true).build());
         when(countryServiceRest.countryIdExists(id)).thenReturn(true);
         when(countryServiceRest.getAllCitiesByCountryId(id)).thenReturn(cities);
 
-        List<CityDAO> actual = countryHandler.getAllCitiesByCountryId(id);
+        Set<CityEntity> actual = countryHandler.getAllCitiesByCountryId(id);
 
         assertAll(
                 () -> assertEquals(2, actual.size()),
-                () -> assertEquals(actual.get(0).getName(), kyoto),
-                () -> assertEquals(actual.get(1).getName(), tokyo),
+                () -> assertEquals(cities, actual),
                 () -> verify(countryServiceRest).getAllCitiesByCountryId(id),
                 () -> verify(countryServiceRest).countryIdExists(id),
                 () -> verifyNoMoreInteractions(countryServiceRest)
@@ -229,7 +230,8 @@ class CountryHandlerTest {
     @Test
     void getCapitalByCountryIdSuccess() {
         when(countryServiceRest.countryIdExists(COUNTRY_ID)).thenReturn(true);
-        when(countryServiceRest.getCapitalByCountryId(COUNTRY_ID)).thenReturn(new CityDAO("Moscow", RUS_DAO, true));
+        when(countryServiceRest.getCapitalByCountryId(COUNTRY_ID)).thenReturn(
+                CityEntity.builder().name("Moscow").countryEntity(RUS_DAO).capital(true).build());
 
         countryHandler.getCapitalByCountryId(COUNTRY_ID);
 

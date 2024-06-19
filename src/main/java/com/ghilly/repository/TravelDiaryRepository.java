@@ -1,6 +1,6 @@
 package com.ghilly.repository;
 
-import com.ghilly.model.dao.CountryEntity;
+import com.ghilly.model.dao.TravelDiaryEntity;
 import lombok.NonNull;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -8,11 +8,10 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 import java.util.Set;
 
-@Repository
-public interface CountryRepository extends CrudRepository<CountryEntity, Integer> {
-    Optional<CountryEntity> findByName(String countryName);
 
+@Repository
+public interface TravelDiaryRepository extends CrudRepository<TravelDiaryEntity, Integer> {
     @Override
     @NonNull
-    Set<CountryEntity> findAll();
+    Set<TravelDiaryEntity> findAll();
 }

@@ -1,22 +1,22 @@
 package com.ghilly.service;
 
-import com.ghilly.model.DAO.CityDAO;
-import com.ghilly.model.DAO.CountryDAO;
+import com.ghilly.model.dao.CityEntity;
+import com.ghilly.model.dao.CountryEntity;
 
-import java.util.List;
+import java.util.Set;
 
 public interface CountryService {
-    CountryDAO create(CountryDAO countryDAO);
+    CountryEntity create(CountryEntity countryEntity);
 
-    List<CountryDAO> getAllCountries();
+    Set<CountryEntity> getAllCountries();
 
-    CountryDAO getCountryById(int countryId);
+    CountryEntity getCountryById(int countryId);
 
-    CountryDAO update(CountryDAO countryDAO);
+    CountryEntity update(CountryEntity countryEntity);
 
     void delete(int countryId);
 
-    List<CityDAO> getAllCitiesByCountryId(int countryId);
+    Set<CityEntity> getAllCitiesByCountryId(int countryId);
 
-    CityDAO getCapitalByCountryId(int countryId);
+    CityEntity getCapitalByCountryId(int countryId);
 }

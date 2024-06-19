@@ -1,9 +1,6 @@
 package com.ghilly.web.handler;
 
-import com.ghilly.exception.CapitalAlreadyExistsException;
-import com.ghilly.exception.IdNotFoundException;
-import com.ghilly.exception.NameAlreadyExistsException;
-import com.ghilly.exception.WrongNameException;
+import com.ghilly.exception.*;
 import com.ghilly.web.ErrorHandler;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpStatus;
@@ -41,7 +38,7 @@ class ErrorHandlerTest {
     void catchNameAlreadyExistsExceptionTest() {
         String message = "The country name " + usa + " is not found.";
         ResponseEntity<String> actual =
-                handler.catchNameAlreadyExistsException(new NameAlreadyExistsException(message));
+                handler.catchThisAlreadyExistsException(new NameAlreadyExistsException(message));
         HttpStatus status = HttpStatus.BAD_REQUEST;
 
         assertEquals(status, actual.getStatusCode());
@@ -53,7 +50,7 @@ class ErrorHandlerTest {
         String wrongName = "U.S.A.";
         String message = "Warning! \n The legal name consists of letters that " +
                 "could be separated by one space or hyphen. \n The name is not allowed here: " + wrongName;
-        ResponseEntity<String> actual = handler.catchWrongArgumentNameException(new WrongNameException(message));
+        ResponseEntity<String> actual = handler.catchNotAcceptableException(new WrongNameException(message));
         HttpStatus status = HttpStatus.NOT_ACCEPTABLE;
 
         assertEquals(status, actual.getStatusCode());
@@ -64,8 +61,52 @@ class ErrorHandlerTest {
     void catchCapitalAlreadyExistsException() {
         String message = "The capital for the country ID 13 is already set. Try to update this city.";
         ResponseEntity<String> actual =
-                handler.catchCapitalAlreadyExistsException(new CapitalAlreadyExistsException(message));
+                handler.catchThisAlreadyExistsException(new CapitalAlreadyExistsException(message));
         HttpStatus status = HttpStatus.BAD_REQUEST;
+
+        assertEquals(status, actual.getStatusCode());
+        assertEquals(message, actual.getBody());
+    }
+
+    @Test
+    void catchWrongDateException() {
+        String message = "The arrival date should be earlier than departure date or should be equal to it!";
+        ResponseEntity<String> actual =
+                handler.catchNotAcceptableException(new IllegalDateException(message));
+        HttpStatus status = HttpStatus.NOT_ACCEPTABLE;
+
+        assertEquals(status, actual.getStatusCode());
+        assertEquals(message, actual.getBody());
+    }
+
+    @Test
+    void catchIllegalBudgetEx() {
+        String message = "The budget should not be less than 0.";
+        ResponseEntity<String> actual =
+                handler.catchNotAcceptableException(new IllegalBudgetException(message));
+        HttpStatus status = HttpStatus.NOT_ACCEPTABLE;
+
+        assertEquals(status, actual.getStatusCode());
+        assertEquals(message, actual.getBody());
+    }
+
+    @Test
+    void catchIllegalRatingNumberEx() {
+        String message = "The rating should be in the range from 0 to 10, including these numbers.";
+        ResponseEntity<String> actual =
+                handler.catchNotAcceptableException(new IllegalRatingNumberException(message));
+        HttpStatus status = HttpStatus.NOT_ACCEPTABLE;
+
+        assertEquals(status, actual.getStatusCode());
+        assertEquals(message, actual.getBody());
+    }
+
+    @Test
+    void catchTooLongDescriptionException() {
+        String message = "The description should be no longer than 300 symbols, including spaces.";
+        ResponseEntity<String> actual =
+                handler.catchNotAcceptableException(new TooLongDescriptionException(message));
+        HttpStatus status = HttpStatus.NOT_ACCEPTABLE;
 
         assertEquals(status, actual.getStatusCode());
         assertEquals(message, actual.getBody());

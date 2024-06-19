@@ -1,9 +1,9 @@
 package com.ghilly.integrationTest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ghilly.model.DAO.CityDAO;
-import com.ghilly.model.DAO.CountryDAO;
-import com.ghilly.model.DTO.CountryDTO;
+import com.ghilly.model.dao.CityEntity;
+import com.ghilly.model.dao.CountryEntity;
+import com.ghilly.model.dto.Country;
 import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.CountryRepository;
 import org.junit.Test;
@@ -26,7 +26,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         webEnvironment = SpringBootTest.WebEnvironment.MOCK)
 @AutoConfigureMockMvc
 @TestPropertySource(locations = "classpath:application.properties")
-public class CountryDAORestControllerIntegrationSuccessfulTest {
+public class CountryEntityRestControllerIntegrationSuccessfulTest {
 
     @Autowired
     private MockMvc mvc;
@@ -40,7 +40,7 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
     @Test
     public void createCountryStatusOk() throws Exception {
         String jp = "japan";
-        CountryDTO japan = new CountryDTO(jp);
+        Country japan = new Country(jp);
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(japan);
 
@@ -60,9 +60,9 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
         String rus = "russia";
         String fr = "france";
         String de = "deutschland";
-        countryRepository.save(new CountryDAO(de));
-        countryRepository.save(new CountryDAO(fr));
-        countryRepository.save(new CountryDAO(rus));
+        countryRepository.save(new CountryEntity(de));
+        countryRepository.save(new CountryEntity(fr));
+        countryRepository.save(new CountryEntity(rus));
 
         mvc.perform(MockMvcRequestBuilders
                         .get("/countries/all")
@@ -83,7 +83,7 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
     @Test
     public void getCountryStatusOk() throws Exception {
         String cn = "China";
-        countryRepository.save(new CountryDAO(cn));
+        countryRepository.save(new CountryEntity(cn));
         int id = countryRepository.findByName(cn).get().getId();
 
         mvc.perform(MockMvcRequestBuilders
@@ -101,11 +101,11 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
     @Test
     public void updateCountryStatusOk() throws Exception {
         String ussr = "ussr";
-        CountryDAO countryDAO = new CountryDAO(ussr);
-        countryRepository.save(countryDAO);
+        CountryEntity countryEntity = new CountryEntity(ussr);
+        countryRepository.save(countryEntity);
         int id = countryRepository.findByName(ussr).orElseThrow().getId();
         String newName = "Russia";
-        CountryDTO toUpdate = new CountryDTO(id, newName);
+        Country toUpdate = new Country(id, newName);
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(toUpdate);
 
@@ -125,7 +125,7 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
     @Test
     public void deleteCountryStatusOk() throws Exception {
         String gr = "Greece";
-        countryRepository.save(new CountryDAO(gr));
+        countryRepository.save(new CountryEntity(gr));
         int id = countryRepository.findByName(gr).get().getId();
 
         mvc.perform(MockMvcRequestBuilders
@@ -143,14 +143,14 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
         String spb = "Saint-Petersburg";
         String rus = "Russia";
         String ger = "Germany";
-        CountryDAO germany = new CountryDAO(ger);
+        CountryEntity germany = new CountryEntity(ger);
         countryRepository.save(germany);
-        cityRepository.save(new CityDAO(ber, germany, true));
-        CountryDAO russia = new CountryDAO(rus);
+        cityRepository.save(CityEntity.builder().name(ber).countryEntity(germany).capital(true).build());
+        CountryEntity russia = new CountryEntity(rus);
         countryRepository.save(russia);
         int id = countryRepository.findByName(rus).orElseThrow().getId();
-        cityRepository.save(new CityDAO(mos, russia, true));
-        cityRepository.save(new CityDAO(spb, russia));
+        cityRepository.save(CityEntity.builder().name(mos).countryEntity(russia).capital(true).build());
+        cityRepository.save(CityEntity.builder().name(spb).countryEntity(russia).build());
 
         mvc.perform(MockMvcRequestBuilders
                         .get("/countries/" + id + "/cities/all")
@@ -168,10 +168,10 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
     public void getCapitalByCountryIdStatusOk() throws Exception {
         String cn = "China";
         String bj = "Beijing";
-        CountryDAO china = new CountryDAO(cn);
+        CountryEntity china = new CountryEntity(cn);
         countryRepository.save(china);
         int id = countryRepository.findByName(cn).orElseThrow().getId();
-        cityRepository.save(new CityDAO(bj, china, true));
+        cityRepository.save(CityEntity.builder().name(bj).countryEntity(china).capital(true).build());
 
         mvc.perform(MockMvcRequestBuilders
                         .get("/countries/" + id + "/capital")
@@ -183,5 +183,16 @@ public class CountryDAORestControllerIntegrationSuccessfulTest {
 
         cityRepository.deleteAll();
         countryRepository.deleteAll();
+    }
+
+    @Test
+    public void getAllCountriesEmptySet() throws Exception {
+        mvc.perform(MockMvcRequestBuilders
+                        .get("/countries/all")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content()
+                        .contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+                .andExpect(jsonPath("$[0].name").doesNotExist());
     }
 }
