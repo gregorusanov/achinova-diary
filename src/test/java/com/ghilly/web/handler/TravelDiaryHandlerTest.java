@@ -19,13 +19,14 @@ import static org.mockito.Mockito.*;
 class TravelDiaryHandlerTest {
     private final String name = "Copenhagen";
     private int cityId = 1;
-    private Set<Integer> cityIdSet = Set.of(cityId);
-    private final CityEntity city = new CityEntity(cityId, name, new CountryEntity("Denmark"), true);
-    private CityTravelDiaryEntity cityTravelDiary = CityTravelDiaryEntity.builder()
+    private final Set<Integer> cityIdSet = Set.of(cityId);
+    private final CityEntity city = CityEntity.builder().id(cityId).name(name)
+            .countryEntity(new CountryEntity("Denmark")).capital(true).build();
+    private final CityTravelDiaryEntity cityTravelDiary = CityTravelDiaryEntity.builder()
             .id(new CityTravelDiaryCompositeKey())
             .cityEntity(city)
             .build();
-    private Set<CityTravelDiaryEntity> cityTravelDiarySet = new HashSet<>(Set.of(cityTravelDiary));
+    private final Set<CityTravelDiaryEntity> cityTravelDiarySet = new HashSet<>(Set.of(cityTravelDiary));
     private TravelDiaryHandler handler;
     private TravelDiaryServiceRest travelDiaryServiceRest;
     private CityServiceRest cityServiceRest;

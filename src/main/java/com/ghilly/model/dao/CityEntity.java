@@ -35,38 +35,4 @@ public class CityEntity implements Serializable {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private Set<CityTravelDiaryEntity> travelDiaryCitySet = new HashSet<>();
-
-    public CityEntity(int id, String name) {
-        this.id = id;
-        this.name = name;
-    }
-
-    public CityEntity(int id, String name, boolean capital) {
-        this.id = id;
-        this.name = name;
-        this.capital = capital;
-    }
-
-    public CityEntity(int id, String name, CountryEntity countryEntity, boolean capital) {
-        this.id = id;
-        this.name = name;
-        this.countryEntity = countryEntity;
-        this.capital = capital;
-    }
-
-    public CityEntity(String name, boolean capital) {
-        this.name = name;
-        this.capital = capital;
-    }
-
-    public CityEntity(String name, CountryEntity countryEntity, boolean capital) {
-        this.name = name;
-        this.countryEntity = countryEntity;
-        this.capital = capital;
-    }
-
-    public CityEntity(String name, CountryEntity countryEntity) {
-        this.name = name;
-        this.countryEntity = countryEntity;
-    }
 }

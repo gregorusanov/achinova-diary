@@ -21,8 +21,9 @@ class CityHandlerTest {
     private static final int COUNTRY_ID = 1;
     private static final int CITY_ID = 7;
     private static final CountryEntity RUS = new CountryEntity(COUNTRY_ID, "russia");
-    private static final CityEntity MOS_DAO_FROM_REPO = new CityEntity(CITY_ID, MOSCOW, RUS, true);
-    private static final CityEntity MOS_DAO = new CityEntity(MOSCOW, true);
+    private static final CityEntity MOS_DAO_FROM_REPO = CityEntity.builder().id(CITY_ID).name(MOSCOW).countryEntity(RUS)
+            .capital(true).build();
+    private static final CityEntity MOS_DAO = CityEntity.builder().name(MOSCOW).capital(true).build();
     private static final String COUNTRY_ID_NOT_FOUND_EX_MSG_BEGIN = "The country ID ";
     private static final String CITY_ID_NOT_FOUND_EX_MSG_BEGIN = "The city ID ";
     private static final String ID_NOT_FOUND_EX_MSG_END = " is not found.";
@@ -110,7 +111,7 @@ class CityHandlerTest {
     @Test
     void createWrongNameFail() {
         String wrong = "777Mo$cow!";
-        CityEntity city = new CityEntity(wrong, RUS);
+        CityEntity city = CityEntity.builder().name(wrong).countryEntity(RUS).build();
 
         WrongNameException exception = assertThrows(WrongNameException.class,
                 () -> handler.create(city, COUNTRY_ID));
@@ -152,7 +153,9 @@ class CityHandlerTest {
     void getAllCities() {
         String sochi = "sochi";
         String spb = "saint-Petersburg";
-        Set<CityEntity> cities = Set.of(MOS_DAO, new CityEntity(sochi, RUS, false), new CityEntity(spb, RUS, false));
+        Set<CityEntity> cities = Set.of(MOS_DAO,
+                CityEntity.builder().name(sochi).countryEntity(RUS).build(),
+                CityEntity.builder().name(spb).countryEntity(RUS).build());
         when(cityServiceRest.getAllCities()).thenReturn(cities);
 
         Set<CityEntity> actual = cityServiceRest.getAllCities();
@@ -170,7 +173,7 @@ class CityHandlerTest {
         when(countryServiceRest.countryIdExists(COUNTRY_ID)).thenReturn(true);
         when(countryServiceRest.getCountryById(COUNTRY_ID)).thenReturn(RUS);
         String newName = "nerezinovaya";
-        CityEntity cityEntity = new CityEntity(CITY_ID, newName, true);
+        CityEntity cityEntity = CityEntity.builder().id(CITY_ID).name(newName).capital(true).build();
 
         handler.update(cityEntity, COUNTRY_ID);
         cityEntity.setCountryEntity(RUS);
@@ -203,7 +206,7 @@ class CityHandlerTest {
     void updateWrongNewNameFail() {
         when(cityServiceRest.cityIdExists(CITY_ID)).thenReturn(true);
         String newName = "Moskv@b@d";
-        CityEntity toChange = new CityEntity(CITY_ID, newName, true);
+        CityEntity toChange = CityEntity.builder().id(CITY_ID).name(newName).capital(true).build();
 
         WrongNameException exception = assertThrows(WrongNameException.class,
                 () -> handler.update(toChange, COUNTRY_ID));
@@ -218,7 +221,7 @@ class CityHandlerTest {
     @Test
     void updateExistingCityFail() {
         String newName = "saint-petersburg";
-        CityEntity toChange = new CityEntity(CITY_ID, newName, RUS, false);
+        CityEntity toChange = CityEntity.builder().id(CITY_ID).name(newName).build();
         when(cityServiceRest.cityIdExists(CITY_ID)).thenReturn(true);
         when(countryServiceRest.countryIdExists(COUNTRY_ID)).thenReturn(true);
         when(cityServiceRest.theSameCityExists(COUNTRY_ID, newName)).thenReturn(true);

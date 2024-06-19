@@ -145,12 +145,12 @@ public class CountryEntityRestControllerIntegrationSuccessfulTest {
         String ger = "Germany";
         CountryEntity germany = new CountryEntity(ger);
         countryRepository.save(germany);
-        cityRepository.save(new CityEntity(ber, germany, true));
+        cityRepository.save(CityEntity.builder().name(ber).countryEntity(germany).capital(true).build());
         CountryEntity russia = new CountryEntity(rus);
         countryRepository.save(russia);
         int id = countryRepository.findByName(rus).orElseThrow().getId();
-        cityRepository.save(new CityEntity(mos, russia, true));
-        cityRepository.save(new CityEntity(spb, russia));
+        cityRepository.save(CityEntity.builder().name(mos).countryEntity(russia).capital(true).build());
+        cityRepository.save(CityEntity.builder().name(spb).countryEntity(russia).build());
 
         mvc.perform(MockMvcRequestBuilders
                         .get("/countries/" + id + "/cities/all")
@@ -171,7 +171,7 @@ public class CountryEntityRestControllerIntegrationSuccessfulTest {
         CountryEntity china = new CountryEntity(cn);
         countryRepository.save(china);
         int id = countryRepository.findByName(cn).orElseThrow().getId();
-        cityRepository.save(new CityEntity(bj, china, true));
+        cityRepository.save(CityEntity.builder().name(bj).countryEntity(china).capital(true).build());
 
         mvc.perform(MockMvcRequestBuilders
                         .get("/countries/" + id + "/capital")

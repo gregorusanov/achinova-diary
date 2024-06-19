@@ -47,7 +47,7 @@ public class CityEntityRestControllerIntegrationTest {
         countryRepository.save(countryEntity);
         int id = Objects.requireNonNull(countryRepository.findByName(jp).orElse(null)).getId();
         String tokyo = "Tokyo";
-        City city = new City(tokyo, id, true);
+        City city = City.builder().name(tokyo).countryId(id).capital(true).build();
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(city);
 
@@ -68,8 +68,8 @@ public class CityEntityRestControllerIntegrationTest {
         countryRepository.save(japan);
         int id = Objects.requireNonNull(countryRepository.findByName(jp).orElse(null)).getId();
         String tokyo = "Tokyo";
-        City city = new City(tokyo, id, true);
-        cityRepository.save(new CityEntity(tokyo.toLowerCase(), japan, true));
+        City city = City.builder().name(tokyo).countryId(id).capital(true).build();
+        cityRepository.save(CityEntity.builder().name(tokyo.toLowerCase()).countryEntity(japan).capital(true).build());
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(city);
 
@@ -91,7 +91,7 @@ public class CityEntityRestControllerIntegrationTest {
         String paris = "Paris";
         CountryEntity countryEntity = new CountryEntity(fr);
         countryRepository.save(countryEntity);
-        CityEntity cityEntity = new CityEntity(paris, countryEntity, true);
+        CityEntity cityEntity = CityEntity.builder().name(paris).countryEntity(countryEntity).capital(true).build();
         cityRepository.save(cityEntity);
         int cityId = cityRepository.findByName(paris).get().getId();
 
@@ -131,11 +131,11 @@ public class CityEntityRestControllerIntegrationTest {
         String ger = "germany";
         CountryEntity germany = new CountryEntity(ger);
         countryRepository.save(germany);
-        cityRepository.save(new CityEntity(ber, germany, true));
+        cityRepository.save(CityEntity.builder().name(ber).countryEntity(germany).capital(true).build());
         CountryEntity russia = new CountryEntity(rus);
         countryRepository.save(russia);
-        cityRepository.save(new CityEntity(mos, russia, true));
-        cityRepository.save(new CityEntity(spb, russia));
+        cityRepository.save(CityEntity.builder().name(mos).countryEntity(russia).capital(true).build());
+        cityRepository.save(CityEntity.builder().name(spb).countryEntity(russia).build());
 
         mvc.perform(MockMvcRequestBuilders
                         .get(url + "all/")
@@ -156,9 +156,12 @@ public class CityEntityRestControllerIntegrationTest {
         CountryEntity rus = new CountryEntity("Russia");
         countryRepository.save(rus);
         int countryId = countryRepository.findByName(rus.getName()).orElseThrow().getId();
-        cityRepository.save(new CityEntity(oldName, rus));
+        cityRepository.save(CityEntity.builder().name(oldName).countryEntity(rus).build());
         int cityId = cityRepository.findByName(oldName).orElseThrow().getId();
-        City volgograd = new City(newName, countryId);
+        City volgograd = City.builder()
+                .name(newName)
+                .countryId(countryId)
+                .build();
         ObjectMapper objectMapper = new ObjectMapper();
         String json = objectMapper.writeValueAsString(volgograd);
 
@@ -178,7 +181,7 @@ public class CityEntityRestControllerIntegrationTest {
         CountryEntity usa = new CountryEntity("USA");
         countryRepository.save(usa);
         String ny = "New York";
-        cityRepository.save(new CityEntity(ny, usa, false));
+        cityRepository.save(CityEntity.builder().name(ny).countryEntity(usa).build());
         int cityId = cityRepository.findByName(ny).orElseThrow().getId();
 
         mvc.perform(MockMvcRequestBuilders

@@ -15,19 +15,31 @@ import java.util.Optional;
 import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 class TravelDiaryServiceRestTest {
     private CityRepository cityRepository;
     private TravelDiaryRepository travelDiaryRepository;
     private TravelDiaryServiceRest service;
-    private final CityTravelDiaryEntity cityTravelDiary = new CityTravelDiaryEntity();
+    private final CityEntity city = CityEntity.builder().id(2).name("Berlin").build();
+    private final CityTravelDiaryEntity cityTravelDiary = CityTravelDiaryEntity.builder().cityEntity(city).build();
     private final Set<CityTravelDiaryEntity> cityTravelDiarySet = new HashSet<>(Set.of(cityTravelDiary));
-    private final CityEntity city = new CityEntity(2, "Netherlands");
+    private LocalDate arrivalDate = parsingDate("28.01.2023");
+    private LocalDate departureDate = parsingDate("08.05.2024");
+    private TravelDiaryEntity record = TravelDiaryEntity.builder()
+            .id(1)
+            .arrivalDate(arrivalDate)
+            .departureDate(departureDate)
+            .plannedBudget(15000)
+            .realBudget(15000)
+            .description("The new beginning.")
+            .rating(10)
+            .cityTravelSet(cityTravelDiarySet)
+            .build();
 
     @BeforeEach
     void init() {
+        cityTravelDiary.setTravelDiaryEntity(record);
         cityRepository = mock(CityRepository.class);
         travelDiaryRepository = mock(TravelDiaryRepository.class);
         service = new TravelDiaryServiceRest(cityRepository, travelDiaryRepository);
@@ -40,12 +52,12 @@ class TravelDiaryServiceRestTest {
 
     @Test
     void create() {
-        cityTravelDiary.setCityEntity(city);
-        LocalDate arrivalDate = parsingDate("10.03.2023");
-        LocalDate departureDate = parsingDate("12.03.2023");
-        TravelDiaryEntity record = new TravelDiaryEntity(1, arrivalDate, departureDate, 800.00,
-                1000.00, "Cold place.", 8, cityTravelDiarySet);
-        cityTravelDiary.setTravelDiaryEntity(record);
+        arrivalDate = parsingDate("10.03.2023");
+        departureDate = parsingDate("12.03.2023");
+        record.setPlannedBudget(800.00);
+        record.setRealBudget(1000.00);
+        record.setRating(8);
+        record.setDescription("The place feels like a frozen island.");
 
         service.create(record);
 
@@ -57,12 +69,6 @@ class TravelDiaryServiceRestTest {
 
     @Test
     void getTravelDiarySuccess() {
-        LocalDate arrivalDate = parsingDate("10.07.2023");
-        LocalDate departureDate = parsingDate("12.12.2023");
-        TravelDiaryEntity record = new TravelDiaryEntity(1, arrivalDate, departureDate, 2000, 5000,
-                "Dislike", 1, cityTravelDiarySet);
-        cityTravelDiary.setTravelDiaryEntity(record);
-
         when(travelDiaryRepository.findById(1)).thenReturn(Optional.of(record));
 
         service.getTravelDiaryEntityById(1);

@@ -19,8 +19,8 @@ import static org.mockito.Mockito.*;
 
 class TravelDiaryControllerTest {
     private final int cityId = 1;
-    private Set<Integer> cityIdSet = Set.of(cityId);
-    private CityEntity cityEntity = new CityEntity(cityId, "Rostov");
+    private final Set<Integer> cityIdSet = Set.of(cityId);
+    private final CityEntity cityEntity = CityEntity.builder().id(1).name("Rostov").build();
     private TravelDiaryHandler handler;
     private TravelDiaryController controller;
 

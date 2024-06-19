@@ -18,7 +18,8 @@ class CityServiceRestTest {
     private static final int COUNTRY_ID = 1;
     private static final int CITY_ID = 7;
     private static final CountryEntity RUS = new CountryEntity(COUNTRY_ID, "Russia");
-    private static final CityEntity MOS = new CityEntity(CITY_ID, MOSCOW, RUS, true);
+    private static final CityEntity MOS = CityEntity.builder().id(CITY_ID).name(MOSCOW).countryEntity(RUS)
+            .capital(true).build();
     private CityServiceRest service;
     private CityRepository cityRepository;
 
@@ -26,6 +27,7 @@ class CityServiceRestTest {
     void init() {
         cityRepository = mock(CityRepository.class);
         service = new CityServiceRest(cityRepository);
+        MOS.setName(MOSCOW);
     }
 
     @Test
@@ -57,8 +59,10 @@ class CityServiceRestTest {
     void getAllCities() {
         String berlin = "Berlin";
         String paris = "Paris";
-        Set<CityEntity> cities = Set.of(new CityEntity(berlin, new CountryEntity("Germany"), true), MOS,
-                new CityEntity(paris, new CountryEntity("France"), true));
+        Set<CityEntity> cities = Set.of(
+                CityEntity.builder().name(berlin).countryEntity(new CountryEntity("Germany")).capital(true).build(),
+                MOS,
+                CityEntity.builder().name(paris).countryEntity(new CountryEntity("France")).capital(true).build());
         when(cityRepository.findAll()).thenReturn(cities);
 
         Set<CityEntity> actual = service.getAllCities();
@@ -73,13 +77,13 @@ class CityServiceRestTest {
     @Test
     void update() {
         String name = "moskvabad";
-        CityEntity toChange = new CityEntity(CITY_ID, name, RUS, true);
-        when(cityRepository.findById(CITY_ID)).thenReturn(Optional.of(toChange));
+        MOS.setName(name);
+        when(cityRepository.findById(CITY_ID)).thenReturn(Optional.of(MOS));
 
-        service.update(toChange);
+        service.update(MOS);
 
         assertAll(
-                () -> verify(cityRepository).save(toChange),
+                () -> verify(cityRepository).save(MOS),
                 () -> verify(cityRepository).findById(CITY_ID),
                 () -> verifyNoMoreInteractions(cityRepository)
         );

@@ -100,9 +100,13 @@ public class CatchExceptionIntegrationTest {
         CountryEntity countryEntity = countryRepository.findByName(rus).orElseThrow();
         int countryId = countryEntity.getId();
         String moscow = "Moscow";
-        cityRepository.save(new CityEntity(moscow, countryEntity, true));
+        cityRepository.save(CityEntity.builder().name(moscow).countryEntity(countryEntity).capital(true).build());
         ObjectMapper objectMapper = new ObjectMapper();
-        String json = objectMapper.writeValueAsString(new City("Saint-Petersburg", countryId, true));
+        String json = objectMapper.writeValueAsString(City.builder()
+                .name("Saint-Petersburg")
+                .countryId(countryId)
+                .capital(true)
+                .build());
 
         mvc.perform(MockMvcRequestBuilders
                         .post("/cities/")
@@ -124,7 +128,7 @@ public class CatchExceptionIntegrationTest {
         CountryEntity countryEntity = countryRepository.findByName(rus).orElseThrow();
         int countryId = countryEntity.getId();
         String moscow = "moscow";
-        cityRepository.save(new CityEntity(moscow, countryEntity, true));
+        cityRepository.save(CityEntity.builder().name(moscow).countryEntity(countryEntity).capital(true).build());
         CityEntity cityEntity = cityRepository.findByName(moscow).orElseThrow();
         int id = cityEntity.getId();
         ObjectMapper objectMapper = new ObjectMapper();

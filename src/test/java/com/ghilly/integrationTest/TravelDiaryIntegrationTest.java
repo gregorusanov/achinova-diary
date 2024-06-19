@@ -1,8 +1,6 @@
 package com.ghilly.integrationTest;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ghilly.model.dao.*;
-import com.ghilly.model.dto.TravelDiary;
 import com.ghilly.repository.CityRepository;
 import com.ghilly.repository.CountryRepository;
 import com.ghilly.repository.TravelDiaryRepository;
@@ -49,10 +47,10 @@ public class TravelDiaryIntegrationTest {
         CountryEntity ger = new CountryEntity("Germany");
         countryRepository.save(ger);
         String berlin = "Berlin";
-        CityEntity firstCity = new CityEntity(berlin, ger, true);
+        CityEntity firstCity = CityEntity.builder().name(berlin).countryEntity(ger).capital(true).build();
         cityRepository.save(firstCity);
         int berlinId = cityRepository.findByName(berlin).orElseThrow().getId();
-        CityEntity secondCity = new CityEntity("Munich", ger);
+        CityEntity secondCity = CityEntity.builder().name("Munich").countryEntity(ger).build();
         cityRepository.save(secondCity);
         int munichId = cityRepository.findByName("Munich").orElseThrow().getId();
         TravelDiaryEntity travelDiary = TravelDiaryEntity.builder()

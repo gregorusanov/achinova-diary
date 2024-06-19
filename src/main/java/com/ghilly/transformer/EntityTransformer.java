@@ -19,18 +19,11 @@ public class EntityTransformer {
     }
 
     public static CountryEntity transformToCountryEntity(Country country) {
-        return CountryEntity.builder()
-                .id(country.getId())
-                .name(country.getName())
-                .citySet(new HashSet<>())
-                .build();
+        return new CountryEntity(country.getId(), country.getName(), new HashSet<>());
     }
 
     public static Country transformToCountry(CountryEntity countryEntity) {
-        return Country.builder()
-                .id(countryEntity.getId())
-                .name(countryEntity.getName())
-                .build();
+        return new Country(countryEntity.getId(), countryEntity.getName());
     }
 
     public static City transformToCity(CityEntity cityEntity) {

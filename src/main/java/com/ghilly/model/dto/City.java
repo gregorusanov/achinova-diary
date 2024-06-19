@@ -15,18 +15,4 @@ public class City {
     private int countryId;
     private boolean capital;
 
-    public City(String name) {
-        this.name = name;
-    }
-
-    public City(String name, int countryId, boolean capital) {
-        this.name = name;
-        this.countryId = countryId;
-        this.capital = capital;
-    }
-
-    public City(String name, int countryId) {
-        this.name = name;
-        this.countryId = countryId;
-    }
 }

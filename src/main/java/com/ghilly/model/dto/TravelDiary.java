@@ -21,10 +21,4 @@ public class TravelDiary {
     private String description;
     private int rating;
     private Set<Integer> cityIdSet = new HashSet<>();
-
-    public TravelDiary(int id, String arrivalDate, String departureDate) {
-        this.id = id;
-        this.arrivalDate = arrivalDate;
-        this.departureDate = departureDate;
-    }
 }

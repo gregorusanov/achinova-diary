@@ -18,9 +18,12 @@ class CityControllerTest {
     private static final int CITY_ID = 9;
     private static final String CITY_NAME = "moscow";
     private static final CountryEntity RUS = new CountryEntity(COUNTRY_ID, "russia");
-    private static final CityEntity CITY_DAO_FROM_REPO = new CityEntity(CITY_ID, CITY_NAME, RUS, true);
-    private static final City CITY_DTO = new City(CITY_NAME.toUpperCase(), COUNTRY_ID, true);
-    private static final CityEntity CITY_DAO = new CityEntity(CITY_NAME, null, true);
+    private static final CityEntity CITY_DAO_FROM_REPO = CityEntity.builder().id(CITY_ID).name(CITY_NAME)
+            .countryEntity(RUS).capital(true).build();
+    private static final City CITY_DTO = City.builder().name(CITY_NAME.toUpperCase()).countryId(COUNTRY_ID)
+            .capital(true).build();
+    private static final CityEntity CITY_DAO = CityEntity.builder().name(CITY_NAME).countryEntity(null).capital(true)
+            .build();
     private CityHandler handler;
     private CityController controller;
 
@@ -67,8 +70,9 @@ class CityControllerTest {
     void getAllCities() {
         String sochi = "Sochi";
         String spb = "Saint-Petersburg";
-        boolean notCapital = false;
-        Set<CityEntity> cities = Set.of(CITY_DAO_FROM_REPO, new CityEntity(spb, RUS, notCapital), new CityEntity(sochi, RUS, notCapital));
+        Set<CityEntity> cities = Set.of(CITY_DAO_FROM_REPO,
+                CityEntity.builder().name(spb).countryEntity(RUS).build(),
+                CityEntity.builder().name(sochi).countryEntity(RUS).build());
         when(handler.getAllCities()).thenReturn(cities);
 
         controller.getAllCities();
@@ -82,8 +86,8 @@ class CityControllerTest {
     @Test
     void update() {
         String newName = "Moskvabad";
-        City city = new City(newName, COUNTRY_ID);
-        CityEntity transformedCity = new CityEntity(CITY_ID, newName.toLowerCase());
+        City city = City.builder().name(newName).countryId(COUNTRY_ID).build();
+        CityEntity transformedCity = CityEntity.builder().id(CITY_ID).name(newName.toLowerCase()).build();
 
         controller.update(city, CITY_ID);
 

@@ -210,7 +210,9 @@ class CountryHandlerTest {
         String tokyo = "Tokyo";
         CountryEntity countryEntity = new CountryEntity("Japan");
         int id = countryEntity.getId();
-        Set<CityEntity> cities = Set.of(new CityEntity(kyoto, countryEntity, false), new CityEntity(tokyo, countryEntity, true));
+        Set<CityEntity> cities = Set.of(
+                CityEntity.builder().name(kyoto).countryEntity(countryEntity).build(),
+                CityEntity.builder().name(tokyo).countryEntity(countryEntity).capital(true).build());
         when(countryServiceRest.countryIdExists(id)).thenReturn(true);
         when(countryServiceRest.getAllCitiesByCountryId(id)).thenReturn(cities);
 
@@ -228,7 +230,8 @@ class CountryHandlerTest {
     @Test
     void getCapitalByCountryIdSuccess() {
         when(countryServiceRest.countryIdExists(COUNTRY_ID)).thenReturn(true);
-        when(countryServiceRest.getCapitalByCountryId(COUNTRY_ID)).thenReturn(new CityEntity("Moscow", RUS_DAO, true));
+        when(countryServiceRest.getCapitalByCountryId(COUNTRY_ID)).thenReturn(
+                CityEntity.builder().name("Moscow").countryEntity(RUS_DAO).capital(true).build());
 
         countryHandler.getCapitalByCountryId(COUNTRY_ID);
 
