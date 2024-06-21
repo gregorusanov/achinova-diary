@@ -35,7 +35,7 @@ public class TravelDiaryController {
     @GetMapping("/{travelId}")
     public ResponseEntity<TravelDiary> getTravelById(@PathVariable int travelId) {
         logger.info("Transfer data {} to the handler.", travelId);
-        return handler.getTravelDiaryEntityById(travelId)
+        return Optional.of(handler.getTravelDiaryEntityById(travelId))
                 .map(EntityTransformer::transformToTravelDiary)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());

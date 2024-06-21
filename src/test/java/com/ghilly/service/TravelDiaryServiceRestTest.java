@@ -26,7 +26,7 @@ class TravelDiaryServiceRestTest {
     private final Set<CityTravelDiaryEntity> cityTravelDiarySet = new HashSet<>(Set.of(cityTravelDiary));
     private LocalDate arrivalDate = parsingDate("28.01.2023");
     private LocalDate departureDate = parsingDate("08.05.2024");
-    private TravelDiaryEntity record = TravelDiaryEntity.builder()
+    private final TravelDiaryEntity travelDiaryEntity = TravelDiaryEntity.builder()
             .id(1)
             .arrivalDate(arrivalDate)
             .departureDate(departureDate)
@@ -39,7 +39,7 @@ class TravelDiaryServiceRestTest {
 
     @BeforeEach
     void init() {
-        cityTravelDiary.setTravelDiaryEntity(record);
+        cityTravelDiary.setTravelDiaryEntity(travelDiaryEntity);
         cityRepository = mock(CityRepository.class);
         travelDiaryRepository = mock(TravelDiaryRepository.class);
         service = new TravelDiaryServiceRest(cityRepository, travelDiaryRepository);
@@ -54,27 +54,47 @@ class TravelDiaryServiceRestTest {
     void create() {
         arrivalDate = parsingDate("10.03.2023");
         departureDate = parsingDate("12.03.2023");
-        record.setPlannedBudget(800.00);
-        record.setRealBudget(1000.00);
-        record.setRating(8);
-        record.setDescription("The place feels like a frozen island.");
+        travelDiaryEntity.setPlannedBudget(800.00);
+        travelDiaryEntity.setRealBudget(1000.00);
+        travelDiaryEntity.setRating(8);
+        travelDiaryEntity.setDescription("The place feels like a frozen island.");
 
-        service.create(record);
+        service.create(travelDiaryEntity);
 
         assertAll(
-                () -> verify(travelDiaryRepository).save(record),
+                () -> verify(travelDiaryRepository).save(travelDiaryEntity),
                 () -> verifyNoMoreInteractions(travelDiaryRepository)
         );
     }
 
     @Test
-    void getTravelDiarySuccess() {
-        when(travelDiaryRepository.findById(1)).thenReturn(Optional.of(record));
+    void getTravelDiary() {
+        when(travelDiaryRepository.findById(1)).thenReturn(Optional.of(travelDiaryEntity));
 
         service.getTravelDiaryEntityById(1);
 
         assertAll(
                 () -> verify(travelDiaryRepository).findById(1),
+                () -> verifyNoMoreInteractions(travelDiaryRepository)
+        );
+    }
+
+    @Test
+    void getAll() {
+        service.getAll();
+
+        assertAll(
+                () -> verify(travelDiaryRepository).findAll(),
+                () -> verifyNoMoreInteractions(travelDiaryRepository)
+        );
+    }
+
+    @Test
+    void delete() {
+        service.delete(10);
+
+        assertAll(
+                () -> verify(travelDiaryRepository).deleteById(10),
                 () -> verifyNoMoreInteractions(travelDiaryRepository)
         );
     }

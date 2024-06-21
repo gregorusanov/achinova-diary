@@ -5,7 +5,7 @@ import lombok.NonNull;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
-import java.util.Optional;
+import java.time.LocalDate;
 import java.util.Set;
 
 
@@ -14,4 +14,9 @@ public interface TravelDiaryRepository extends CrudRepository<TravelDiaryEntity,
     @Override
     @NonNull
     Set<TravelDiaryEntity> findAll();
+
+    @NonNull
+    Set<TravelDiaryEntity> findTravelDiaryEntitiesByArrivalDate(LocalDate localDate);
+
+    TravelDiaryEntity findTravelDiaryEntityByDescription(String description);
 }

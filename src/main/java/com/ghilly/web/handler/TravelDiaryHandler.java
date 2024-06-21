@@ -9,7 +9,6 @@ import com.ghilly.service.TravelDiaryServiceRest;
 import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
-import java.util.Optional;
 import java.util.Set;
 
 public class TravelDiaryHandler {
@@ -29,7 +28,7 @@ public class TravelDiaryHandler {
         return travelDiaryService.create(travelDiaryEntity);
     }
 
-    public Optional<TravelDiaryEntity> getTravelDiaryEntityById(int id) {
+    public TravelDiaryEntity getTravelDiaryEntityById(int id) {
         logger.info("Checking city {} exists", id);
         checkTravelIdExists(id);
         return travelDiaryService.getTravelDiaryEntityById(id);

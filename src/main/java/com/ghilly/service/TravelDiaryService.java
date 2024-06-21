@@ -8,7 +8,7 @@ import java.util.Set;
 public interface TravelDiaryService {
     TravelDiaryEntity create(TravelDiaryEntity travelDiaryEntity);
 
-    Optional<TravelDiaryEntity> getTravelDiaryEntityById(int id);
+    TravelDiaryEntity getTravelDiaryEntityById(int id);
 
     Set<TravelDiaryEntity> getAll();
 
