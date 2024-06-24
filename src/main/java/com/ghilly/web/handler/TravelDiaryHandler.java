@@ -45,6 +45,13 @@ public class TravelDiaryHandler {
         travelDiaryService.delete(id);
     }
 
+    public TravelDiaryEntity update(TravelDiaryEntity travelDiaryEntity) {
+        checkTravelIdExists(travelDiaryEntity.getId());
+        checkData(travelDiaryEntity);
+        logger.info("Transferring data to the service");
+        return travelDiaryService.update(travelDiaryEntity);
+    }
+
     private void checkData(TravelDiaryEntity travelDiaryEntity) {
         checkDate(travelDiaryEntity.getArrivalDate(), travelDiaryEntity.getDepartureDate());
         checkRating(travelDiaryEntity.getRating());

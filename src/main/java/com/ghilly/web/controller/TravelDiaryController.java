@@ -56,4 +56,16 @@ public class TravelDiaryController {
         handler.delete(travelId);
         return ResponseEntity.ok().body("The record with the ID " + travelId + " is deleted.");
     }
+
+    @PutMapping("/{travelId}")
+    public ResponseEntity<TravelDiary> update(@RequestBody TravelDiary travelDiary, @PathVariable int travelId) {
+        travelDiary.setId(travelId);
+        logger.info("The data are received from the user.");
+        return Optional.of(travelDiary)
+                .map(EntityTransformer::transformToTravelDiaryEntity)
+                .map(handler::update)
+                .map(EntityTransformer::transformToTravelDiary)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
+    }
 }
