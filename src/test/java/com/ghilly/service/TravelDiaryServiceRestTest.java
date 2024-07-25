@@ -18,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.mockito.Mockito.*;
 
 class TravelDiaryServiceRestTest {
-    private CityRepository cityRepository;
     private TravelDiaryRepository travelDiaryRepository;
     private TravelDiaryServiceRest service;
     private final CityEntity city = CityEntity.builder().id(2).name("Berlin").build();
@@ -40,7 +39,7 @@ class TravelDiaryServiceRestTest {
     @BeforeEach
     void init() {
         cityTravelDiary.setTravelDiaryEntity(travelDiaryEntity);
-        cityRepository = mock(CityRepository.class);
+        CityRepository cityRepository = mock(CityRepository.class);
         travelDiaryRepository = mock(TravelDiaryRepository.class);
         service = new TravelDiaryServiceRest(cityRepository, travelDiaryRepository);
     }
@@ -95,6 +94,22 @@ class TravelDiaryServiceRestTest {
 
         assertAll(
                 () -> verify(travelDiaryRepository).deleteById(10),
+                () -> verifyNoMoreInteractions(travelDiaryRepository)
+        );
+    }
+
+    @Test
+    void update() {
+        travelDiaryEntity.setPlannedBudget(1000.00);
+        travelDiaryEntity.setRealBudget(2000.00);
+        travelDiaryEntity.setRating(5);
+        when(travelDiaryRepository.findById(travelDiaryEntity.getId())).thenReturn(Optional.of(travelDiaryEntity));
+
+        service.update(travelDiaryEntity);
+
+        assertAll(
+                () -> verify(travelDiaryRepository).findById(travelDiaryEntity.getId()),
+                () -> verify(travelDiaryRepository).save(travelDiaryEntity),
                 () -> verifyNoMoreInteractions(travelDiaryRepository)
         );
     }

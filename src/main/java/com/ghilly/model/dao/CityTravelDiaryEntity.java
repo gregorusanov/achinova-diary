@@ -1,9 +1,7 @@
 package com.ghilly.model.dao;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+import org.springframework.lang.NonNull;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -22,6 +20,7 @@ public class CityTravelDiaryEntity implements Serializable {
     @ManyToOne
     @MapsId("cityId")
     @JoinColumn(name = "city_id")
+    @NonNull
     private CityEntity cityEntity;
 
     @ManyToOne

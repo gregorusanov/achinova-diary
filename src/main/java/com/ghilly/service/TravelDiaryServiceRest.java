@@ -28,7 +28,7 @@ public class TravelDiaryServiceRest implements TravelDiaryService {
     @Override
     public TravelDiaryEntity getTravelDiaryEntityById(int id) {
         TravelDiaryEntity travelDiaryEntity = travelDiaryRepository.findById(id).orElseThrow();
-        logger.info("Got record from diary by id [{}], result is [{}]", id, travelDiaryEntity);
+        logger.info("Got the record from diary by id [{}]", id);
         return travelDiaryEntity;
     }
 
@@ -42,6 +42,19 @@ public class TravelDiaryServiceRest implements TravelDiaryService {
     public void delete(int id) {
         travelDiaryRepository.deleteById(id);
         logger.info("Getting data from the repository.");
+    }
+
+    @Override
+    public TravelDiaryEntity update(TravelDiaryEntity travelDiaryEntity) {
+        logger.info("Transferring data {} to the repository", travelDiaryEntity);
+        TravelDiaryEntity oldTravelDiaryEntity = travelDiaryRepository.findById(travelDiaryEntity.getId()).orElseThrow();
+        oldTravelDiaryEntity.setArrivalDate(travelDiaryEntity.getArrivalDate());
+        oldTravelDiaryEntity.setDepartureDate(travelDiaryEntity.getDepartureDate());
+        oldTravelDiaryEntity.setRating(travelDiaryEntity.getRating());
+        oldTravelDiaryEntity.setRealBudget(travelDiaryEntity.getRealBudget());
+        oldTravelDiaryEntity.setPlannedBudget(travelDiaryEntity.getPlannedBudget());
+        oldTravelDiaryEntity.setDescription(travelDiaryEntity.getDescription());
+        return travelDiaryRepository.save(oldTravelDiaryEntity);
     }
 
     public boolean travelIdExists(int id) {

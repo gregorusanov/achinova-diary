@@ -120,4 +120,20 @@ class TravelDiaryControllerTest {
                 () -> verifyNoMoreInteractions(handler)
         );
     }
+
+    @Test
+    void update() {
+        travelDiaryEntity.setId(2);
+        travelDiaryEntity.setDescription("Updated");
+        travelDiaryDTO.setId(2);
+        travelDiaryDTO.setDescription("Updated");
+        when(handler.update(travelDiaryEntity)).thenReturn(travelDiaryEntity);
+
+        controller.update(travelDiaryDTO, 2);
+
+        assertAll(
+                () -> verify(handler).update(travelDiaryEntity),
+                () -> verifyNoMoreInteractions(handler)
+        );
+    }
 }

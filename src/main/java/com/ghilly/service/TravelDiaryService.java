@@ -1,8 +1,6 @@
 package com.ghilly.service;
 
 import com.ghilly.model.dao.TravelDiaryEntity;
-
-import java.util.Optional;
 import java.util.Set;
 
 public interface TravelDiaryService {
@@ -13,4 +11,6 @@ public interface TravelDiaryService {
     Set<TravelDiaryEntity> getAll();
 
     void delete(int id);
+
+    TravelDiaryEntity update(TravelDiaryEntity travelDiaryEntity);
 }
